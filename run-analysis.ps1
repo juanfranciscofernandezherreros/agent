@@ -141,6 +141,7 @@ try {
     $BundleDir = Join-Path $ReportDir "$SafeName-$Timestamp-documentacion"
     New-Item -ItemType Directory -Force -Path $BundleDir | Out-Null
     $ReportPath = Join-Path $BundleDir "analysis.html"
+
     Write-Host "Descargando documentación HTML completa..." -ForegroundColor Cyan
     $AnalysisData = Invoke-ApiJson -Uri "$Api/api/analysis-groups/$AnalysisGroupId/analysis"
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/report.html" -OutFile $ReportPath -UseBasicParsing
@@ -148,25 +149,7 @@ try {
     # Preserve the server workspace's relative layout so links work offline.
     foreach ($Repository in @($AnalysisData.repositories)) {
         $ArtifactDir = [string]$Repository.artifact_dir
-        if ($ArtifactDir -notmatch '^repositories/[A-Za-z0-9_-]+
-
-    if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
-        Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
-    } else {
-        Write-Host "Análisis completado correctamente." -ForegroundColor Green
-    }
-    Write-Host "Documentación completa: $BundleDir" -ForegroundColor Green
-    Write-Host "Índice de documentación: $(Join-Path $BundleDir 'index.html')" -ForegroundColor Green
-    Start-Process -FilePath (Join-Path $BundleDir "index.html")
-    exit 0
-}
-catch {
-    Write-Host ""
-    Write-Host ("ERROR: " + $_.Exception.Message) -ForegroundColor Red
-    Write-Host "Comprueba .env y, si falla el arranque de la API, revisa logs/api.stderr.log."
-    exit 1
-}
-) { continue }
+        if ($ArtifactDir -notmatch '^repositories/[A-Za-z0-9_-]+$') { continue }
         $RepositorySlug = ($ArtifactDir -split '/')[-1]
         $ServiceDir = Join-Path $BundleDir $ArtifactDir
         New-Item -ItemType Directory -Force -Path $ServiceDir | Out-Null
@@ -178,38 +161,20 @@ catch {
     New-Item -ItemType Directory -Force -Path $BugReportsDir | Out-Null
     foreach ($BugReport in @($AnalysisData.bug_reports)) {
         $BugFile = [string]$BugReport.file
-        if ($BugFile -notmatch '^[A-Za-z0-9_-]+[.]html
-
-    if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
-        Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
-    } else {
-        Write-Host "Análisis completado correctamente." -ForegroundColor Green
-    }
-    Write-Host "Informe principal: $ReportPath" -ForegroundColor Green
-    Start-Process -FilePath $ReportPath
-    exit 0
-}
-catch {
-    Write-Host ""
-    Write-Host ("ERROR: " + $_.Exception.Message) -ForegroundColor Red
-    Write-Host "Comprueba .env y, si falla el arranque de la API, revisa logs/api.stderr.log."
-    exit 1
-}
-) { continue }
+        if ($BugFile -notmatch '^[A-Za-z0-9_-]+[.]html$') { continue }
         Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$BugFile" -OutFile (Join-Path $BugReportsDir $BugFile) -UseBasicParsing
     }
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/index.html" -OutFile (Join-Path $BugReportsDir "index.html") -UseBasicParsing
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/documentation/index.html" -OutFile (Join-Path $BundleDir "index.html") -UseBasicParsing
-    Write-Host "Índice de documentación: $(Join-Path $BundleDir 'index.html')" -ForegroundColor Green
-    Write-Host "Documentación completa: $BundleDir" -ForegroundColor Green
 
     if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
         Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
     } else {
         Write-Host "Análisis completado correctamente." -ForegroundColor Green
     }
-    Write-Host "Informe principal: $ReportPath" -ForegroundColor Green
-    Start-Process -FilePath $ReportPath
+    Write-Host "Documentación completa: $BundleDir" -ForegroundColor Green
+    Write-Host "Índice de documentación: $(Join-Path $BundleDir 'index.html')" -ForegroundColor Green
+    Start-Process -FilePath (Join-Path $BundleDir "index.html")
     exit 0
 }
 catch {
