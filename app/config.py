@@ -12,5 +12,5 @@ DB_PATH = DATA_DIR / "platform.db"
 DATA_DIR.mkdir(exist_ok=True)
 WORKSPACES_DIR.mkdir(exist_ok=True)
 APP_NAME = "Deep Reverse Engineering & Analysis Orchestrator"
-APP_VERSION = "5.3.0"
+APP_VERSION = "5.4.0"
 MAX_CLONE_SECONDS = int(os.getenv("MAX_CLONE_SECONDS", "180"))
