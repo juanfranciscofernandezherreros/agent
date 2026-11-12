@@ -11,7 +11,7 @@ La aplicación utiliza un **orquestador con módulos analizadores especializados
 3. **Análisis individual:** inspecciona cada repositorio con analizadores de inventario, dependencias, análisis funcional, Java/Spring, SQL, contratos y calidad.
 4. **Correlación entre repositorios:** consolida resultados y busca relaciones candidatas entre servicios, especialmente en configuración Kafka, productores, consumidores y contratos compartidos.
 5. **Calidad:** calcula una puntuación heurística por repositorio y extrae candidatos a posibles bugs con evidencias.
-6. **Informe:** genera datos estructurados, un informe Markdown y un HTML conjunto con resumen, puntuaciones, tareas priorizadas y fichas por servicio.
+6. **Documentación enlazada:** genera un índice HTML navegable, un informe global, fichas HTML por microservicio y expedientes HTML de posibles bugs. Los documentos incluyen enlaces de ida y vuelta y conservan una estructura de carpetas común para poder consultarlos sin conexión.
 
 El análisis no ejecuta ni modifica los repositorios inspeccionados.
 
@@ -43,7 +43,9 @@ El análisis no ejecuta ni modifica los repositorios inspeccionados.
 - Evidencia de cada candidato: identificador de patrón, prioridad, archivo, línea, fragmento y explicación.
 - Resumen de puntuaciones al principio del informe, ordenado de menor a mayor.
 - Plan de tareas derivado de los candidatos detectados, ordenado por prioridad.
-- Un informe HTML independiente por cada microservicio que tenga al menos un candidato a bug, más un índice HTML con los enlaces.
+- Un HTML técnico independiente por cada microservicio analizado, enlazado con el informe global.
+- Un HTML de posibles bugs por cada microservicio con candidatos, enlazado con su ficha técnica y el informe global.
+- Un índice HTML de documentación que conecta todos los documentos y permite navegar el conjunto sin conexión.
 
 La puntuación no es una certificación ni una probabilidad de defectos. Los candidatos son indicios heurísticos y necesitan revisión humana.
 
@@ -116,8 +118,8 @@ El lanzador invoca run-analysis.ps1, que:
 4. Envía el ID configurado a GitLab para descubrir el grupo y sus subgrupos.
 5. Espera a que termine el análisis.
 6. Descarga el informe HTML principal en la carpeta configurada.
-7. Descarga también un HTML por cada microservicio con posibles bugs, junto con un índice navegable, en una subcarpeta con sufijo `-bug-reports`.
-8. Abre el informe principal en el navegador predeterminado.
+7. Descarga un paquete autocontenido con el informe global, todas las fichas de microservicio, los informes de posibles bugs y un índice HTML que enlaza todos los documentos.
+8. Abre el índice de documentación en el navegador predeterminado.
 
 No es necesario editar scripts para cambiar de grupo: modifica GITLAB_GROUP_ID en .env. Si ANALYSIS_NAME está vacío, el nombre se genera automáticamente a partir del grupo y la fecha/hora.
 
@@ -163,6 +165,8 @@ La respuesta contiene analysis_group_id y el número de repositorios descubierto
 - GET /api/analysis-groups/{analysis_group_id}/analysis
 - GET /api/analysis-groups/{analysis_group_id}/report
 - GET /api/analysis-groups/{analysis_group_id}/report.html
+- GET /api/analysis-groups/{analysis_group_id}/documentation/index.html
+- GET /api/analysis-groups/{analysis_group_id}/repositories/{repository_slug}/report.html
 
 ### Lista manual de repositorios
 
