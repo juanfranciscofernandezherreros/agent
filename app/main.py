@@ -36,8 +36,8 @@ def run_analysis(project_id):
         (folder/"analysis.json").write_text(json.dumps(analysis,indent=2,ensure_ascii=False),encoding="utf-8")
         (folder/"reconstruction-package.json").write_text(json.dumps(package,indent=2,ensure_ascii=False),encoding="utf-8")
         (folder/"reconstruction-package.md").write_text(
-          f"# Paquete de reconstrucción\\n\\nProyecto: {name}\\n\\nCommit: {analysis.get('commit_sha')}\\n\\n"
-          f"Lenguajes: {analysis.get('languages')}\\n\\nRequiere revisión técnica.\\n",encoding="utf-8")
+          f"# Paquete de reconstrucción\n\nProyecto: {name}\n\nCommit: {analysis.get('commit_sha')}\n\n"
+          f"Lenguajes: {analysis.get('languages')}\n\nRequiere revisión técnica.\n",encoding="utf-8")
         with connect() as con:
             con.execute("UPDATE projects SET status='ANALYSIS_COMPLETED',source_path=?,analysis_json=?,reconstruction_json=? WHERE id=?",
               (str(path),json.dumps(analysis),json.dumps(package),project_id))
@@ -58,7 +58,8 @@ def run_code_generation(generation_id: str, project_id: str, brief: str, max_fil
             source_root=Path(row["source_path"]),
             reconstruction_package=json.loads(row["reconstruction_json"]),
             brief=brief,
-            max_files=max_files
+            max_files=max_files,
+            generation_id=generation_id
         )
         with connect() as con:
             con.execute("UPDATE generation_runs SET status=?,result_json=? WHERE id=?",
