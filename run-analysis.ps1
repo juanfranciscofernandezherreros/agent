@@ -55,10 +55,8 @@ try {
     if (-not (Test-Path -LiteralPath $Python)) { throw "No se ha podido crear el entorno .venv." }
 
     $Api = "http://127.0.0.1:8001"
-    $Health = $false
-    try { $null = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 3; $Health = $true } catch { $Health = $false }
 
-    if (-not $Health) {
+    function Start-LocalApi {
         Write-Host "Iniciando API local en el puerto 8001..." -ForegroundColor Yellow
         $Logs = Join-Path $Root "logs"
         New-Item -ItemType Directory -Force -Path $Logs | Out-Null
@@ -69,6 +67,39 @@ try {
             try { $null = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 3; $Ready = $true; break } catch { }
         }
         if (-not $Ready) { throw "La API no respondió en 120 segundos. Revisa logs/api.stderr.log." }
+    }
+
+    $Health = $false
+    try { $null = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 3; $Health = $true } catch { $Health = $false }
+    if (-not $Health) {
+        Start-LocalApi
+    }
+
+    # A health check alone is insufficient: an older uvicorn process may still
+    # be serving code without the individual bug-report endpoints.
+    $HasBugReportRoutes = $false
+    try {
+        $ApiSpec = Invoke-RestMethod -Uri "$Api/openapi.json" -TimeoutSec 5
+        $HasBugReportRoutes = $ApiSpec.paths.PSObject.Properties.Name -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}"
+    } catch { $HasBugReportRoutes = $false }
+
+    if (-not $HasBugReportRoutes) {
+        $Listener = Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 8001 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($null -eq $Listener) {
+            throw "La API responde, pero no publica las rutas de informes individuales. Cierra la API antigua y vuelve a ejecutar este launcher."
+        }
+        $ApiProcess = Get-CimInstance Win32_Process -Filter "ProcessId = $($Listener.OwningProcess)" -ErrorAction SilentlyContinue
+        if ($null -eq $ApiProcess -or $ApiProcess.CommandLine -notmatch "uvicorn.*app\.main:app") {
+            throw "El puerto 8001 está ocupado por un proceso que no parece ser esta API. Libera el puerto y vuelve a ejecutar el launcher."
+        }
+        Write-Host "Se ha detectado una API antigua; reiniciándola para cargar las rutas nuevas..." -ForegroundColor Yellow
+        Stop-Process -Id $Listener.OwningProcess -Force
+        Start-Sleep -Seconds 2
+        Start-LocalApi
+        $ApiSpec = Invoke-RestMethod -Uri "$Api/openapi.json" -TimeoutSec 10
+        if (-not ($ApiSpec.paths.PSObject.Properties.Name -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}")) {
+            throw "La API reiniciada sigue sin publicar las rutas de informes. Revisa logs/api.stderr.log."
+        }
     }
 
     $Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
