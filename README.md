@@ -1,64 +1,48 @@
-# Software Reconstruction Platform — Analysis Edition
+# Deep Reverse Engineering & Analysis Orchestrator
 
-La aplicación se centra exclusivamente en descargar y analizar en profundidad un microservicio. La versión 4.1 añade análisis funcional estático y exportación HTML.
+Versión 5.0: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
 
-## Qué hace
+## Capacidades
+- Clonado Git HTTPS aislado por repositorio.
+- Inventario, dependencias, despliegue, configuración, endpoints candidatos, seguridad, integraciones, migraciones y tests.
+- Análisis funcional estático: operaciones, ramas, validaciones, errores, efectos y referencias de llamadas.
+- Parser Java heurístico: clases, métodos, llamadas por nombre, inyección de dependencias, mappings Spring, listeners/productores Kafka, SQL y contratos Avro/Proto.
+- Análisis coordinado de hasta 10 repositorios en una ejecución: candidatos de topics y contratos compartidos.
+- Artefactos JSON, Markdown y HTML con búsqueda de correlaciones.
 
-1. Clona un repositorio Git mediante HTTPS en un workspace separado.
-2. Inventaría archivos, tamaños, lenguajes y manifiestos.
-3. Detecta candidatos de arquitectura, puntos de entrada, rutas HTTP, modelos de datos, migraciones, dependencias, configuración, variables de entorno, tests, seguridad e integraciones.
-4. Genera cuatro artefactos:
-   - workspaces/<project_id>/analysis.json: análisis estructurado con evidencias.
-   - workspaces/<project_id>/analysis.md: informe legible.
-   - workspaces/<project_id>/analysis.html: informe HTML autocontenido, apto para abrir en navegador o cargar en otra herramienta.
-   - El análisis funcional identifica operaciones, ramas condicionales, validaciones, errores, posibles efectos sobre estado y referencias de llamadas, con fichero, línea y confianza.
-5. Conserva el estado del análisis en SQLite para consultarlo mediante API.
-
-## Lo que NO hace
-
-- No genera ni modifica código del microservicio.
-- No ejecuta el código descargado.
-- No realiza pruebas dinámicas ni confirma comportamiento en runtime.
-- No reconstruye ni compara una nueva implementación.
-- No necesita una API key de OpenAI para el análisis estático.
-
-Las detecciones de endpoints, seguridad, modelos, integraciones y comportamiento funcional son inferencias estáticas respaldadas por referencias a fichero y línea. La confianza se indica por detección; no debe interpretarse como una especificación funcional validada. Deben revisarse; los patrones estáticos no descubren necesariamente código dinámico, configuración externa o comportamiento oculto.
+## Límites
+El parser Java no sustituye a javac ni resuelve el grafo completo de tipos, sobrecargas, proxies Spring o dispatch dinámico. Las coincidencias de topic/contrato son candidatos, no prueba de conexión o compatibilidad. No se ejecutan tests, SQL, Maven/Gradle, contenedores ni servicios. No se leen valores .env. El análisis no certifica comportamiento runtime.
 
 ## Windows
-
     git pull origin main
     .\.venv\Scripts\python.exe -m pip install -r requirements.txt
     .\run-windows.ps1
 
-No es necesario configurar .env ni una API key para este modo.
+## Analizar un repositorio
+POST /api/projects
 
-## Uso
+    {"name":"billing-watcher","git_url":"https://github.com/org/billing-watcher.git"}
 
-Comprueba el estado:
+Consultar:
+- GET /api/projects/{project_id}/analysis
+- GET /api/projects/{project_id}/report
+- GET /api/projects/{project_id}/report.html
 
-GET http://127.0.0.1:8000/health
-
-Crea un análisis enviando POST a:
-
-http://127.0.0.1:8000/api/projects
-
-Body JSON:
+## Analizar varios microservicios conjuntamente
+POST /api/analysis-groups
 
     {
-      "name": "mi-microservicio",
-      "git_url": "https://github.com/usuario/repositorio.git"
+      "name":"billing-platform",
+      "repositories":[
+        {"name":"billing-watcher","git_url":"https://github.com/org/billing-watcher.git"},
+        {"name":"billing-report-writer","git_url":"https://github.com/org/billing-report-writer.git"}
+      ]
     }
 
-La respuesta devuelve project_id. Consulta el estado con:
+Consultar:
+- GET /api/analysis-groups/{analysis_group_id}
+- GET /api/analysis-groups/{analysis_group_id}/analysis
+- GET /api/analysis-groups/{analysis_group_id}/report
+- GET /api/analysis-groups/{analysis_group_id}/report.html
 
-GET /api/projects/{project_id}
-
-Consulta el análisis estructurado:
-
-GET /api/projects/{project_id}/analysis
-
-Obtén el informe Markdown:
-
-GET /api/projects/{project_id}/report
-
-La documentación interactiva de la API está en http://127.0.0.1:8000/docs.
+La API interactiva está en /docs. No requiere API key de LLM.
