@@ -84,7 +84,7 @@ def _service_section(repo, index):
         "<div class='section-kicker'>MICROSERVICIO " + str(index + 1).zfill(2) + "</div>",
         "<h2>" + _e(name) + "</h2>",
         "<p class='lead'>Ficha técnica consolidada a partir del repositorio y del commit inspeccionado. Las detecciones están enlazadas a su ubicación de origen cuando el parser dispone de ella.</p>",
-        "<nav class='doc-links' aria-label='Documentación relacionada'><a href='../../analysis.html'>← Volver al informe global</a>" + ("<a href='../../" + _e(repo.get("bug_report")) + "'>Informe de posibles bugs</a>" if repo.get("bug_report") else "") + "</nav>",
+        ("<nav class='doc-links' aria-label='Documentación relacionada'><a href='../../analysis.html'>← Volver al informe global</a>" + ("<a href='../../" + _e(repo.get("bug_report")) + "'>Informe de posibles bugs</a>" if repo.get("bug_report") else "") + "</nav>" if repo.get("standalone_document") else ""),
         "<div class='quality-banner'><div><span class='quality-score'>" + _e(quality.get("score", "N/D")) + "<small>/100</small></span><b>Calidad estática: " + _e(quality.get("rating", "Sin datos")) + "</b><p>Indicador heurístico; no es probabilidad de bugs.</p></div><div class='quality-counts'><span>" + str(quality_summary.get("bug_candidates", 0)) + " candidatos</span><span>" + str(quality_summary.get("high", 0)) + " prioridad alta</span><span>" + str(quality_summary.get("medium", 0)) + " prioridad media</span></div></div>",
         "<h3>Posibles bugs detectados (requieren revisión)</h3>" + _table(bug_candidates, [("severity", "Prioridad"), ("code", "Código"), ("title", "Detección"), ("file", "Archivo"), ("line", "Línea"), ("excerpt", "Fragmento"), ("description", "Por qué revisarlo")]),
         "<p class='note'>Los candidatos se obtienen mediante patrones estáticos y pueden ser falsos positivos. No se consideran defectos confirmados. La puntuación parte de 100 y descuenta hasta 45 puntos por patrones de prioridad alta/media, 10 por ausencia de tests detectados, hasta 10 por incidencias de parseo y hasta 15 por indicadores estáticos de seguridad. El resultado se limita a 0–100.</p>",
@@ -229,10 +229,12 @@ def build_integral_html(name, analysis):
         section, anchor = _service_section(repo, i)
         service_sections.append(section)
         nav_links.append("<a href='#" + _e(anchor) + "'>" + _e(repo.get("name", "Microservicio")) + "</a>")
-        service_path = str(repo.get("artifact_dir", "")).replace("\\", "/").strip("/") + "/analysis.html"
-        nav_links.append("<a href='" + _e(service_path) + "'>↗ Ficha HTML: " + _e(repo.get("name", "Microservicio")) + "</a>")
-        if repo.get("bug_report"):
-            nav_links.append("<a href='" + _e(repo.get("bug_report")) + "'>↗ Posibles bugs: " + _e(repo.get("name", "Microservicio")) + "</a>")
+        artifact_dir = str(repo.get("artifact_dir", ""))
+        if artifact_dir and not artifact_dir.startswith("/"):
+            service_path = artifact_dir.replace("\\", "/").strip("/") + "/analysis.html"
+            nav_links.append("<a href='" + _e(service_path) + "'>↗ Ficha HTML: " + _e(repo.get("name", "Microservicio")) + "</a>")
+            if repo.get("bug_report"):
+                nav_links.append("<a href='" + _e(repo.get("bug_report")) + "'>↗ Posibles bugs: " + _e(repo.get("name", "Microservicio")) + "</a>")
     topic_rows = _table(topics, [("topic", "Topic candidato"), ("repositories", "Repositorios"), ("roles_detected", "Roles detectados"), ("producer_and_consumer_candidates", "Productor y consumidor candidatos"), ("cross_service_candidate", "Coincidencia"), ("evidence", "Evidencias por repositorio")])
     contract_rows = _table(contracts, [("contract", "Contrato candidato"), ("repositories", "Repositorios"), ("cross_service_candidate", "Coincidencia"), ("evidence", "Evidencias por repositorio")])
     risk_items = [
