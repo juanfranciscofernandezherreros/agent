@@ -170,6 +170,12 @@ def get_analysis_group_html(group_id:str):
     if not path.is_file(): raise HTTPException(409,"Informe HTML todavía no disponible")
     return path.read_text(encoding="utf-8")
 
+@app.get("/api/analysis-groups/{group_id}/activity.html",response_class=HTMLResponse)
+def get_analysis_group_activity_html(group_id:str):
+    path=WORKSPACES_DIR/group_id/"activity.html"
+    if not path.is_file(): raise HTTPException(404,"Histórico de actividad no disponible (solo para grupos GitLab)")
+    return path.read_text(encoding="utf-8")
+
 @app.get("/api/analysis-groups/{group_id}/agents.html",response_class=HTMLResponse)
 def get_analysis_group_agents_html(group_id:str):
     path=WORKSPACES_DIR/group_id/"agents.html"

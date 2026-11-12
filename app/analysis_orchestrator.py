@@ -32,7 +32,7 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
     for item in repositories:
         try:
             member_id=str(uuid.uuid4()); source=clone_repository(member_id,item["git_url"],auth_token=clone_token,auth_host=clone_host)
-            context=AnalysisContext(root=source,repository=item["name"],store=store,data=shared)
+            context=AnalysisContext(root=source,repository=item["name"],store=store,data={**shared,"repository_input":item})
             supervisor.run(context,scope="repository")
             _require(context,"repository_report",item["name"])
             results.append(context.outputs["repository_entry"])

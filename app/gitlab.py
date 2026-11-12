@@ -50,7 +50,7 @@ def list_group_projects(group_id: str):
                 clone_url = project.get("http_url_to_repo")
                 name = project.get("path_with_namespace") or project.get("name")
                 if clone_url and name and urlparse(clone_url).netloc.lower() == host:
-                    projects.append({"name": name, "git_url": clone_url})
+                    projects.append({"name": name, "git_url": clone_url, "gitlab_project_id": project.get("id")})
             if len(batch) < 100:
                 break
             page += 1

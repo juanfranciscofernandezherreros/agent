@@ -12,6 +12,7 @@ AGENT_LABEL = {
     "llm_functional_interpretation": "Interpretación funcional (LLM)", "llm_bug_review": "Revisión de bugs (LLM)",
     "llm_architecture_explanation": "Explicación arquitectónica (LLM)", "llm_evidence_correlation": "Correlación de evidencias (LLM)",
     "cross_validation": "Validación cruzada", "group_cross_validation": "Validación cruzada global",
+    "activity_analysis": "Histórico de actividad", "group_activity": "Ranking de actividad",
     "repository_report": "Agente documental", "group_report": "Agente documental global",
 }
 
@@ -90,6 +91,11 @@ def build_sections(insights: dict, runs: list[dict], scope: str) -> list[dict]:
                          "note": "Son interpretaciones generadas por un modelo a partir de resultados estáticos, no hechos verificados. "
                                  "La validación cruzada comprueba sus citas contra el repositorio."})
 
+    if insights.get("activity_analysis"):
+        sections += repository_activity_sections(insights["activity_analysis"])
+    if insights.get("group_activity"):
+        sections += group_activity_sections(insights["group_activity"])
+
     v = insights.get("group_cross_validation" if scope == "group" else "cross_validation")
     if v:
         n = v.get("summary", {})
@@ -105,6 +111,62 @@ def build_sections(insights: dict, runs: list[dict], scope: str) -> list[dict]:
     else:
         sections.append({"title": "Validación cruzada", "note": "La validación cruzada no se ejecutó o falló; consulta la tabla de agentes."})
     return sections
+
+
+def _day(value) -> str:
+    return str(value)[:10] if value else "—"
+
+
+def _cut(flag) -> str:
+    return " (truncado: hay más)" if flag else ""
+
+
+def repository_activity_sections(a: dict) -> list[dict]:
+    b, c, p = a["branches"], a["commits"], a["pushes"]
+    top = p.get("top_user") or {}
+    out = [{"title": f"Histórico de actividad (últimos {a['window_days']} días)",
+            "paragraphs": [f"Ramas recientes: {b['recent']} de {b['total']}{_cut(b['truncated'])} · commits: {c['total']}{_cut(c['truncated'])} "
+                           f"de {c['authors']} autores · pushes: {p['total']}{_cut(p['truncated'])} de {p['users']} usuarios · "
+                           f"último commit: {_day(c.get('last_commit_at'))}.",
+                           ("Usuario con más pushes: " + str(top.get("display_name")) + " (" + str(top.get("user")) + "), " +
+                            str(top.get("count")) + " pushes.") if top else "Sin pushes registrados en el periodo."],
+            "bullets": a.get("errors", [])}]
+    out.append({"title": "Ramas con actividad reciente",
+                "table": (["Rama", "Último commit", "Autor", "Fusionada"],
+                          [[x["name"] + (" (principal)" if x["default"] else ""), _day(x["last_commit_at"]), x.get("last_author") or "",
+                            "Sí" if x["merged"] else "No"] for x in b["recent_branches"]])})
+    out.append({"title": "Pushes por usuario",
+                "table": (["Usuario", "Nombre", "Pushes", "Commits empujados"],
+                          [[x["user"], x.get("display_name", ""), str(x["count"]), str(x.get("commits_pushed", 0))] for x in p["by_user"]])})
+    out.append({"title": "Commits por autor",
+                "table": (["Autor", "Commits"], [[x["name"], str(x["count"])] for x in c["by_author"]]),
+                "bullets": a.get("limitations", [])})
+    return out
+
+
+def group_activity_sections(g: dict) -> list[dict]:
+    t, top = g["totals"], g.get("top_pusher") or {}
+    repo_row = lambda r: [r["repository"], str(r["recent_branches"]), str(r["total_branches"]), str(r["commits"]),
+                          str(r["pushes"]), (str(r["top_pusher"]) + " (" + str(r["top_pusher_pushes"]) + ")") if r.get("top_pusher") else "—",
+                          _day(r.get("last_commit_at"))]
+    head = ["Repositorio", "Ramas recientes", "Ramas totales", "Commits", "Pushes", "Quien más empuja", "Último commit"]
+    out = [{"title": f"Resumen de actividad (últimos {g['window_days']} días)",
+            "paragraphs": [f"Repositorios con datos: {g['repositories_with_data']} · ramas recientes: {t['recent_branches']} · "
+                           f"commits: {t['commits']} · pushes: {t['pushes']}.",
+                           ("Usuario con más pushes: " + str(top.get("display_name")) + " (" + str(top.get("user")) + "), " +
+                            str(top.get("count")) + " pushes en " + str(top.get("repositories")) + " repositorios.") if top
+                           else "Sin pushes registrados en el periodo."]},
+           {"title": "Repositorios con más ramas recientes", "table": (head, [repo_row(r) for r in g["by_recent_branches"]])},
+           {"title": "Repositorios con más commits", "table": (head, [repo_row(r) for r in g["by_commits"]])},
+           {"title": "Usuarios con más pushes",
+            "table": (["Usuario", "Nombre", "Pushes", "Repositorios"],
+                      [[x["user"], x.get("display_name", ""), str(x["count"]), str(x.get("repositories", ""))] for x in g["top_pushers"]])},
+           {"title": "Autores con más commits",
+            "table": (["Autor", "Commits"], [[x["name"], str(x["count"])] for x in g["top_committers"]]),
+            "bullets": g.get("limitations", [])}]
+    if g.get("repositories_without_data"):
+        out.append({"title": "Repositorios sin datos de actividad", "bullets": g["repositories_without_data"][:100]})
+    return out
 
 
 def to_markdown(title: str, subtitle: str, sections: list[dict]) -> str:
@@ -131,7 +193,8 @@ def to_markdown(title: str, subtitle: str, sections: list[dict]) -> str:
     return "\n".join(out)
 
 
-def to_html(title: str, subtitle: str, sections: list[dict], links: list[tuple[str, str]]) -> str:
+def to_html(title: str, subtitle: str, sections: list[dict], links: list[tuple[str, str]],
+            kicker: str = "INFORME MULTIAGENTE") -> str:
     body = []
     for s in sections:
         body.append("<section><h2>" + _e(s["title"]) + "</h2>")
@@ -153,7 +216,7 @@ def to_html(title: str, subtitle: str, sections: list[dict], links: list[tuple[s
     nav = "".join("<a href='" + _e(href) + "'>" + _e(label) + "</a>" for label, href in links)
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>""" + _e(title) + """</title><style>
 *{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#17243a;font:15px/1.55 system-ui}header{background:linear-gradient(120deg,#102344,#1e477f,#087e83);color:white;padding:34px max(20px,calc((100% - 1100px)/2))}h1{margin:0 0 6px;font-size:clamp(1.5rem,4vw,2.1rem)}main{max-width:1100px;margin:24px auto;padding:0 18px}section{background:white;border:1px solid #dce4ef;border-radius:12px;padding:18px 20px;margin:14px 0}h2{margin:0 0 10px;font-size:1.15rem}nav{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}nav a{color:#2457a6;font-weight:700;text-decoration:none;border:1px solid #dce4ef;border-radius:8px;padding:8px 12px;background:white}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:9px 10px;border-bottom:1px solid #e6ebf2;vertical-align:top;overflow-wrap:anywhere}th{font-size:.82rem;color:#5b6678;text-transform:uppercase;letter-spacing:.03em}.note{background:#f1f5fb;border-left:4px solid #2457a6;padding:10px 12px;border-radius:6px;color:#3b4a61}.muted{color:#66758a}td.ok{color:#17703a;font-weight:650}td.warn{color:#8a5a00;font-weight:650}td.bad{color:#a62231;font-weight:650}td.off{color:#66758a}
-</style></head><body><header><p>INFORME MULTIAGENTE</p><h1>""" + _e(title) + """</h1><p>""" + _e(subtitle) + """</p></header><main><nav>""" + nav + """</nav>""" + "".join(body) + """</main></body></html>"""
+</style></head><body><header><p>""" + _e(kicker) + """</p><h1>""" + _e(title) + """</h1><p>""" + _e(subtitle) + """</p></header><main><nav>""" + nav + """</nav>""" + "".join(body) + """</main></body></html>"""
 
 
 def _css(cell) -> str:

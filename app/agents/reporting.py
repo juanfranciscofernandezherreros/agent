@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 
-from ..agent_report import STATUS_LABEL, build_sections, to_html, to_markdown
+from ..agent_report import STATUS_LABEL, build_sections, group_activity_sections, to_html, to_markdown
 from ..bug_report import build_bug_report_html, build_bug_reports_index
 from ..communication.contracts import AgentSkipped
 from ..documentation import build_documentation_index
@@ -30,7 +30,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
     """Informes individuales de un microservicio."""
     name = "repository_report"
     requires = STATIC
-    after = (*LLM_REPOSITORY, "cross_validation")
+    after = (*LLM_REPOSITORY, "cross_validation", "activity_analysis")
     optional = True  # se omite si no hay carpeta de salida; el orquestador exige su resultado
 
     def run(self, context: AnalysisContext) -> dict:
@@ -86,7 +86,7 @@ class GroupReportingAgent(AnalyzerAgent):
     """Informes globales del conjunto de microservicios."""
     name = "group_report"
     requires = ("integration_analysis",)
-    after = ("llm_evidence_correlation", "group_cross_validation")
+    after = ("llm_evidence_correlation", "group_cross_validation", "group_activity")
     scope = "group"
     optional = True
 
@@ -135,8 +135,18 @@ class GroupReportingAgent(AnalyzerAgent):
                 [(r["name"], r["artifact_dir"].replace("\\", "/") + "/agents.html") for r in repositories[:40]]
         (folder / "agents.html").write_text(to_html(title, SUBTITLE, sections, links), encoding="utf-8")
 
+        activity_files = []
+        if insights.get("group_activity"):
+            a_title = "Histórico de actividad: " + str(name)
+            a_sub = f"Últimos {insights['group_activity']['window_days']} días · datos de la API de GitLab"
+            a_sections = group_activity_sections(insights["group_activity"])
+            (folder / "activity.md").write_text(to_markdown(a_title, a_sub, a_sections), encoding="utf-8")
+            (folder / "activity.html").write_text(to_html(a_title, a_sub, a_sections, [
+                ("← Índice de documentación", "index.html"), ("Informe global", "analysis.html"),
+                ("Informe multiagente", "agents.html")], kicker="HISTÓRICO DE ACTIVIDAD"), encoding="utf-8")
+            activity_files = ["activity.md", "activity.html"]
         (folder / "index.html").write_text(build_documentation_index(name, result), encoding="utf-8")
         (folder / "analysis.json").write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
         context.outputs["group_analysis"] = result  # no se publica: ya está en analysis.json
         return {"completion_status": result["completion_status"], "files": ["analysis.json", "analysis.md", "analysis.html", "agents.md", "agents.html",
-                                              "index.html", "bug-reports/index.html"]}
+                                              "index.html", "bug-reports/index.html"] + activity_files}

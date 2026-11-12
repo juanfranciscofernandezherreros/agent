@@ -179,6 +179,7 @@ try {
         Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$BugFile" -OutFile (Join-Path $BugReportsDir $BugFile) -UseBasicParsing
     }
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/index.html" -OutFile (Join-Path $BugReportsDir "index.html") -UseBasicParsing
+    try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/activity.html" -OutFile (Join-Path $BundleDir "activity.html") -UseBasicParsing } catch { Write-Host "Histórico de actividad no disponible" -ForegroundColor Yellow }
     try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/agents.html" -OutFile (Join-Path $BundleDir "agents.html") -UseBasicParsing } catch { Write-Host "Informe multiagente global no disponible" -ForegroundColor Yellow }
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/documentation/index.html" -OutFile (Join-Path $BundleDir "index.html") -UseBasicParsing
 

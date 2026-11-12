@@ -7,6 +7,7 @@ from .agents import (
     FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
     EvidenceCorrelationAgent, CrossValidationAgent, GroupCrossValidationAgent,
     RepositoryReportingAgent, GroupReportingAgent,
+    ActivityAnalysisAgent, GroupActivityAgent,
 )
 from .agents.context import AnalyzerAgent
 from .communication import AgentMessage, AgentSkipped, AgentStatus, SharedStore
@@ -152,5 +153,6 @@ def default_supervisor(llm_client=None) -> Supervisor:
         FunctionalInterpretationAgent(llm_client), BugReviewAgent(llm_client),
         ArchitectureExplanationAgent(llm_client), EvidenceCorrelationAgent(llm_client),
         CrossValidationAgent(), GroupCrossValidationAgent(),
+        ActivityAnalysisAgent(), GroupActivityAgent(),
         RepositoryReportingAgent(), GroupReportingAgent(),
     ])
