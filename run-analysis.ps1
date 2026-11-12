@@ -60,13 +60,24 @@ try {
         Write-Host "Iniciando API local en el puerto 8001..." -ForegroundColor Yellow
         $Logs = Join-Path $Root "logs"
         New-Item -ItemType Directory -Force -Path $Logs | Out-Null
-        Start-Process -FilePath $Python -ArgumentList @("-m","uvicorn","app.main:app","--host","127.0.0.1","--port","8001") -WorkingDirectory $Root -WindowStyle Hidden -RedirectStandardOutput (Join-Path $Logs "api.stdout.log") -RedirectStandardError (Join-Path $Logs "api.stderr.log") | Out-Null
+        $StdoutLog = Join-Path $Logs "api.stdout.log"
+        $StderrLog = Join-Path $Logs "api.stderr.log"
+        Remove-Item -LiteralPath $StdoutLog, $StderrLog -Force -ErrorAction SilentlyContinue
+        $ApiProcess = Start-Process -FilePath $Python -ArgumentList @("-m","uvicorn","app.main:app","--host","127.0.0.1","--port","8001") -WorkingDirectory $Root -WindowStyle Hidden -RedirectStandardOutput $StdoutLog -RedirectStandardError $StderrLog -PassThru
         $Ready = $false
         for ($i = 0; $i -lt 60; $i++) {
             Start-Sleep -Seconds 2
+            if ($ApiProcess.HasExited) {
+                $Details = if (Test-Path -LiteralPath $StderrLog) { (Get-Content -LiteralPath $StderrLog -Tail 40) -join [Environment]::NewLine } else { "Sin salida de error." }
+                throw "La API terminó durante el arranque (código $($ApiProcess.ExitCode)). Detalle: $Details"
+            }
             try { $null = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 3; $Ready = $true; break } catch { }
+            if (($i + 1) % 5 -eq 0) { Write-Host ("Esperando a que responda la API... {0}/120 segundos" -f (($i + 1) * 2)) -ForegroundColor DarkYellow }
         }
-        if (-not $Ready) { throw "La API no respondió en 120 segundos. Revisa logs/api.stderr.log." }
+        if (-not $Ready) {
+            $Details = if (Test-Path -LiteralPath $StderrLog) { (Get-Content -LiteralPath $StderrLog -Tail 40) -join [Environment]::NewLine } else { "Sin salida de error." }
+            throw "La API no respondió en 120 segundos. Detalle: $Details"
+        }
     }
 
     $Health = $false
