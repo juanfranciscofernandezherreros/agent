@@ -14,3 +14,7 @@ class EquivalenceRequest(BaseModel):
 class CodeGenerationRequest(BaseModel):
     brief: str = Field(min_length=20, max_length=12000)
     max_files: int = Field(default=12, ge=1, le=20)
+
+class StateSnapshotComparisonRequest(BaseModel):
+    original: dict[str, Any]
+    reconstructed: dict[str, Any]
