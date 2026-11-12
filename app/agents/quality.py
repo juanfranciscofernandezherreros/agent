@@ -4,6 +4,7 @@ from .context import AnalysisContext, AnalyzerAgent
 
 class QualityAnalysisAgent(AnalyzerAgent):
     name = "quality_analysis"
+    requires = ("deep_analysis", "functional_analysis", "java_analysis")
 
     def run(self, context: AnalysisContext) -> dict:
         result = analyze_quality(

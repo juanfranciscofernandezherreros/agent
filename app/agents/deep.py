@@ -4,6 +4,7 @@ from .context import AnalysisContext, AnalyzerAgent
 
 class DeepAnalysisAgent(AnalyzerAgent):
     name = "deep_analysis"
+    requires = ("inventory",)
 
     def run(self, context: AnalysisContext) -> dict:
         result = analyze_repository_deep(context.root, context.results["inventory"])
