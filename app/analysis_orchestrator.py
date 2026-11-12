@@ -7,6 +7,7 @@ from .functional_analysis import analyze_functional_behavior
 from .java_analysis import analyze_java_repository
 from .report_details import java_catalog, write_individual_reports
 from .rich_report import build_integral_html
+from .quality_analysis import analyze_quality
 
 def slug(s):
     return re.sub(r"[^a-zA-Z0-9_-]+","-",s).strip("-_")[:60] or "service"
@@ -110,6 +111,8 @@ def markdown(name,a):
           "- Lenguajes: "+json.dumps(r["inventory"].get("languages",{}),ensure_ascii=False),
           "- Clases/métodos Java: "+str(j["classes"])+"/"+str(j["methods"]),
           "- SQL/listeners Kafka: "+str(j["sql_statements"])+"/"+str(j["kafka_listeners"]),
+          "- Puntuación estática: "+str(r.get("quality_analysis",{}).get("score","N/D"))+"/100 ("+str(r.get("quality_analysis",{}).get("rating","sin datos"))+")",
+          "- Candidatos de bug: "+str(r.get("quality_analysis",{}).get("summary",{}).get("bug_candidates",0)),
           "- Operaciones/reglas inferidas: "+str(f.get("operations",0))+"/"+str(f.get("business_rules",0)),
           "- Evidencias individuales: "+r["artifact_dir"],""]
     out += ["## Correlación entre servicios","### Topics"]
@@ -139,14 +142,15 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
             member_id=str(uuid.uuid4()); source=clone_repository(member_id,item["git_url"],auth_token=clone_token,auth_host=clone_host)
             inv=analyze_repository(source); deep=analyze_repository_deep(source,inv)
             functional=analyze_functional_behavior(source); java=analyze_java_repository(source)
+            quality=analyze_quality(source,deep,functional,java)
             dest=folder/"repositories"/slug(item["name"]); dest.mkdir(parents=True,exist_ok=True)
             member={"project_name":item["name"],"inventory":inv,"deep_analysis":deep,
-              "functional_analysis":functional,"java_analysis":java,
+              "functional_analysis":functional,"java_analysis":java,"quality_analysis":quality,
               "completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
             (dest/"analysis.json").write_text(json.dumps(member,indent=2,ensure_ascii=False),encoding="utf-8")
             write_individual_reports(dest,item["name"],inv,deep,functional,java,member)
             results.append({"name":item["name"],"inventory":inv,"deep_analysis":deep,
-              "functional_analysis":functional,"java_analysis":java,"artifact_dir":str(dest.relative_to(folder))})
+              "functional_analysis":functional,"java_analysis":java,"quality_analysis":quality,"artifact_dir":str(dest.relative_to(folder))})
         except Exception as exc: failures.append({"repository":item["name"],"error":str(exc)})
     if not results: raise RuntimeError("No se pudo analizar ningún repositorio: "+json.dumps(failures,ensure_ascii=False))
     result={"analysis_version":"5.0","group_name":name,"repositories":results,
