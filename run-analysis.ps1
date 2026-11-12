@@ -168,6 +168,7 @@ try {
         New-Item -ItemType Directory -Force -Path $ServiceDir | Out-Null
         $ServiceUrl = "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/report.html"
         Invoke-WebRequest -Uri $ServiceUrl -OutFile (Join-Path $ServiceDir "analysis.html") -UseBasicParsing
+        try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/agents.html" -OutFile (Join-Path $ServiceDir "agents.html") -UseBasicParsing } catch { Write-Host "Informe multiagente no disponible para $RepositorySlug" -ForegroundColor Yellow }
     }
 
     $BugReportsDir = Join-Path $BundleDir "bug-reports"
@@ -178,6 +179,7 @@ try {
         Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$BugFile" -OutFile (Join-Path $BugReportsDir $BugFile) -UseBasicParsing
     }
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/index.html" -OutFile (Join-Path $BugReportsDir "index.html") -UseBasicParsing
+    try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/agents.html" -OutFile (Join-Path $BundleDir "agents.html") -UseBasicParsing } catch { Write-Host "Informe multiagente global no disponible" -ForegroundColor Yellow }
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/documentation/index.html" -OutFile (Join-Path $BundleDir "index.html") -UseBasicParsing
 
     if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {

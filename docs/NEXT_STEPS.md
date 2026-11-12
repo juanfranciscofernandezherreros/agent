@@ -8,6 +8,14 @@
 - Informes JSON, Markdown y HTML.
 - No ejecuta código ni valida comportamiento runtime.
 
+## v6.0 — Sistema multiagente
+- Fase 1: analizadores como agentes con interfaz común (sin cambiar su lógica).
+- Fase 2: supervisor que planifica por dependencias.
+- Fase 3: contratos JSON, estados, evidencias, errores y almacén compartido.
+- Fase 4: agentes LLM opcionales (interpretación funcional, revisión de bugs, arquitectura, correlación).
+- Fase 5: validación cruzada y detección de contradicciones entre agentes.
+- Fase 6: agente documental con informes globales e individuales.
+
 ## Siguientes mejoras
 1. Parser semántico Java basado en AST/compiler model para resolver tipos, overloads, beans y llamadas reales.
 2. Parsers específicos para Spring JDBC/JPA, MyBatis, SQL embebido, Avro schemas, Kafka producer/consumer config y OpenAPI.

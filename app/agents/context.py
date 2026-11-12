@@ -11,6 +11,8 @@ class AnalysisContext:
     - ``results``: resultados ya producidos, indexados por ``AnalyzerAgent.name``.
     - ``repository``: nombre del microservicio analizado.
     - ``store``: almacén compartido donde el supervisor publica los mensajes.
+    - ``outputs``: objetos en memoria que un agente entrega al llamador sin publicarlos
+      en el almacén (p. ej. el análisis completo ya escrito en disco).
     - ``data``: datos de entrada adicionales (p. ej. la lista de repositorios del grupo).
     """
     root: Path | None = None
@@ -18,6 +20,7 @@ class AnalysisContext:
     store: Any = None  # SharedStore: almacén compartido de mensajes (Fase 3)
     results: dict[str, Any] = field(default_factory=dict)
     data: dict[str, Any] = field(default_factory=dict)
+    outputs: dict[str, Any] = field(default_factory=dict)
 
 
 class AnalyzerAgent:

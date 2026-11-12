@@ -2,7 +2,24 @@
 
 Herramienta de **análisis estático de repositorios y grupos de microservicios**. Descubre repositorios desde GitLab, los clona, ejecuta analizadores especializados sobre el código fuente y genera resultados individuales y un informe HTML consolidado.
 
-La aplicación utiliza un **orquestador con módulos analizadores especializados**. No es actualmente un sistema multiagente autónomo: los analizadores no mantienen conversaciones entre sí ni toman decisiones independientes.
+La aplicación es un **sistema multiagente coordinado por un supervisor**. Cada analizador es un agente con una interfaz común; el supervisor decide qué agentes ejecutar y en qué orden según sus dependencias, y todos se comunican mediante mensajes JSON publicados en un almacén compartido. Los agentes estáticos son deterministas; los agentes LLM son opcionales y sus conclusiones se contrastan con la evidencia estática mediante validación cruzada.
+
+## Arquitectura multiagente
+
+| Capa | Agentes | Módulo |
+|---|---|---|
+| Análisis estático (obligatorio) | `inventory`, `deep_analysis`, `functional_analysis`, `java_analysis`, `quality_analysis`, `integration_analysis` (grupo) | `app/agents/` (adaptadores sobre los analizadores originales, sin cambiar su lógica) |
+| Agentes inteligentes (opcional, LLM) | `llm_functional_interpretation`, `llm_bug_review`, `llm_architecture_explanation`, `llm_evidence_correlation` (grupo) | `app/agents/llm_agents.py`, `app/llm.py` |
+| Validación cruzada | `cross_validation`, `group_cross_validation` (grupo) | `app/agents/validation.py` |
+| Documentación | `repository_report`, `group_report` (grupo) | `app/agents/reporting.py`, `app/agent_report.py` |
+
+- **Supervisor** (`app/supervisor.py`): ordena los agentes topológicamente a partir de `requires` (dependencias) y `after` (solo orden), admite ejecutar un subconjunto (`only`) y rechaza ciclos o dependencias desconocidas. Si falla un agente obligatorio, el repositorio se marca como fallido; si falla o se omite uno opcional, el análisis continúa y los agentes que dependían de él se omiten.
+- **Comunicación** (`app/communication/`): cada ejecución produce un `AgentMessage` (contrato `1.0`) con estado (`PENDING`, `RUNNING`, `COMPLETED`, `FAILED`, `SKIPPED`), duración, payload, evidencias (`repositorio`, `archivo`, `línea`, `confianza`) y errores. El `SharedStore` los guarda en memoria y en `workspaces/<id>/agent-runs/` (`manifest.json` y un JSON por agente y repositorio).
+- **Agentes LLM**: desactivados por defecto. Se activan con `LLM_AGENTS_ENABLED=true` y la configuración `LLM_*`. Envían al proveedor resultados del análisis y fragmentos de código con secretos redactados; el contenido del repositorio se trata como dato no confiable. Su salida se marca siempre como `llm_inferred`.
+- **Validación cruzada**: compara los analizadores estáticos entre sí (por ejemplo, Kafka o endpoints que ve el analizador Java y no el análisis profundo) y verifica las afirmaciones LLM: citas a archivos o líneas inexistentes, revisiones de bugs que no corresponden a ningún candidato, discrepancias en prioridad alta, integraciones sin respaldo estático y flujos entre servicios no respaldados.
+- **Informe multiagente**: `agents.html` / `agents.md` global y por microservicio, enlazados desde el índice de documentación.
+
+Para añadir un agente: crea una clase que herede de `AnalyzerAgent` (`name`, `requires`, `scope`, `run`) y regístrala en `default_supervisor()`.
 
 ## Flujo de funcionamiento
 
@@ -11,7 +28,9 @@ La aplicación utiliza un **orquestador con módulos analizadores especializados
 3. **Análisis individual:** inspecciona cada repositorio con analizadores de inventario, dependencias, análisis funcional, Java/Spring, SQL, contratos y calidad.
 4. **Correlación entre repositorios:** consolida resultados y busca relaciones candidatas entre servicios, especialmente en configuración Kafka, productores, consumidores y contratos compartidos.
 5. **Calidad:** calcula una puntuación heurística por repositorio y extrae candidatos a posibles bugs con evidencias.
-6. **Documentación enlazada:** genera un índice HTML navegable, un informe global, fichas HTML por microservicio y expedientes HTML de posibles bugs. Los documentos incluyen enlaces de ida y vuelta y conservan una estructura de carpetas común para poder consultarlos sin conexión.
+6. **Interpretación LLM (opcional):** interpretación funcional, revisión de candidatos a bugs, explicación arquitectónica y correlación de evidencias entre servicios.
+7. **Validación cruzada:** los resultados de unos agentes se contrastan con los de otros y se señalan contradicciones.
+8. **Documentación enlazada:** genera un índice HTML navegable, un informe global, fichas HTML por microservicio y expedientes HTML de posibles bugs. Los documentos incluyen enlaces de ida y vuelta y conservan una estructura de carpetas común para poder consultarlos sin conexión.
 
 El análisis no ejecuta ni modifica los repositorios inspeccionados.
 
@@ -192,7 +211,12 @@ La lista manual admite hasta 100 repositorios.
 
 - app/main.py: API, persistencia de trabajos y endpoints de análisis.
 - app/gitlab.py: descubrimiento paginado de proyectos GitLab.
-- app/analysis_orchestrator.py: coordinación del análisis de repositorios.
+- app/analysis_orchestrator.py: prepara el entorno (clonado, almacén compartido) y delega en el supervisor.
+- app/supervisor.py: planificación y ejecución de agentes.
+- app/agents/: agentes (estáticos, LLM, validación cruzada y documental) con interfaz común.
+- app/communication/: contratos JSON, estados, evidencias, errores y almacén compartido.
+- app/llm.py: cliente LLM de los agentes inteligentes.
+- app/agent_report.py: informe multiagente (Markdown y HTML).
 - app/engines.py: clonado e inventario base.
 - app/deep_analysis.py: análisis técnico profundo.
 - app/functional_analysis.py: análisis funcional estático.

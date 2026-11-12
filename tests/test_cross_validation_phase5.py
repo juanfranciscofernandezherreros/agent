@@ -10,8 +10,8 @@ def _by_id(result):
 def test_validation_runs_after_llm_agents():
     sup = default_supervisor()
     plan = [a.name for a in sup.plan("repository")]
-    assert plan[-1] == "cross_validation"
-    assert [a.name for a in sup.plan("group")] == ["integration_analysis", "llm_evidence_correlation", "group_cross_validation"]
+    assert all(plan.index(n) < plan.index("cross_validation") for n in plan if n.startswith("llm_"))
+    assert [a.name for a in sup.plan("group")][:3] == ["integration_analysis", "llm_evidence_correlation", "group_cross_validation"]
 
 
 def test_static_only_validation_flags_real_gaps_between_analyzers(sample_repo):

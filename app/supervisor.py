@@ -6,6 +6,7 @@ from .agents import (
     JavaAnalysisAgent, QualityAnalysisAgent, IntegrationAnalysisAgent,
     FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
     EvidenceCorrelationAgent, CrossValidationAgent, GroupCrossValidationAgent,
+    RepositoryReportingAgent, GroupReportingAgent,
 )
 from .agents.context import AnalyzerAgent
 from .communication import AgentMessage, AgentSkipped, AgentStatus, SharedStore
@@ -144,11 +145,12 @@ class Supervisor:
 
 
 def default_supervisor(llm_client=None) -> Supervisor:
-    """Agentes estáticos (obligatorios) + LLM (opcionales, SKIPPED sin LLM) + validación cruzada."""
+    """Agentes estáticos (obligatorios) + LLM (opcionales, SKIPPED sin LLM) + validación cruzada + agente documental."""
     return Supervisor([
         InventoryAgent(), DeepAnalysisAgent(), FunctionalAnalysisAgent(),
         JavaAnalysisAgent(), QualityAnalysisAgent(), IntegrationAnalysisAgent(),
         FunctionalInterpretationAgent(llm_client), BugReviewAgent(llm_client),
         ArchitectureExplanationAgent(llm_client), EvidenceCorrelationAgent(llm_client),
         CrossValidationAgent(), GroupCrossValidationAgent(),
+        RepositoryReportingAgent(), GroupReportingAgent(),
     ])
