@@ -6,8 +6,9 @@ from typing import Any
 @dataclass
 class AnalysisContext:
     """Contexto compartido de ejecución para los adaptadores de análisis."""
-    root: Path
+    root: Path | None = None
     results: dict[str, Any] = field(default_factory=dict)
+    data: dict[str, Any] = field(default_factory=dict)
 
 
 class AnalyzerAgent:
