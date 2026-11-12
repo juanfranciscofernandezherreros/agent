@@ -29,7 +29,8 @@ def write_individual_reports(destination, name, inventory, deep, functional, jav
         "repositories": [{
             "name": name, "inventory": inventory, "deep_analysis": deep,
             "functional_analysis": functional, "java_analysis": java,
-            "artifact_dir": str(destination)
+            "artifact_dir": str(destination), "bug_report": member.get("bug_report"),
+            "standalone_document": True
         }],
         "integration_analysis": {"topic_candidates": [], "shared_contract_candidates": [], "limitations": []},
         "failures": [],
