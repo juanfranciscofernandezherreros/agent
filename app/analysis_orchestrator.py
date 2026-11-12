@@ -4,6 +4,7 @@ from .config import WORKSPACES_DIR
 from .engines import clone_repository
 from .agents import AnalysisContext
 from .supervisor import default_supervisor
+from .communication import SharedStore
 from .report_details import java_catalog, write_individual_reports
 from .rich_report import build_integral_html
 from .bug_report import build_bug_report_html, build_bug_reports_index
@@ -52,11 +53,13 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
     results,failures=[],[]
     bug_reports=[]
     supervisor=default_supervisor()
+    # Fase 3: almacén compartido; cada agente publica un mensaje con estado, evidencias y errores.
+    store=SharedStore(folder/"agent-runs",run_id=group_id)
     for item in repositories:
         try:
             member_id=str(uuid.uuid4()); source=clone_repository(member_id,item["git_url"],auth_token=clone_token,auth_host=clone_host)
             # Fase 2: el supervisor decide qué agentes ejecutar y en qué orden según sus dependencias.
-            context = AnalysisContext(root=source)
+            context = AnalysisContext(root=source,repository=item["name"],store=store)
             supervisor.run(context, scope="repository")
             inv = context.results["inventory"]; deep = context.results["deep_analysis"]
             functional = context.results["functional_analysis"]; java = context.results["java_analysis"]
@@ -88,9 +91,10 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
         except Exception as exc: failures.append({"repository":item["name"],"error":str(exc)})
     if not results: raise RuntimeError("No se pudo analizar ningún repositorio: "+json.dumps(failures,ensure_ascii=False))
     result={"analysis_version":"5.0","group_name":name,"repositories":results,
-      "integration_analysis":supervisor.run(AnalysisContext(data={"repositories": results}),scope="group")["integration_analysis"],"failures":failures,
+      "integration_analysis":supervisor.run(AnalysisContext(data={"repositories": results},store=store),scope="group")["integration_analysis"],"failures":failures,
       "completion_status":"STATIC_ANALYSIS_COMPLETED" if not failures else "PARTIAL_ANALYSIS_COMPLETED",
       "runtime_validation":"NOT_PERFORMED"}
+    result["agent_runs"]=store.manifest()
     (folder/"analysis.json").write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding="utf-8")
     (folder/"analysis.md").write_text(markdown(name,result) + "\n" + java_catalog(result),encoding="utf-8")
     result["bug_reports"] = bug_reports

@@ -14,6 +14,7 @@ from .deep_analysis import build_analysis_markdown
 from .functional_analysis import build_analysis_html
 from .agents import AnalysisContext
 from .supervisor import default_supervisor
+from .communication import SharedStore
 from .analysis_orchestrator import run_group_analysis
 from .gitlab import gitlab_settings, list_group_projects
 
@@ -39,7 +40,7 @@ def run_analysis(project_id: str):
     try:
         source=clone_repository(project_id,git_url)
         with connect() as con: con.execute("UPDATE projects SET status='ANALYZING' WHERE id=?",(project_id,))
-        context = AnalysisContext(root=source)
+        context = AnalysisContext(root=source, repository=name, store=SharedStore(WORKSPACES_DIR/project_id/"agent-runs", run_id=project_id))
         # El análisis individual no incluye calidad: se pide al supervisor solo lo necesario.
         default_supervisor().run(context, only=["inventory", "deep_analysis", "functional_analysis", "java_analysis"])
         inventory = context.results["inventory"]; deep = context.results["deep_analysis"]
@@ -142,6 +143,16 @@ def get_analysis_group_result(group_id:str):
     if not row: raise HTTPException(404,"Grupo de análisis no encontrado")
     if not row["analysis_json"]: return {"analysis_group_id":group_id,"status":row["status"],"error":row["last_error"]}
     return json.loads(row["analysis_json"])
+
+@app.get("/api/analysis-groups/{group_id}/agent-runs")
+def get_analysis_group_agent_runs(group_id:str):
+    """Estado, evidencias y errores de cada agente (manifiesto del almacén compartido)."""
+    import re
+    if not re.fullmatch(r"[A-Za-z0-9-]+", group_id):
+        raise HTTPException(404,"Grupo de análisis no encontrado")
+    path=WORKSPACES_DIR/group_id/"agent-runs"/"manifest.json"
+    if not path.is_file(): raise HTTPException(409,"Todavía no hay ejecuciones de agentes registradas")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 @app.get("/api/analysis-groups/{group_id}/report",response_class=PlainTextResponse)
 def get_analysis_group_report(group_id:str):

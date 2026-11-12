@@ -6,6 +6,9 @@ from .agents import (
     JavaAnalysisAgent, QualityAnalysisAgent, IntegrationAnalysisAgent,
 )
 from .agents.context import AnalyzerAgent
+from .communication import AgentMessage, AgentSkipped, AgentStatus, SharedStore
+
+MAX_EVIDENCE_PER_MESSAGE = 500
 
 
 class SupervisorError(RuntimeError):
@@ -74,12 +77,66 @@ class Supervisor:
 
     def run(self, context: AnalysisContext, scope: str = "repository",
             only: list[str] | None = None) -> dict:
-        """Ejecuta el plan. Un fallo se propaga al llamador (igual que antes del supervisor)."""
-        for agent in self.plan(scope, only, available=set(context.results)):
-            missing = [d for d in agent.requires if d not in context.results]
-            if missing:
-                raise SupervisorError(f"{agent.name} no puede ejecutarse; falta: {', '.join(missing)}")
-            agent.run(context)
+        """Ejecuta el plan publicando un ``AgentMessage`` por agente en el almacén compartido.
+
+        - Agente obligatorio que falla: se publica FAILED, el resto queda SKIPPED y la
+          excepción se propaga (mismo comportamiento que antes del supervisor).
+        - Agente opcional que falla o se omite: se publica FAILED/SKIPPED y se continúa;
+          los agentes que dependan de él se omiten.
+        """
+        store = context.store if context.store is not None else SharedStore()
+        context.store = store
+        repository = None
+        if scope == "repository":
+            repository = context.repository or "repository"
+            context.repository = repository
+        plan = self.plan(scope, only, available=set(context.results))
+        messages = {a.name: store.publish(AgentMessage(
+            agent=a.name, scope=scope, repository=repository, requires=list(a.requires))) for a in plan}
+        try:
+            for agent in plan:
+                message = messages[agent.name]
+                missing = [d for d in agent.requires if d not in context.results]
+                if missing:
+                    reason = "Dependencias no disponibles: " + ", ".join(missing)
+                    if agent.optional:
+                        message.detail = reason
+                        store.publish(message.transition(AgentStatus.SKIPPED))
+                        continue
+                    message.transition(AgentStatus.RUNNING)
+                    message.add_error(reason)
+                    store.publish(message.transition(AgentStatus.FAILED))
+                    raise SupervisorError(f"{agent.name} no puede ejecutarse. {reason}")
+                store.publish(message.transition(AgentStatus.RUNNING))
+                try:
+                    result = agent.run(context)
+                except AgentSkipped as skipped:
+                    context.results.pop(agent.name, None)
+                    message.detail = str(skipped)
+                    store.publish(message.transition(AgentStatus.SKIPPED))
+                    if not agent.optional:
+                        raise SupervisorError(f"El agente obligatorio {agent.name} se omitió: {skipped}")
+                    continue
+                except Exception as exc:
+                    context.results.pop(agent.name, None)
+                    message.add_error(exc, recoverable=agent.optional)
+                    store.publish(message.transition(AgentStatus.FAILED))
+                    if not agent.optional:
+                        raise
+                    continue
+                context.results[agent.name] = result
+                message.payload = result
+                evidence = agent.collect_evidence(result, context)[:MAX_EVIDENCE_PER_MESSAGE]
+                for item in evidence:
+                    if item.get("repository") is None:
+                        item["repository"] = repository
+                message.evidence = evidence
+                store.publish(message.transition(AgentStatus.COMPLETED))
+        finally:
+            for message in messages.values():
+                if message.status == AgentStatus.PENDING:
+                    message.detail = "No ejecutado: el análisis se interrumpió antes."
+                    store.publish(message.transition(AgentStatus.SKIPPED))
         return context.results
 
 
