@@ -3,11 +3,11 @@
   "repositories": [
     {
       "name": "rft-billing-watcher",
-      "git_url": "https://github.com/ORGANIZACION/rft-billing-watcher.git"
+      "git_url": "https://gitlab.six-group.net/six/rftemir/rft/components/backend/rft-billing/rft-billing-watcher.git"
     },
     {
       "name": "rft-billing-report-writer",
-      "git_url": "https://github.com/ORGANIZACION/rft-billing-report-writer.git"
+      "git_url": "https://gitlab.six-group.net/six/rftemir/rft/components/backend/rft-billing/rft-billing-report-writer.git"
     }
   ]
 }
