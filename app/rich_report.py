@@ -176,7 +176,7 @@ def build_integral_html(name, analysis):
         section, anchor = _service_section(repo, i)
         service_sections.append(section)
         nav_links.append("<a href='#" + _e(anchor) + "'>" + _e(repo.get("name", "Microservicio")) + "</a>")
-    topic_rows = _table(topics, [("topic", "Topic candidato"), ("repositories", "Repositorios"), ("cross_service_candidate", "Coincidencia"), ("evidence", "Evidencias por repositorio")])
+    topic_rows = _table(topics, [("topic", "Topic candidato"), ("repositories", "Repositorios"), ("roles_detected", "Roles detectados"), ("producer_and_consumer_candidates", "Productor y consumidor candidatos"), ("cross_service_candidate", "Coincidencia"), ("evidence", "Evidencias por repositorio")])
     contract_rows = _table(contracts, [("contract", "Contrato candidato"), ("repositories", "Repositorios"), ("cross_service_candidate", "Coincidencia"), ("evidence", "Evidencias por repositorio")])
     risk_items = [
         ("Integración Kafka", "Comprobar productor, consumidor, configuración efectiva y despliegue. La coincidencia de un nombre no prueba que el flujo esté conectado."),
@@ -245,7 +245,7 @@ main{min-width:0}.report-section,.service{background:var(--paper);border:1px sol
 <section class='report-section' id='integration'><div class='section-kicker'>04 · COMUNICACIÓN ENTRE SERVICIOS</div><h2>Integración, mensajería y contratos</h2>
 <p>Se muestran las coincidencias encontradas y las evidencias que las originan. La coincidencia de nombres no se presenta como conexión probada.</p>
 <h3>Topics Kafka candidatos</h3>""" + topic_rows + """
-<h3>Contratos Avro / Proto candidatos</h3>""" + contract_rows + """
+<h3>Expresiones productoras Kafka detectadas</h3>""" + _table(integration.get("producer_candidates", []), [("repository", "Servicio"), ("expression", "Expresión productora"), ("file", "Archivo"), ("line", "Línea")]) + """<h3>Contratos Avro / Proto candidatos</h3>""" + contract_rows + """
 <div class='two-col'><article class='panel'><h3>Validaciones necesarias para Kafka</h3><ul class='compact'><li>Resolver el topic final tras placeholders, perfiles y configuración externa.</li><li>Identificar el método productor y el método consumidor.</li><li>Seguir el tipo real del mensaje y sus conversiones.</li><li>Verificar grupo consumidor, particiones, offsets, retries y DLQ.</li><li>Confirmar ACLs, serializers y configuración de despliegue.</li></ul></article><article class='panel'><h3>Validaciones necesarias para contratos</h3><ul class='compact'><li>Comparar nombres fully-qualified y namespaces.</li><li>Comparar todos los campos, tipos, defaults y nullability.</li><li>Revisar evolución, compatibilidad y versiones publicadas.</li><li>Seguir el mapping desde DTO/entidad hasta mensaje publicado.</li><li>Validar el contrato consumido y el tratamiento de campos desconocidos.</li></ul></article></div>
 </section>
 <section class='report-section' id='risks'><div class='section-kicker'>05 · CALIDAD Y DECISIONES</div><h2>Riesgos técnicos y plan de validación</h2><p>Los siguientes puntos son una agenda de validación derivada de los límites del análisis; no son defectos confirmados.</p><div class='risk-list'>""" + risks_html + """</div>
