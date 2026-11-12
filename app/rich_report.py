@@ -130,12 +130,12 @@ def _service_section(repo, index):
     for cls in classes:
         classes_per_file[cls.get("file")] = classes_per_file.get(cls.get("file"), 0) + 1
     for method in methods:
-        methods_by_class.setdefault(method.get("class_name"), []).append(method)
+        methods_by_class.setdefault((method.get("class_name"), method.get("file")), []).append(method)
         methods_by_file.setdefault(method.get("file"), []).append(method)
     parts.append("<div class='catalog-tools'><input class='class-search' data-target='" + _e(anchor) + "' placeholder='Filtrar por clase, método, archivo o llamada...' aria-label='Filtrar catálogo Java'><span>" + str(len(classes)) + " clases · " + str(len(methods)) + " métodos</span></div>")
     cards = []
     for cls in classes:
-        class_methods = methods_by_class.get(cls.get("name"), [])
+        class_methods = methods_by_class.get((cls.get("name"), cls.get("file")), [])
         if not class_methods and classes_per_file.get(cls.get("file")) == 1:
             class_methods = methods_by_file.get(cls.get("file"), [])
         method_html = []
