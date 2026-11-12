@@ -9,7 +9,9 @@ La aplicación se centra exclusivamente en descargar y analizar en profundidad u
 3. Detecta candidatos de arquitectura, puntos de entrada, rutas HTTP, modelos de datos, migraciones, dependencias, configuración, variables de entorno, tests, seguridad e integraciones.
 4. Genera cuatro artefactos:
    - workspaces/<project_id>/analysis.json: análisis estructurado con evidencias.
-   - workspaces/<project_id>/analysis.md: informe legible.\n   - workspaces/<project_id>/analysis.html: informe HTML autocontenido, apto para abrir en navegador o cargar en otra herramienta.\n   - El análisis funcional identifica operaciones, ramas condicionales, validaciones, errores, posibles efectos sobre estado y referencias de llamadas, con fichero, línea y confianza.
+   - workspaces/<project_id>/analysis.md: informe legible.
+   - workspaces/<project_id>/analysis.html: informe HTML autocontenido, apto para abrir en navegador o cargar en otra herramienta.
+   - El análisis funcional identifica operaciones, ramas condicionales, validaciones, errores, posibles efectos sobre estado y referencias de llamadas, con fichero, línea y confianza.
 5. Conserva el estado del análisis en SQLite para consultarlo mediante API.
 
 ## Lo que NO hace
