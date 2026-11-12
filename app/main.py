@@ -152,6 +152,25 @@ def get_analysis_group_html(group_id:str):
     if not path.is_file(): raise HTTPException(409,"Informe HTML todavía no disponible")
     return path.read_text(encoding="utf-8")
 
+@app.get("/api/analysis-groups/{group_id}/documentation/index.html",response_class=HTMLResponse)
+def get_analysis_group_documentation_index(group_id: str):
+    path = WORKSPACES_DIR/group_id/"index.html"
+    if not path.is_file():
+        raise HTTPException(409, "El índice de documentación todavía no está disponible")
+    return path.read_text(encoding="utf-8")
+
+
+@app.get("/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html",response_class=HTMLResponse)
+def get_analysis_group_repository_html(group_id: str, repository_slug: str):
+    import re
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", repository_slug):
+        raise HTTPException(404, "Microservicio no encontrado")
+    path = WORKSPACES_DIR/group_id/"repositories"/repository_slug/"analysis.html"
+    if not path.is_file():
+        raise HTTPException(404, "Ficha HTML del microservicio no encontrada")
+    return path.read_text(encoding="utf-8")
+
+
 @app.get("/api/analysis-groups/{group_id}/bug-reports/index.html",response_class=HTMLResponse)
 def get_analysis_group_bug_reports_index(group_id: str):
     path = WORKSPACES_DIR/group_id/"bug-reports"/"index.html"
