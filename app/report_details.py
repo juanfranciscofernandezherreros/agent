@@ -29,6 +29,7 @@ def write_individual_reports(destination, name, inventory, deep, functional, jav
         "repositories": [{
             "name": name, "inventory": inventory, "deep_analysis": deep,
             "functional_analysis": functional, "java_analysis": java,
+            "quality_analysis": member.get("quality_analysis", {}),
             "artifact_dir": str(destination), "bug_report": member.get("bug_report"),
             "standalone_document": True
         }],
