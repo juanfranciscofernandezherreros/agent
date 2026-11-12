@@ -3,7 +3,6 @@ param()
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
-
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location -LiteralPath $Root
 
@@ -45,7 +44,7 @@ try {
     if ([string]::IsNullOrWhiteSpace($BaseUrl)) { $BaseUrl = "https://gitlab.com" }
 
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw "Git no está instalado o no está disponible en PATH." }
-    if (-not (Get-Command curl.exe -ErrorAction SilentlyContinue)) { throw "No se encuentra curl.exe (incluido normalmente en Windows 10/11)." }
+    if (-not (Get-Command curl.exe -ErrorAction SilentlyContinue)) { throw "No se encuentra curl.exe." }
 
     $Python = Join-Path $Root ".venv\Scripts\python.exe"
     if (-not (Test-Path -LiteralPath $Python)) {
@@ -57,27 +56,17 @@ try {
 
     $Api = "http://127.0.0.1:8001"
     $Health = $false
-    try {
-        $null = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 3
-        $Health = $true
-    } catch { $Health = $false }
+    try { $null = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 3; $Health = $true } catch { $Health = $false }
 
     if (-not $Health) {
         Write-Host "Iniciando API local en el puerto 8001..." -ForegroundColor Yellow
         $Logs = Join-Path $Root "logs"
         New-Item -ItemType Directory -Force -Path $Logs | Out-Null
-        $Stdout = Join-Path $Logs "api.stdout.log"
-        $Stderr = Join-Path $Logs "api.stderr.log"
-        Start-Process -FilePath $Python -ArgumentList @("-m","uvicorn","app.main:app","--host","127.0.0.1","--port","8001") -WorkingDirectory $Root -WindowStyle Hidden -RedirectStandardOutput $Stdout -RedirectStandardError $Stderr | Out-Null
-
+        Start-Process -FilePath $Python -ArgumentList @("-m","uvicorn","app.main:app","--host","127.0.0.1","--port","8001") -WorkingDirectory $Root -WindowStyle Hidden -RedirectStandardOutput (Join-Path $Logs "api.stdout.log") -RedirectStandardError (Join-Path $Logs "api.stderr.log") | Out-Null
         $Ready = $false
         for ($i = 0; $i -lt 60; $i++) {
             Start-Sleep -Seconds 2
-            try {
-                $null = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 3
-                $Ready = $true
-                break
-            } catch { }
+            try { $null = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 3; $Ready = $true; break } catch { }
         }
         if (-not $Ready) { throw "La API no respondió en 120 segundos. Revisa logs/api.stderr.log." }
     }
@@ -89,8 +78,6 @@ try {
 
     Write-Host "Grupo GitLab: $GroupId" -ForegroundColor Cyan
     Write-Host "Nombre del análisis: $AnalysisName"
-    Write-Host "Descubriendo repositorios y solicitando análisis..."
-
     $EncodedGroup = [uri]::EscapeDataString($GroupId)
     $Start = Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/analysis" -Method "POST" -Body @{ name = $AnalysisName }
     $AnalysisGroupId = $Start.analysis_group_id
@@ -98,8 +85,6 @@ try {
 
     Write-Host "Trabajo: $AnalysisGroupId"
     Write-Host "Repositorios descubiertos: $($Start.repository_count)"
-    Write-Host "Esperando a que finalice el análisis..." -ForegroundColor Yellow
-
     $FinalStatus = $null
     $Deadline = (Get-Date).AddHours(6)
     while ((Get-Date) -lt $Deadline) {
@@ -109,7 +94,7 @@ try {
         if ($FinalStatus -in @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { break }
         Write-Host ("Estado: {0}" -f $FinalStatus)
     }
-    if ($FinalStatus -notin @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { throw "El análisis superó el tiempo máximo de espera de seis horas. ID: $AnalysisGroupId" }
+    if ($FinalStatus -notin @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { throw "El análisis superó el tiempo máximo de seis horas. ID: $AnalysisGroupId" }
     if ($FinalStatus -eq "FAILED") {
         $Reason = $Status.last_error
         if (-not $Reason) { $Reason = "El servidor marcó el análisis como FAILED." }
@@ -124,10 +109,10 @@ try {
     if ([string]::IsNullOrWhiteSpace($SafeName)) { $SafeName = "analysis" }
     $ReportPath = Join-Path $ReportDir "$SafeName-$Timestamp.html"
 
-    Write-Host "Descargando informe HTML..." -ForegroundColor Cyan
+    Write-Host "Descargando informe HTML principal..." -ForegroundColor Cyan
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/report.html" -OutFile $ReportPath -UseBasicParsing
 
-    # Descarga un HTML independiente por cada microservicio con candidatos a bugs.
+    Write-Host "Descargando informes individuales de posibles bugs..." -ForegroundColor Cyan
     $BugReportsDir = Join-Path $ReportDir "$SafeName-bug-reports"
     $AnalysisData = Invoke-ApiJson -Uri "$Api/api/analysis-groups/$AnalysisGroupId/analysis"
     $BugReports = @($AnalysisData.bug_reports)
@@ -135,41 +120,23 @@ try {
         New-Item -ItemType Directory -Force -Path $BugReportsDir | Out-Null
         foreach ($BugReport in $BugReports) {
             $BugFile = [string]$BugReport.file
-            if ($BugFile -notmatch '^[A-Za-z0-9_-]+\.html    if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
-        Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
-    } else {
-        Write-Host "Análisis completado correctamente." -ForegroundColor Green
-    }
-    Write-Host "Informe: $ReportPath" -ForegroundColor Green
-    Start-Process -FilePath $ReportPath
-    Write-Host "El informe se ha abierto en el navegador." -ForegroundColor Green
-    exit 0
-}
-catch {
-    Write-Host ""
-    Write-Host ("ERROR: " + $_.Exception.Message) -ForegroundColor Red
-    Write-Host "Comprueba .env y, si falla el arranque de la API, revisa logs/api.stderr.log."
-    exit 1
-}
-) { continue }
+            if ($BugFile -notmatch '^[A-Za-z0-9_-]+[.]html$') { continue }
             $BugUrl = "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$BugFile"
             Invoke-WebRequest -Uri $BugUrl -OutFile (Join-Path $BugReportsDir $BugFile) -UseBasicParsing
         }
         Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/index.html" -OutFile (Join-Path $BugReportsDir "index.html") -UseBasicParsing
-        Write-Host "Informes individuales de posibles bugs: $(Join-Path $BugReportsDir 'index.html')" -ForegroundColor Green
+        Write-Host "Índice de informes individuales: $(Join-Path $BugReportsDir 'index.html')" -ForegroundColor Green
     } else {
-        Write-Host "No se han detectado candidatos a bugs; no hay informes individuales que generar." -ForegroundColor Green
+        Write-Host "No se han detectado candidatos a bugs; no hay informes individuales." -ForegroundColor Green
     }
 
-    Write-Host ""
     if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
         Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
     } else {
         Write-Host "Análisis completado correctamente." -ForegroundColor Green
     }
-    Write-Host "Informe: $ReportPath" -ForegroundColor Green
+    Write-Host "Informe principal: $ReportPath" -ForegroundColor Green
     Start-Process -FilePath $ReportPath
-    Write-Host "El informe se ha abierto en el navegador." -ForegroundColor Green
     exit 0
 }
 catch {
