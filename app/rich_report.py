@@ -230,7 +230,7 @@ def build_integral_html(name, analysis):
         service_sections.append(section)
         nav_links.append("<a href='#" + _e(anchor) + "'>" + _e(repo.get("name", "Microservicio")) + "</a>")
         artifact_dir = str(repo.get("artifact_dir", ""))
-        if artifact_dir and not artifact_dir.startswith("/"):
+        if artifact_dir and not repo.get("standalone_document"):
             service_path = artifact_dir.replace("\\", "/").strip("/") + "/analysis.html"
             nav_links.append("<a href='" + _e(service_path) + "'>↗ Ficha HTML: " + _e(repo.get("name", "Microservicio")) + "</a>")
             if repo.get("bug_report"):
