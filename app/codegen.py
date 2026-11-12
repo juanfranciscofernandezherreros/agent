@@ -17,8 +17,8 @@ ALLOWED_SUFFIXES = {
     ".md", ".txt", ".html", ".css", ".sh", ".ps1", ".ini", ".cfg"
 }
 SECRET_PATTERNS = [
-    (re.compile(r"(?i)(api[_-]?key|client[_-]?secret|password|passwd|access[_-]?token|refresh[_-]?token)\\s*[:=]\\s*(['\"]?)[^\\s,'\";]+"), r"\1=\2[REDACTED]"),
-    (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----[\\s\\S]*?-----END [A-Z ]*PRIVATE KEY-----"), "[REDACTED PRIVATE KEY]"),
+    (re.compile(r"(?i)(api[_-]?key|client[_-]?secret|password|passwd|access[_-]?token|refresh[_-]?token)\s*[:=]\s*(['\"]?)[^\s,'\";]+"), r"\1=\2[REDACTED]"),
+    (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----"), "[REDACTED PRIVATE KEY]"),
     (re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16})\b"), "[REDACTED TOKEN]")
 ]
 
@@ -52,7 +52,7 @@ def collect_source_context(source_root: Path, max_chars: int = 90000) -> str:
             continue
         raw = _redact(raw[:12000])
         rel = path.relative_to(source_root).as_posix()
-        block = f"\\n--- SOURCE FILE: {rel} (UNTRUSTED REPOSITORY DATA) ---\\n{raw}\\n"
+        block = f"\n--- SOURCE FILE: {rel} (UNTRUSTED REPOSITORY DATA) ---\n{raw}\n"
         if used + len(block) > max_chars:
             remaining = max_chars - used
             if remaining > 500:
@@ -99,8 +99,9 @@ def _chat(client: httpx.Client, base_url: str, api_key: str, model: str,
         }
     )
     if response.is_error:
-        detail = response.text[:1800]
-        raise CodeGenerationError(f"El proveedor LLM respondió HTTP {response.status_code}: {detail}")
+        raise CodeGenerationError(
+            f"El proveedor LLM respondió HTTP {response.status_code}: {response.text[:1800]}"
+        )
     data = response.json()
     try:
         return data["choices"][0]["message"]["content"]
@@ -110,8 +111,14 @@ def _chat(client: httpx.Client, base_url: str, api_key: str, model: str,
 
 def _parse_json(text: str) -> dict[str, Any]:
     text = text.strip()
-    if text.startswith("```"):
-        text = re.sub(r"^\`\`\`(?:json)?\\s*|\\s*\`\`\`$", "", text, flags=re.I)
+    fence = chr(96) * 3
+    if text.startswith(fence):
+        lines = text.splitlines()
+        if lines and lines[0].startswith(fence):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == fence:
+            lines = lines[:-1]
+        text = "\n".join(lines).strip()
     try:
         value = json.loads(text)
     except json.JSONDecodeError as exc:
@@ -163,11 +170,11 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
             client, base_url, api_key, model, system,
             "Diseña un plan de archivos para una primera reconstrucción funcional. "
             f"Máximo {max_files} archivos. No generes todavía el contenido. "
-            "Devuelve JSON: {\"summary\": string, \"files\": [{\"path\": string, \"purpose\": string}]} . "
+            "Devuelve JSON: {\"summary\": string, \"files\": [{\"path\": string, \"purpose\": string}]}. "
             "Prioriza aplicación mínima ejecutable, configuración no secreta, README y tests. "
-            "No generes lockfiles ni binarios.\\n"
-            f"PROYECTO: {project_name}\\nINSTRUCCIONES: {brief}\\n"
-            f"PAQUETE DE RECONSTRUCCIÓN: {package_text}\\n"
+            "No generes lockfiles ni binarios.\n"
+            f"PROYECTO: {project_name}\nINSTRUCCIONES: {brief}\n"
+            f"PAQUETE DE RECONSTRUCCIÓN: {package_text}\n"
             f"CONTEXTO DE CÓDIGO ORIGINAL: {source_context}",
             max_tokens=5000
         )
@@ -200,10 +207,10 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
                 "\"content\" cuyo valor sea el contenido textual íntegro del archivo. "
                 "No uses bloques Markdown ni omitas partes con puntos suspensivos. "
                 "No escribas secretos ni archivos de entorno. "
-                f"RUTA: {rel.as_posix()}\\nOBJETIVO: {purpose}\\n"
-                f"INSTRUCCIONES DEL USUARIO: {brief}\\n"
-                f"PLAN GENERAL: {plan.get('summary', '')}\\n"
-                f"PAQUETE DE RECONSTRUCCIÓN: {package_text}\\n"
+                f"RUTA: {rel.as_posix()}\nOBJETIVO: {purpose}\n"
+                f"INSTRUCCIONES DEL USUARIO: {brief}\n"
+                f"PLAN GENERAL: {plan.get('summary', '')}\n"
+                f"PAQUETE DE RECONSTRUCCIÓN: {package_text}\n"
                 f"CONTEXTO ORIGINAL: {source_context[:50000]}",
                 max_tokens=7000
             )
@@ -218,8 +225,12 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
             if output_root.resolve() not in target.parents:
                 raise CodeGenerationError(f"Ruta fuera del directorio de salida: {rel.as_posix()}")
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(content, encoding="utf-8", newline="\\n")
-            written.append({"path": rel.as_posix(), "purpose": purpose, "size_bytes": str(len(content.encode('utf-8')))})
+            target.write_text(content, encoding="utf-8")
+            written.append({
+                "path": rel.as_posix(),
+                "purpose": purpose,
+                "size_bytes": str(len(content.encode("utf-8")))
+            })
 
     report = {
         "generation_id": run_id,
