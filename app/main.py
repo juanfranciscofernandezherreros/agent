@@ -152,6 +152,25 @@ def get_analysis_group_html(group_id:str):
     if not path.is_file(): raise HTTPException(409,"Informe HTML todavía no disponible")
     return path.read_text(encoding="utf-8")
 
+@app.get("/api/analysis-groups/{group_id}/bug-reports/index.html",response_class=HTMLResponse)
+def get_analysis_group_bug_reports_index(group_id: str):
+    path = WORKSPACES_DIR/group_id/"bug-reports"/"index.html"
+    if not path.is_file():
+        raise HTTPException(409, "El índice de informes de posibles bugs todavía no está disponible")
+    return path.read_text(encoding="utf-8")
+
+
+@app.get("/api/analysis-groups/{group_id}/bug-reports/{report_name}",response_class=HTMLResponse)
+def get_analysis_group_bug_report(group_id: str, report_name: str):
+    import re
+    if not re.fullmatch(r"[A-Za-z0-9_-]+\.html", report_name):
+        raise HTTPException(404, "Informe no encontrado")
+    path = WORKSPACES_DIR/group_id/"bug-reports"/report_name
+    if not path.is_file():
+        raise HTTPException(404, "No existe un informe de posibles bugs para ese microservicio")
+    return path.read_text(encoding="utf-8")
+
+
 @app.get("/api/projects")
 def list_projects():
     with connect() as con: rows=con.execute("SELECT id,name,status,created_at,last_error FROM projects ORDER BY created_at DESC").fetchall()
