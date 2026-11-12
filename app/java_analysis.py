@@ -33,8 +33,10 @@ def analyze_java_repository(root: Path) -> dict:
         if p.suffix.lower() == ".java":
             for m in CLASS.finditer(source):
                 out["classes"].append({"name":m.group(2),"kind":m.group(1),"file":rel,"line":_line(source,m.start())})
+            class_positions = [(m.start(), m.group(2)) for m in CLASS.finditer(source)]
             for m in METHOD.finditer(source):
                 name, args = m.group(1), m.group(2)
+                enclosing_class = next((class_name for offset, class_name in reversed(class_positions) if offset < m.start()), None)
                 start, depth, i, quote = m.end(), 1, m.end(), None
                 while i < len(source) and depth:
                     ch = source[i]
@@ -50,7 +52,7 @@ def analyze_java_repository(root: Path) -> dict:
                 calls = [c for c in calls if c not in {name,"if","for","while","switch","catch","return","new","synchronized"}]
                 branches = [{"kind":x.group(1),"line":_line(source,start+x.start())} for x in re.finditer(r'\b(if|else\s+if|switch|case|throw|try|catch)\b',body)]
                 effects = sorted(set(x.group(1).lower().replace(" ","_") for x in re.finditer(r'\b(insert\s+into|update|delete\s+from|save|saveAll|deleteById|publish|send|produce|write|commit)\b',body,re.I)))
-                out["methods"].append({"name":name,"parameters":args.strip(),"file":rel,"line":line,"end_line":_line(source,i),"calls":calls[:100],"branches_and_errors":branches[:100],"possible_effects":effects,"confidence":"inferred"})
+                out["methods"].append({"name":name,"class_name":enclosing_class,"parameters":args.strip(),"file":rel,"line":line,"end_line":_line(source,i),"calls":calls[:100],"branches_and_errors":branches[:100],"possible_effects":effects,"confidence":"inferred"})
                 for callee in calls: out["call_references"].append({"caller":name,"callee":callee,"file":rel,"line":line,"confidence":"inferred"})
             for m in ANNOTATIONS.finditer(source):
                 ann,args=m.group(1),m.group(2) or ""
