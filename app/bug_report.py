@@ -22,7 +22,7 @@ def _sorted_findings(quality):
         str(item.get("file", "")), int(item.get("line") or 0), str(item.get("code", "")),
     ))
 
-def build_bug_report_html(repository, group_name, quality):
+def build_bug_report_html(repository, group_name, quality, service_slug=None):
     findings = _sorted_findings(quality)
     summary = quality.get("summary") or {}
     counts = {s: sum(1 for x in findings if str(x.get("severity", "")).lower() == s) for s in ("high", "medium", "low")}
@@ -46,9 +46,9 @@ main{max-width:1000px;margin:25px auto;padding:0 18px}.metrics{display:grid;grid
 .metric span,footer{color:#5b6678}.finding{margin:14px 0;border-left:5px solid #8b96a8}.finding.high{border-left-color:#c43d4b}.finding.medium{border-left-color:#c28a23}.finding.low{border-left-color:#3975bb}
 .top{display:flex;gap:12px}.top b{font-size:.8rem;padding:3px 8px;border-radius:20px;background:#edf1f6}.high .top b{background:#fdebed;color:#a62231}.medium .top b{background:#fff3d9;color:#805500}
 h1{font-size:clamp(1.6rem,4vw,2.2rem);margin:0}h2{font-size:1.2rem}dl{display:grid;grid-template-columns:100px 1fr;gap:5px 12px}dt{font-weight:650;color:#5b6678}dd{margin:0;overflow-wrap:anywhere}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff;padding:13px;border-radius:8px}.notice{margin:16px 0;color:#5b6678}footer{padding:22px 0;font-size:.85rem}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff;padding:13px;border-radius:8px}.notice{margin:16px 0;color:#5b6678}footer{padding:22px 0;font-size:.85rem}.doc-links{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.doc-links a{color:#2457c5;text-decoration:none;border:1px solid #dce3ed;border-radius:7px;padding:7px 10px;font-weight:650}
 @media(max-width:520px){header{padding:25px 18px}dl{grid-template-columns:1fr}dd{margin-bottom:7px}}
-</style></head><body><header><p>INFORME INDIVIDUAL DE HALLAZGOS</p><h1>""" + _e(repository) + """</h1><p>Conjunto analizado: """ + _e(group_name) + """</p></header><main>
+</style></head><body><header><p>INFORME INDIVIDUAL DE HALLAZGOS</p><h1>""" + _e(repository) + """</h1><p>Conjunto analizado: """ + _e(group_name) + """</p></header><main><nav class="doc-links"><a href="../analysis.html">← Volver al informe global</a>""" + ("<a href="../repositories/" + _e(service_slug) + "/analysis.html">Abrir ficha técnica del microservicio</a>" if service_slug else "") + """</nav>
 <section class="metrics"><div class="metric"><strong>""" + _e(quality.get("score", "N/D")) + """ / 100</strong><span>Calidad estática: """ + _e(quality.get("rating", "Sin puntuación")) + """</span></div>
 <div class="metric"><strong>""" + str(len(findings)) + """</strong><span>Posibles bugs</span></div>
 <div class="metric"><strong>""" + str(counts["high"]) + """</strong><span>Prioridad alta</span></div>
