@@ -75,7 +75,7 @@ input,textarea,button{font:inherit;padding:10px;border:1px solid #ccd2da;border-
 button{background:#172b4d;color:white;cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f3f6;padding:12px;border-radius:8px}
 .small{color:#596579;font-size:.92rem}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:700px){.grid{grid-template-columns:1fr}}</style></head><body>
-<h1>Software Reconstruction Platform <small>v3.2</small></h1>
+<h1>Software Reconstruction Platform <small>v3.3</small></h1>
 <p class="small">Análisis, generación LLM, comparación diferencial y reparación guiada.</p>
 <div class="card"><h2>1 · Crear proyecto y analizar Git</h2><label>Nombre</label><input id="name" placeholder="Mi microservicio"><label>URL Git HTTPS</label><input id="git" placeholder="https://github.com/usuario/repositorio.git"><button onclick="createProject()">Clonar y analizar</button><pre id="createOut">Esperando...</pre></div>
 <div class="card"><h2>2 · Proyectos</h2><button onclick="loadProjects()">Actualizar</button><pre id="projectsOut">Pulsa actualizar.</pre></div>
