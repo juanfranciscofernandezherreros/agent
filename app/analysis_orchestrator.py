@@ -6,6 +6,7 @@ from .deep_analysis import analyze_repository_deep
 from .functional_analysis import analyze_functional_behavior
 from .java_analysis import analyze_java_repository
 from .report_details import java_catalog, write_individual_reports
+from .rich_report import build_integral_html
 
 def slug(s):
     return re.sub(r"[^a-zA-Z0-9_-]+","-",s).strip("-_")[:60] or "service"
@@ -88,5 +89,5 @@ def run_group_analysis(group_id,name,repositories):
       "runtime_validation":"NOT_PERFORMED"}
     (folder/"analysis.json").write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding="utf-8")
     (folder/"analysis.md").write_text(markdown(name,result) + "\n" + java_catalog(result),encoding="utf-8")
-    (folder/"analysis.html").write_text(html_report(name,result),encoding="utf-8")
+    (folder/"analysis.html").write_text(build_integral_html(name,result),encoding="utf-8")
     return result
