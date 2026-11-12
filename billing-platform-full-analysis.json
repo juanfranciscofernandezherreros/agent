@@ -1,0 +1,13 @@
+{
+  "name": "billing-platform-full-analysis",
+  "repositories": [
+    {
+      "name": "rft-billing-watcher",
+      "git_url": "https://github.com/ORGANIZACION/rft-billing-watcher.git"
+    },
+    {
+      "name": "rft-billing-report-writer",
+      "git_url": "https://github.com/ORGANIZACION/rft-billing-report-writer.git"
+    }
+  ]
+}
