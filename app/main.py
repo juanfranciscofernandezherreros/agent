@@ -3,15 +3,17 @@ from fastapi.responses import PlainTextResponse, HTMLResponse
 from datetime import datetime, timezone
 from pathlib import Path
 import json
+import os
 import uuid
 
 from .config import APP_NAME, APP_VERSION, WORKSPACES_DIR
 from .database import init_db, connect
-from .schemas import ProjectCreate, AnalysisGroupCreate
+from .schemas import ProjectCreate, AnalysisGroupCreate, GitLabGroupAnalysisCreate
 from .engines import clone_repository, analyze_repository
 from .deep_analysis import analyze_repository_deep, build_analysis_markdown
 from .functional_analysis import analyze_functional_behavior, build_analysis_html
 from .analysis_orchestrator import run_group_analysis
+from .gitlab import gitlab_settings, list_group_projects
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION,
  description="Orquestador de análisis estático profundo de uno o varios microservicios. No ejecuta el código analizado.")
@@ -62,7 +64,12 @@ def run_analysis_group(group_id: str):
         con.execute("UPDATE analysis_groups SET status='ANALYZING',last_error=NULL WHERE id=?",(group_id,))
         name,repositories=row["name"],json.loads(row["repositories_json"])
     try:
-        analysis=run_group_analysis(group_id,name,repositories)
+        # The token is loaded at execution time and is never persisted in SQLite or report data.
+        token=os.getenv("GITLAB_TOKEN","").strip()
+        host=None
+        if token:
+            _,_,host=gitlab_settings()
+        analysis=run_group_analysis(group_id,name,repositories,clone_token=token or None,clone_host=host)
         status="ANALYSIS_COMPLETED" if not analysis["failures"] else "PARTIAL_ANALYSIS_COMPLETED"
         with connect() as con:
             con.execute("UPDATE analysis_groups SET status=?,analysis_json=?,last_error=NULL WHERE id=?",
@@ -73,7 +80,7 @@ def run_analysis_group(group_id: str):
 @app.get("/")
 def root():
     return {"application":APP_NAME,"version":APP_VERSION,"mode":"deep_analysis_orchestrator",
-      "message":"Usa /api/projects para un servicio o /api/analysis-groups para varios repositorios relacionados.","documentation":"/docs"}
+      "message":"Usa /api/projects para un servicio, /api/analysis-groups para una lista o /api/gitlab/groups/{group_id}/analysis para un grupo GitLab.","documentation":"/docs"}
 
 @app.get("/health")
 def health(): return {"status":"ok","version":APP_VERSION,"mode":"deep_analysis_orchestrator"}
@@ -87,14 +94,30 @@ def create_project(payload:ProjectCreate,background_tasks:BackgroundTasks):
     background_tasks.add_task(run_analysis,project_id)
     return {"project_id":project_id,"status":"QUEUED","message":"Análisis individual profundo iniciado."}
 
-@app.post("/api/analysis-groups",status_code=202)
-def create_analysis_group(payload:AnalysisGroupCreate,background_tasks:BackgroundTasks):
-    group_id=str(uuid.uuid4()); repositories=[x.model_dump() for x in payload.repositories]
+def persist_analysis_group(name: str, repositories: list[dict], background_tasks: BackgroundTasks):
+    group_id=str(uuid.uuid4())
     with connect() as con:
         con.execute("INSERT INTO analysis_groups(id,name,repositories_json,status,created_at) VALUES(?,?,?,?,?)",
-          (group_id,payload.name,json.dumps(repositories,ensure_ascii=False),"QUEUED",now()))
+          (group_id,name,json.dumps(repositories,ensure_ascii=False),"QUEUED",now()))
     background_tasks.add_task(run_analysis_group,group_id)
     return {"analysis_group_id":group_id,"status":"QUEUED","repository_count":len(repositories)}
+
+@app.post("/api/analysis-groups",status_code=202)
+def create_analysis_group(payload:AnalysisGroupCreate,background_tasks:BackgroundTasks):
+    return persist_analysis_group(payload.name,[x.model_dump() for x in payload.repositories],background_tasks)
+
+@app.post("/api/gitlab/groups/{group_id}/analysis",status_code=202)
+def create_gitlab_group_analysis(group_id:str,payload:GitLabGroupAnalysisCreate,background_tasks:BackgroundTasks):
+    try:
+        # Validate credentials/configuration before accepting the job.
+        gitlab_settings()
+        repositories=list_group_projects(group_id)
+    except (ValueError,RuntimeError) as exc:
+        raise HTTPException(400,str(exc))
+    except Exception as exc:
+        raise HTTPException(502,f"No se pudo consultar GitLab: {exc}")
+    name=payload.name or f"gitlab-group-{group_id}"
+    return persist_analysis_group(name,repositories,background_tasks)
 
 @app.get("/api/analysis-groups")
 def list_analysis_groups():
