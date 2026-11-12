@@ -18,3 +18,6 @@ def init_db():
         con.execute("""CREATE TABLE IF NOT EXISTS generation_runs (
             id TEXT PRIMARY KEY, project_id TEXT NOT NULL, status TEXT NOT NULL,
             created_at TEXT NOT NULL, result_json TEXT, error TEXT)""")
+        con.execute("""CREATE TABLE IF NOT EXISTS repair_runs (
+            id TEXT PRIMARY KEY, generation_id TEXT NOT NULL, equivalence_run_id TEXT NOT NULL,
+            status TEXT NOT NULL, created_at TEXT NOT NULL, result_json TEXT, error TEXT)""")
