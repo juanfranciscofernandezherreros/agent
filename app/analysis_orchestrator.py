@@ -86,6 +86,6 @@ def run_group_analysis(group_id,name,repositories):
       "completion_status":"STATIC_ANALYSIS_COMPLETED" if not failures else "PARTIAL_ANALYSIS_COMPLETED",
       "runtime_validation":"NOT_PERFORMED"}
     (folder/"analysis.json").write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding="utf-8")
-    (folder/"analysis.md").write_text(markdown(name,result) + "\\n" + java_catalog(result),encoding="utf-8")
+    (folder/"analysis.md").write_text(markdown(name,result) + "\n" + java_catalog(result),encoding="utf-8")
     (folder/"analysis.html").write_text(html_report(name,result),encoding="utf-8")
     return result
