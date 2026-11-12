@@ -1,9 +1,10 @@
 # Deep Reverse Engineering & Analysis Orchestrator
 
-Versión 5.2: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
+Versión 5.3: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
 
 ## Capacidades
-- Clonado Git HTTPS aislado por repositorio.
+- Clonado Git HTTPS aislado por repositorio, con autenticación privada GitLab sin incrustar tokens en URLs, argumentos ni informes.
+- Descubrimiento automático de todos los proyectos no archivados de un grupo GitLab, incluidos subgrupos, con paginación de API (hasta 10.000 repositorios por ejecución).
 - Inventario, dependencias, despliegue, configuración, endpoints candidatos, seguridad, integraciones, migraciones y tests.
 - Análisis funcional estático: operaciones, ramas, validaciones, errores, efectos y referencias de llamadas.
 - Parser Java heurístico: clases, métodos, llamadas por nombre, inyección de dependencias, mappings Spring, listeners/productores Kafka, SQL y contratos Avro/Proto.
@@ -29,6 +30,18 @@ Consultar:
 - GET /api/projects/{project_id}/analysis
 - GET /api/projects/{project_id}/report
 - GET /api/projects/{project_id}/report.html
+
+## Analizar un grupo completo de GitLab (descubrimiento automático)
+Configura una sola vez las variables locales `GITLAB_BASE_URL` y `GITLAB_TOKEN` en `.env` (el archivo está ignorado por Git):
+
+    GITLAB_BASE_URL=https://gitlab.six-group.net
+    GITLAB_TOKEN=\u003ctoken_personal_de_gitlab\u003e
+
+El token debe tener permiso de lectura de API y repositorios (`read_api` y `read_repository`). No lo incluyas en JSON, BAT, URL ni commits. El endpoint descubre automáticamente los proyectos del grupo y sus subgrupos, omite archivados y clona cada repositorio privado con autenticación temporal en el entorno del proceso:
+
+    curl.exe --fail --silent --show-error -X POST "http://127.0.0.1:8001/api/gitlab/groups/212/analysis" -H "Content-Type: application/json" -d "{\"name\":\"billing-platform\"}"
+
+La respuesta incluye `analysis_group_id`. Consulta el estado con `GET /api/analysis-groups/{analysis_group_id}` y descarga el informe con `GET /api/analysis-groups/{analysis_group_id}/report.html`. También se puede lanzar desde `/docs`. El límite por ejecución es de 100 repositorios para listas manuales y 10.000 para descubrimiento GitLab.
 
 ## Analizar varios microservicios conjuntamente
 POST /api/analysis-groups
