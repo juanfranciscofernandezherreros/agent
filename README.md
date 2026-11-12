@@ -46,3 +46,14 @@ Consultar:
 - GET /api/analysis-groups/{analysis_group_id}/report.html
 
 La API interactiva está en /docs. No requiere API key de LLM.
+
+
+## Arrancar los dos microservicios Billing en Windows
+El script `run-billing.bat` abre una ventana independiente para cada servicio y ejecuta `spring-boot:run`. Por defecto espera esta estructura junto al BAT:
+
+    agent/
+      run-billing.bat
+      rft-billing-watcher/
+      rft-billing-report-writer/
+
+Cada proyecto debe incluir `pom.xml` y, preferiblemente, `mvnw.cmd`. Si las carpetas están en otra ubicación, define antes las variables `BILLING_WATCHER_DIR` y `BILLING_WRITER_DIR` con sus rutas completas. Si no hay Maven Wrapper, el equipo debe tener Maven instalado y disponible en PATH. El script no instala dependencias externas como Kafka, bases de datos o Schema Registry.
