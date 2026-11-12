@@ -1,6 +1,6 @@
 # Deep Reverse Engineering & Analysis Orchestrator
 
-Versión 5.3: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
+Versión 5.4: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
 
 ## Capacidades
 - Clonado Git HTTPS aislado por repositorio, con autenticación privada GitLab sin incrustar tokens en URLs, argumentos ni informes.
@@ -9,12 +9,14 @@ Versión 5.3: plataforma de análisis estático profundo para uno o varios micro
 - Análisis funcional estático: operaciones, ramas, validaciones, errores, efectos y referencias de llamadas.
 - Parser Java heurístico: clases, métodos, llamadas por nombre, inyección de dependencias, mappings Spring, listeners/productores Kafka, SQL y contratos Avro/Proto.
 - Análisis coordinado de hasta 100 repositorios en listas manuales (los grupos GitLab se descubren automáticamente) en una ejecución: candidatos de topics y contratos compartidos.
-- Informes HTML integrales y por microservicio con diseño editorial, índice navegable, métricas, mapa de servicios, cobertura y límites, integración Kafka/contratos con evidencias, riesgos y agenda de validación.
+- Puntuación heurística de calidad (0–100) por microservicio, con factores explicados y resumen global.
+- Detección de posibles bugs por patrones estáticos con prioridad, archivo, línea, fragmento y explicación; los candidatos requieren revisión y no se presentan como defectos confirmados.
+- Informes HTML integrales y por microservicio con diseño responsive, índice navegable, métricas, puntuación, tabla de candidatos, mapa de servicios, cobertura y límites, integración Kafka/contratos con evidencias, riesgos y agenda de validación.
 - Fichas detalladas por microservicio: arquitectura, dependencias, endpoints, configuración, persistencia, seguridad, integraciones, comportamiento funcional, tests, incidencias del parser y catálogo Java filtrable por clase/método/archivo/llamadas.
 - Correlación Kafka enriquecida con evidencias de configuración, listeners consumidores y expresiones productoras. La presencia de ambos roles se marca como candidato, nunca como conexión runtime demostrada.
 
 ## Límites
-El parser Java sigue siendo heurístico: las llamadas se asocian por nombre y la asociación método-clase usa la declaración de clase anterior más cercana, no resolución semántica del compilador. La correlación Kafka ahora separa indicios de configuración, consumidores y productores, pero no demuestra conexión activa ni compatibilidad de payload. Los contratos se agrupan por nombre, sin comparación formal campo a campo. El informe documenta la evidencia disponible y diferencia hallazgos, inferencias y pendientes; la trazabilidad completa de payloads, la semántica de isLast/UUID y la validación de schemas requieren extracción y pruebas adicionales. No se ejecutan tests, SQL, Maven/Gradle, contenedores ni servicios. No se leen valores .env ni se certifica comportamiento runtime.
+El parser Java sigue siendo heurístico: las llamadas se asocian por nombre y la asociación método-clase usa la declaración de clase anterior más cercana, no resolución semántica del compilador. La correlación Kafka ahora separa indicios de configuración, consumidores y productores, pero no demuestra conexión activa ni compatibilidad de payload. Los contratos se agrupan por nombre, sin comparación formal campo a campo. El informe documenta la evidencia disponible y diferencia hallazgos, inferencias y pendientes; la trazabilidad completa de payloads, la semántica de isLast/UUID y la validación de schemas requieren extracción y pruebas adicionales. La puntuación estática descuenta por patrones de prioridad alta/media, ausencia de tests detectados, incidencias de parseo e indicadores estáticos de seguridad; es una señal de priorización, no una medida objetiva ni una probabilidad de defectos. Los patrones de bugs pueden producir falsos positivos y falsos negativos. No se ejecutan tests, SQL, Maven/Gradle, contenedores ni servicios. No se leen valores .env ni se certifica comportamiento runtime.
 
 ## Windows
     git pull origin main
