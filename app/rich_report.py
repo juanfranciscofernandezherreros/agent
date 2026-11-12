@@ -255,7 +255,7 @@ def build_integral_html(name, analysis):
         "No se pueden confirmar garantías runtime de orden, entrega, atomicidad, idempotencia o concurrencia solo con el análisis estático.",
         "La ausencia de una detección no demuestra que la funcionalidad no exista: puede estar en configuración externa, código generado o dependencias."
     ] + integration.get("limitations", [])
-    nav = ["<a href='#executive'>Resumen ejecutivo</a>", "<a href='#scope'>Alcance y método</a>", "<a href='#landscape'>Mapa de servicios</a>", "<a href='#integration'>Integración y contratos</a>", "<a href='#risks'>Riesgos y validaciones</a>"] + nav_links
+    nav = ["<a href='index.html'>Índice de documentación</a>", "<a href='#executive'>Resumen ejecutivo</a>", "<a href='#scope'>Alcance y método</a>", "<a href='#landscape'>Mapa de servicios</a>", "<a href='#integration'>Integración y contratos</a>", "<a href='#risks'>Riesgos y validaciones</a>"] + nav_links
     failure_section = ""
     if failures:
         failure_section = "<section id='failures'><div class='section-kicker'>COBERTURA</div><h2>Repositorios con análisis incompleto</h2><p>Estos repositorios no pudieron analizarse completamente. Sus ausencias no deben interpretarse como ausencia de funcionalidad.</p>" + _table(failures, [("repository", "Repositorio"), ("error", "Error registrado")]) + "</section>"
