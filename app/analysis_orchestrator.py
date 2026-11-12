@@ -153,7 +153,7 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
                 bug_dir.mkdir(parents=True, exist_ok=True)
                 report_file = str(len(bug_reports) + 1).zfill(3) + "-" + slug(item["name"]) + ".html"
                 (bug_dir/report_file).write_text(
-                    build_bug_report_html(item["name"], name, quality), encoding="utf-8"
+                    build_bug_report_html(item["name"], name, quality, slug(item["name"])), encoding="utf-8"
                 )
                 bug_reports.append({
                     "repository": item["name"], "file": report_file,
@@ -161,6 +161,7 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
                 })
             member={"project_name":item["name"],"inventory":inv,"deep_analysis":deep,
               "functional_analysis":functional,"java_analysis":java,"quality_analysis":quality,
+              "bug_report": ("bug-reports/" + report_file) if report_file else None,
               "completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
             (dest/"analysis.json").write_text(json.dumps(member,indent=2,ensure_ascii=False),encoding="utf-8")
             write_individual_reports(dest,item["name"],inv,deep,functional,java,member)
@@ -176,10 +177,12 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
       "runtime_validation":"NOT_PERFORMED"}
     (folder/"analysis.json").write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding="utf-8")
     (folder/"analysis.md").write_text(markdown(name,result) + "\n" + java_catalog(result),encoding="utf-8")
+    result["bug_reports"] = bug_reports
     (folder/"analysis.html").write_text(build_integral_html(name,result),encoding="utf-8")
     bug_dir = folder/"bug-reports"
     bug_dir.mkdir(parents=True, exist_ok=True)
     (bug_dir/"index.html").write_text(build_bug_reports_index(name, bug_reports), encoding="utf-8")
-    result["bug_reports"] = bug_reports
+    from .documentation import build_documentation_index
+    (folder/"index.html").write_text(build_documentation_index(name, result), encoding="utf-8")
     (folder/"analysis.json").write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding="utf-8")
     return result
