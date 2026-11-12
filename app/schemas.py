@@ -18,3 +18,7 @@ class CodeGenerationRequest(BaseModel):
 class StateSnapshotComparisonRequest(BaseModel):
     original: dict[str, Any]
     reconstructed: dict[str, Any]
+
+class RepairRequest(BaseModel):
+    equivalence_run_id: str = Field(min_length=1, max_length=80)
+    max_files: int = Field(default=5, ge=1, le=10)
