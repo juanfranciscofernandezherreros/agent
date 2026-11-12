@@ -1,61 +1,46 @@
 @echo off
-setlocal EnableExtensions
+setlocal
+set "ROOT=%~dp0"
 
-REM Arranque local de Billing Watcher y Billing Report Writer.
-REM Por defecto, ambos proyectos deben estar junto a este BAT.
-REM Se pueden sobrescribir las rutas con BILLING_WATCHER_DIR y BILLING_WRITER_DIR.
-
-if not defined BILLING_WATCHER_DIR set "BILLING_WATCHER_DIR=%~dp0rft-billing-watcher"
-if not defined BILLING_WRITER_DIR set "BILLING_WRITER_DIR=%~dp0rft-billing-report-writer"
+if not exist "%ROOT%.venv\Scripts\python.exe" (
+  echo [ERROR] No existe el entorno .venv.
+  echo Ejecuta primero setup-windows.ps1.
+  pause
+  exit /b 1
+)
 
 echo.
 echo ============================================
-echo       ARRANQUE DE BILLING MICROSERVICES
+echo    ANALISIS BILLING WATCHER + REPORT WRITER
 echo ============================================
 echo.
-
-call :check_project "%BILLING_WATCHER_DIR%" "Billing Watcher"
-if errorlevel 1 exit /b 1
-
-call :check_project "%BILLING_WRITER_DIR%" "Billing Report Writer"
-if errorlevel 1 exit /b 1
-
-call :launch "%BILLING_WATCHER_DIR%" "Billing Watcher"
-if errorlevel 1 exit /b 1
-
-call :launch "%BILLING_WRITER_DIR%" "Billing Report Writer"
-if errorlevel 1 exit /b 1
-
+echo Introduce las URL Git de los dos repositorios Billing.
+echo El BAT iniciara el analizador, generara el HTML y lo abrira.
 echo.
-echo Se han abierto ventanas independientes para ambos microservicios.
-echo Para detenerlos, cierra sus respectivas ventanas o pulsa Ctrl+C en ellas.
-echo.
-exit /b 0
 
-:check_project
-if not exist "%~1\pom.xml" if not exist "%~1\mvnw.cmd" (
-    echo [ERROR] No encuentro el proyecto %~2 en:
-    echo         %~1
-    echo.
-    echo Ajusta BILLING_WATCHER_DIR y BILLING_WRITER_DIR en el entorno
-    echo o edita las rutas por defecto al principio de este BAT.
-    exit /b 1
+set /p "WATCHER_URL=URL Git de Billing Watcher: "
+if not defined WATCHER_URL (
+  echo [ERROR] Falta la URL de Billing Watcher.
+  pause
+  exit /b 1
 )
-exit /b 0
 
-:launch
-set "PROJECT_DIR=%~1"
-set "SERVICE_NAME=%~2"
-if exist "%PROJECT_DIR%\mvnw.cmd" (
-    echo [OK] Lanzando %SERVICE_NAME% con Maven Wrapper...
-    start "%SERVICE_NAME%" cmd /k "cd /d ""%PROJECT_DIR%"" && mvnw.cmd spring-boot:run"
-) else (
-    where mvn >nul 2>nul
-    if errorlevel 1 (
-        echo [ERROR] No hay mvnw.cmd ni Maven (mvn) disponible para %SERVICE_NAME%.
-        exit /b 1
-    )
-    echo [OK] Lanzando %SERVICE_NAME% con Maven...
-    start "%SERVICE_NAME%" cmd /k "cd /d ""%PROJECT_DIR%"" && mvn spring-boot:run"
+set /p "WRITER_URL=URL Git de Billing Report Writer: "
+if not defined WRITER_URL (
+  echo [ERROR] Falta la URL de Billing Report Writer.
+  pause
+  exit /b 1
 )
-exit /b 0
+
+if not exist "%ROOT%.venv\Scripts\python.exe" exit /b 1
+
+start "Billing Analyzer API" /D "%ROOT%" cmd /k ""%ROOT%.venv\Scripts\python.exe" -m uvicorn app.main:app --host 127.0.0.1 --port 8001"
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%run-billing-report.ps1" -Root "%ROOT%" -WatcherUrl "%WATCHER_URL%" -WriterUrl "%WRITER_URL%"
+if errorlevel 1 (
+  echo.
+  echo [ERROR] No se pudo generar el informe. Revisa la ventana Billing Analyzer API.
+  pause
+  exit /b 1
+)
+endlocal
