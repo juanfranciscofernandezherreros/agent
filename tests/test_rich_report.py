@@ -6,8 +6,8 @@ def test_integral_report_contains_executive_architecture_and_evidence_sections()
         "completion_status": "STATIC_ANALYSIS_COMPLETED",
         "runtime_validation": "NOT_PERFORMED",
         "repositories": [{
-            "name": "billing-watcher",
-            "artifact_dir": "repositories/billing-watcher",
+            "name": "inventory-service",
+            "artifact_dir": "repositories/inventory-service",
             "inventory": {"commit_sha": "abc123", "languages": {"Java": 12}},
             "deep_analysis": {
                 "scan_stats": {"files_seen": 12, "test_files": 2},
@@ -41,26 +41,26 @@ def test_integral_report_contains_executive_architecture_and_evidence_sections()
         }],
         "integration_analysis": {
             "topic_candidates": [{
-                "topic": "billing.events", "repositories": ["billing-watcher"],
+                "topic": "orders.events", "repositories": ["inventory-service"],
                 "roles_detected": ["consumer_candidate", "producer_candidate"],
                 "producer_and_consumer_candidates": True, "cross_service_candidate": False,
-                "evidence": [{"repository": "billing-watcher", "role": "consumer_candidate", "file": "Worker.java", "line": 10}],
+                "evidence": [{"repository": "inventory-service", "role": "consumer_candidate", "file": "Worker.java", "line": 10}],
             }],
             "shared_contract_candidates": [],
-            "producer_candidates": [{"repository": "billing-watcher", "expression": "KafkaTemplate.send", "file": "Worker.java", "line": 15}],
+            "producer_candidates": [{"repository": "inventory-service", "expression": "KafkaTemplate.send", "file": "Worker.java", "line": 15}],
             "limitations": [],
         },
         "failures": [],
     }
 
-    report = build_integral_html("Billing platform", analysis)
+    report = build_integral_html("Platform analysis", analysis)
 
     assert "Resumen ejecutivo" in report
     assert "Alcance, método y cobertura" in report
     assert "Mapa de servicios" in report
     assert "Topics Kafka candidatos" in report
     assert "Expresiones productoras Kafka detectadas" in report
-    assert "billing.events" in report
+    assert "orders.events" in report
     assert "Worker" in report
     assert "process(String id)" in report
     assert "Riesgos técnicos y plan de validación" in report
@@ -68,7 +68,7 @@ def test_integral_report_contains_executive_architecture_and_evidence_sections()
     assert "Posibles bugs detectados" in report
     assert "Puntuación /100" in report
     assert "Informe de arquitectura y calidad de microservicios" in report
-    assert "Conjunto analizado: <strong>Billing platform</strong>" in report
+    assert "Conjunto analizado: <strong>Platform analysis</strong>" in report
     assert "Calidad global de los microservicios" in report
     assert "Plan de tareas priorizado: posibles bugs" in report
     assert "Sustituir assert por una validación explícita" in report
