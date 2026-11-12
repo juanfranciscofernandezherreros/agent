@@ -19,7 +19,7 @@ def correlate(repositories):
 
         for item in ja.get("kafka_listeners", []):
             args = item.get("arguments", "")
-            literals = re.findall(r'["\\']([^"\\']+)["\\']', args)
+            literals = re.findall(r"[\"']([^\"']+)[\"']", args)
             for topic in literals:
                 topics.setdefault(topic, []).append({
                     "repository": service, "role": "consumer_candidate",
@@ -33,7 +33,7 @@ def correlate(repositories):
                 "repository": service, "file": item.get("file"),
                 "line": item.get("line"), "expression": expression
             })
-            literals = re.findall(r'["\\']([^"\\']+)["\\']', expression)
+            literals = re.findall(r"[\"']([^\"']+)[\"']", expression)
             for topic in literals:
                 if topic and len(topic) < 250:
                     topics.setdefault(topic, []).append({
