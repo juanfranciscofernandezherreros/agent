@@ -77,13 +77,14 @@ try {
 
     # A health check alone is insufficient: an older uvicorn process may still
     # be serving code without the individual bug-report endpoints.
-    $HasBugReportRoutes = $false
+    $HasDocumentationRoutes = $false
     try {
         $ApiSpec = Invoke-RestMethod -Uri "$Api/openapi.json" -TimeoutSec 5
-        $HasBugReportRoutes = $ApiSpec.paths.PSObject.Properties.Name -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}"
-    } catch { $HasBugReportRoutes = $false }
+        $RouteNames = @($ApiSpec.paths.PSObject.Properties.Name)
+        $HasDocumentationRoutes = ($RouteNames -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/documentation/index.html")
+    } catch { $HasDocumentationRoutes = $false }
 
-    if (-not $HasBugReportRoutes) {
+    if (-not $HasDocumentationRoutes) {
         $Listener = Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 8001 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
         if ($null -eq $Listener) {
             throw "La API responde, pero no publica las rutas de informes individuales. Cierra la API antigua y vuelve a ejecutar este launcher."
@@ -97,7 +98,8 @@ try {
         Start-Sleep -Seconds 2
         Start-LocalApi
         $ApiSpec = Invoke-RestMethod -Uri "$Api/openapi.json" -TimeoutSec 10
-        if (-not ($ApiSpec.paths.PSObject.Properties.Name -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}")) {
+        $RouteNames = @($ApiSpec.paths.PSObject.Properties.Name)
+        if (-not (($RouteNames -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/documentation/index.html"))) {
             throw "La API reiniciada sigue sin publicar las rutas de informes. Revisa logs/api.stderr.log."
         }
     }
