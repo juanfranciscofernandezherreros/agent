@@ -49,4 +49,4 @@ La API interactiva está en /docs. No requiere API key de LLM.
 
 
 ## Generar y abrir el informe integral de Billing en Windows
-Ejecuta `run-billing.bat`. Solicita las URL Git de Billing Watcher y Billing Report Writer, inicia la API del analizador en el puerto 8001, envía ambos repositorios al análisis conjunto, espera a que termine, descarga el HTML integral y lo abre en el navegador. El informe queda guardado como `billing-analysis-<id>.html` en la raíz del proyecto. Requiere haber ejecutado previamente `setup-windows.ps1` y disponer de acceso Git a ambos repositorios.
+Con la API ya arrancada en `http://127.0.0.1:8001`, ejecuta `run-billing.bat`. El BAT envía `billing-platform-full-analysis.json` mediante `curl` a `POST /api/analysis-groups`, espera a que finalice el análisis, descarga `report.html` y abre el informe. Sustituye `ORGANIZACION` por la organización GitHub real en el JSON.
