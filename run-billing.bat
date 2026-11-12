@@ -45,7 +45,12 @@ goto WAIT_API
 :API_READY
 echo API disponible en %API%.
 echo Descubriendo repositorios del grupo GitLab %GITLAB_GROUP_ID%...
-curl.exe --fail --silent --show-error -X POST "http://127.0.0.1:8001/api/gitlab/groups/212/analysis" -H "Content-Type: application/json" -d "{\"name\":\"billing-platform-full-analysis\"}" > "%RESPONSE%"
+for /f "usebackq delims=" %%H in (`curl.exe --silent --show-error -X POST "http://127.0.0.1:8001/api/gitlab/groups/212/analysis" -H "Content-Type: application/json" -d "{\"name\":\"billing-platform-full-analysis\"}" -o "%RESPONSE%" -w "%%{http_code}"`) do set "HTTP_CODE=%%H"
+if not "%HTTP_CODE%"=="202" (
+  echo [ERROR] La API ha respondido HTTP %HTTP_CODE%. Detalle devuelto por el servidor:
+  if exist "%RESPONSE%" type "%RESPONSE%"
+  goto POST_FAILED
+ )
 if errorlevel 1 (
   if exist "%RESPONSE%" type "%RESPONSE%"
   goto POST_FAILED
