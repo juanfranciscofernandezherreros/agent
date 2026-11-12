@@ -1,29 +1,21 @@
-# Alcance actual y evolución
+# Roadmap — Deep Reverse Engineering
 
-## Versión 4.0 — análisis-only
+## v5.0 — Orquestación de análisis estático
+- Coordinación de análisis de uno o varios repositorios.
+- Inventario y análisis funcional por servicio.
+- Extracción Java/Spring de clases, métodos, anotaciones, dependencias inyectadas, listeners Kafka y SQL.
+- Detección de contratos Avro/Proto y correlación de nombres de topics/contratos entre repositorios.
+- Informes JSON, Markdown y HTML.
+- No ejecuta código ni valida comportamiento runtime.
 
-La aplicación se centra en descargar e inspeccionar el microservicio original. El análisis genera:
-- Inventario de archivos, lenguajes y manifiestos.
-- Candidatos de arquitectura, entrypoints y despliegue.
-- Rutas HTTP reconocibles estáticamente.
-- Dependencias declaradas en package.json y manifiestos detectados.
-- Candidatos de modelos, esquemas y migraciones.
-- Indicios de autenticación, autorización, validación y criptografía.
-- Indicios de integraciones HTTP, bases de datos, mensajería, cloud, pagos y email.
-- Variables de entorno por nombre, ficheros de configuración y tests.
-- Símbolos Python (clases y funciones) y problemas de parseo.
-- Evidencias con fichero y línea.
+## Siguientes mejoras
+1. Parser semántico Java basado en AST/compiler model para resolver tipos, overloads, beans y llamadas reales.
+2. Parsers específicos para Spring JDBC/JPA, MyBatis, SQL embebido, Avro schemas, Kafka producer/consumer config y OpenAPI.
+3. Contratos de datos con comparación estructural de esquemas, compatibilidad y mapeo campo a campo productor-consumidor.
+4. Grafo de llamadas y flujo de datos con trazabilidad origen-transformación-destino y evidencia por línea.
+5. Reglas de negocio con estados observed_static, inferred, unknown; análisis asistido por LLM opcional con repositorio tratado como input no confiable.
+6. Correlación multi-repo avanzada: topic → schema → producer → consumer → persistencia/archivo/evento downstream.
+7. Análisis dinámico opcional únicamente en sandbox aislado, con autorización y credenciales protegidas.
 
-Artefactos: analysis.json y analysis.md en el workspace del proyecto.
-
-## Límites conocidos
-
-Es un análisis estático. No ejecuta código ni inspecciona comportamiento dinámico. No certifica que una ruta detectada esté activa ni que se hayan encontrado todas las rutas, reglas de negocio o integraciones. No lee valores de archivos .env. Los resultados deben revisarse y completarse con análisis dinámico autorizado cuando sea necesario.
-
-## Siguiente evolución recomendada
-
-1. Parsers específicos por stack (FastAPI, Django, Flask, Express, NestJS, Spring, .NET, Go).
-2. Extracción más precisa de contratos OpenAPI, esquemas ORM y migraciones.
-3. Análisis de flujos de llamadas y dependencias entre módulos.
-4. Análisis semántico de reglas de negocio asistido por LLM, siempre con citas de fichero/línea y estados verified/inferred/unknown.
-5. Análisis dinámico opcional en sandbox aislado, con credenciales y servicios externos protegidos.
+## Criterio de calidad
+No presentar inferencias como hechos verificados. Cada hallazgo debe conservar repositorio, archivo, línea, evidencia y nivel de confianza. La ausencia de detección no prueba ausencia de comportamiento.
