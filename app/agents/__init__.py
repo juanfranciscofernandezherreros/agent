@@ -5,8 +5,10 @@ from .deep import DeepAnalysisAgent
 from .functional import FunctionalAnalysisAgent
 from .java import JavaAnalysisAgent
 from .quality import QualityAnalysisAgent
+from .integration import IntegrationAnalysisAgent
 
 __all__ = [
     "AnalysisContext", "InventoryAgent", "DeepAnalysisAgent",
     "FunctionalAnalysisAgent", "JavaAnalysisAgent", "QualityAnalysisAgent",
+    "IntegrationAnalysisAgent",
 ]
