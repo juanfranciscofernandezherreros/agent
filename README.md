@@ -8,7 +8,7 @@ Versión 5.3: plataforma de análisis estático profundo para uno o varios micro
 - Inventario, dependencias, despliegue, configuración, endpoints candidatos, seguridad, integraciones, migraciones y tests.
 - Análisis funcional estático: operaciones, ramas, validaciones, errores, efectos y referencias de llamadas.
 - Parser Java heurístico: clases, métodos, llamadas por nombre, inyección de dependencias, mappings Spring, listeners/productores Kafka, SQL y contratos Avro/Proto.
-- Análisis coordinado de hasta 10 repositorios en una ejecución: candidatos de topics y contratos compartidos.
+- Análisis coordinado de hasta 100 repositorios en listas manuales (los grupos GitLab se descubren automáticamente) en una ejecución: candidatos de topics y contratos compartidos.
 - Informes HTML integrales y por microservicio con diseño editorial, índice navegable, métricas, mapa de servicios, cobertura y límites, integración Kafka/contratos con evidencias, riesgos y agenda de validación.
 - Fichas detalladas por microservicio: arquitectura, dependencias, endpoints, configuración, persistencia, seguridad, integraciones, comportamiento funcional, tests, incidencias del parser y catálogo Java filtrable por clase/método/archivo/llamadas.
 - Correlación Kafka enriquecida con evidencias de configuración, listeners consumidores y expresiones productoras. La presencia de ambos roles se marca como candidato, nunca como conexión runtime demostrada.
