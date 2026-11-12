@@ -37,3 +37,12 @@ def write_individual_reports(destination, name, inventory, deep, functional, jav
         "runtime_validation": member.get("runtime_validation", "NOT_PERFORMED")
     }
     (destination / "analysis.html").write_text(build_integral_html(name, single), encoding="utf-8")
+    bug_report = member.get("bug_report")
+    links = "<nav class='doc-links'><a href='../../analysis.html'>← Informe global</a>"
+    if bug_report:
+        links += "<a href='../../" + __import__("html").escape(bug_report, quote=True) + "'>Informe de posibles bugs</a>"
+    links += "</nav>"
+    html_path = destination / "analysis.html"
+    html_text = html_path.read_text(encoding="utf-8").replace("<main>", "<main>" + links, 1)
+    html_text = html_text.replace("</style>", ".doc-links{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.doc-links a{color:#2457c5;text-decoration:none;border:1px solid #dce3ed;border-radius:7px;padding:7px 10px;font-weight:650}</style>", 1)
+    html_path.write_text(html_text, encoding="utf-8")
