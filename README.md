@@ -48,12 +48,5 @@ Consultar:
 La API interactiva está en /docs. No requiere API key de LLM.
 
 
-## Arrancar los dos microservicios Billing en Windows
-El script `run-billing.bat` abre una ventana independiente para cada servicio y ejecuta `spring-boot:run`. Por defecto espera esta estructura junto al BAT:
-
-    agent/
-      run-billing.bat
-      rft-billing-watcher/
-      rft-billing-report-writer/
-
-Cada proyecto debe incluir `pom.xml` y, preferiblemente, `mvnw.cmd`. Si las carpetas están en otra ubicación, define antes las variables `BILLING_WATCHER_DIR` y `BILLING_WRITER_DIR` con sus rutas completas. Si no hay Maven Wrapper, el equipo debe tener Maven instalado y disponible en PATH. El script no instala dependencias externas como Kafka, bases de datos o Schema Registry.
+## Generar y abrir el informe integral de Billing en Windows
+Ejecuta `run-billing.bat`. Solicita las URL Git de Billing Watcher y Billing Report Writer, inicia la API del analizador en el puerto 8001, envía ambos repositorios al análisis conjunto, espera a que termine, descarga el HTML integral y lo abre en el navegador. El informe queda guardado como `billing-analysis-<id>.html` en la raíz del proyecto. Requiere haber ejecutado previamente `setup-windows.ps1` y disponer de acceso Git a ambos repositorios.
