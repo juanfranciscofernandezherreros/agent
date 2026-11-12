@@ -28,6 +28,7 @@ def test_integral_report_contains_executive_architecture_and_evidence_sections()
                 "business_rules": [], "validations": [], "error_handling": [], "state_changes": [],
                 "limitations": [],
             },
+            "quality_analysis": {"score": 82, "rating": "Mejorable", "summary": {"bug_candidates": 2, "high": 1, "medium": 1}, "bug_candidates": [{"code": "BUG004", "severity": "high", "title": "Uso de assert", "file": "Worker.java", "line": 12, "excerpt": "assert id != null", "description": "Revisar validación"}]},
             "java_analysis": {
                 "summary": {"classes": 1, "methods": 1, "sql_statements": 0, "kafka_listeners": 1, "kafka_producers": 1, "avro_contracts": 0},
                 "classes": [{"name": "Worker", "kind": "class", "file": "Worker.java", "line": 1}],
@@ -63,6 +64,9 @@ def test_integral_report_contains_executive_architecture_and_evidence_sections()
     assert "Worker" in report
     assert "process(String id)" in report
     assert "Riesgos técnicos y plan de validación" in report
+    assert "Calidad estática: Mejorable" in report
+    assert "Posibles bugs detectados" in report
+    assert "Puntuación /100" in report
 
 
 def test_integral_report_escapes_untrusted_repository_names():
