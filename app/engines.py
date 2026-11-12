@@ -1,6 +1,7 @@
 from pathlib import Path
 import subprocess
 from collections import Counter
+from urllib.parse import urlparse
 from .config import WORKSPACES_DIR, MAX_CLONE_SECONDS
 
 SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".next", "vendor"}
@@ -16,20 +17,34 @@ MANIFESTS = ["package.json","pyproject.toml","requirements.txt","Pipfile","pom.x
              "compose.yaml","openapi.yaml","openapi.yml"]
 
 def validate_git_url(url: str):
-    if not url.startswith("https://"):
-        raise ValueError("Por seguridad, esta versión solo acepta URLs Git HTTPS.")
-    if any(x in url.lower() for x in ["localhost", "127.0.0.1", "169.254.", "file://"]):
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+        raise ValueError("Por seguridad, solo se aceptan URLs Git HTTPS sin credenciales embebidas.")
+    host = parsed.hostname.lower()
+    if host in {"localhost", "127.0.0.1", "::1"} or host.startswith("169.254."):
         raise ValueError("La URL no está permitida.")
 
-def clone_repository(project_id: str, git_url: str) -> Path:
+def clone_repository(project_id: str, git_url: str, auth_token: str | None = None,
+                     auth_host: str | None = None) -> Path:
     validate_git_url(git_url)
     dest = WORKSPACES_DIR / project_id / "source"
     dest.parent.mkdir(parents=True, exist_ok=True)
     if dest.exists():
         raise ValueError("Ya existe un clon para este proyecto.")
     cmd = ["git", "clone", "--depth", "1", "--no-recurse-submodules", git_url, str(dest)]
+    env = None
+    parsed_host = urlparse(git_url).hostname.lower()
+    if auth_token and auth_host and parsed_host == auth_host.lower():
+        import os
+        env = os.environ.copy()
+        # Git reads the header from its environment; the token is never put in the URL or argv.
+        env["GIT_CONFIG_COUNT"] = "1"
+        env["GIT_CONFIG_KEY_0"] = f"http.https://{auth_host.lower()}/.extraheader"
+        env["GIT_CONFIG_VALUE_0"] = f"PRIVATE-TOKEN: {auth_token}"
+        env["GIT_TERMINAL_PROMPT"] = "0"
     try:
-        subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=MAX_CLONE_SECONDS)
+        subprocess.run(cmd, check=True, capture_output=True, text=True,
+                       timeout=MAX_CLONE_SECONDS, env=env)
     except FileNotFoundError:
         raise RuntimeError("No se encuentra Git. Instala Git for Windows.")
     except subprocess.TimeoutExpired:
