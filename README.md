@@ -1,6 +1,6 @@
 # Deep Reverse Engineering & Analysis Orchestrator
 
-Versión 5.1: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
+Versión 5.2: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
 
 ## Capacidades
 - Clonado Git HTTPS aislado por repositorio.
@@ -8,10 +8,12 @@ Versión 5.1: plataforma de análisis estático profundo para uno o varios micro
 - Análisis funcional estático: operaciones, ramas, validaciones, errores, efectos y referencias de llamadas.
 - Parser Java heurístico: clases, métodos, llamadas por nombre, inyección de dependencias, mappings Spring, listeners/productores Kafka, SQL y contratos Avro/Proto.
 - Análisis coordinado de hasta 10 repositorios en una ejecución: candidatos de topics y contratos compartidos.
-- Informes HTML integrales y por microservicio: resumen ejecutivo, arquitectura, flujo, integraciones, API, configuración, seguridad, persistencia, reglas/ramas inferidas, errores, inventario Java clase/método filtrable, riesgos y limitaciones. También se generan JSON y Markdown.
+- Informes HTML integrales y por microservicio con diseño editorial, índice navegable, métricas, mapa de servicios, cobertura y límites, integración Kafka/contratos con evidencias, riesgos y agenda de validación.
+- Fichas detalladas por microservicio: arquitectura, dependencias, endpoints, configuración, persistencia, seguridad, integraciones, comportamiento funcional, tests, incidencias del parser y catálogo Java filtrable por clase/método/archivo/llamadas.
+- Correlación Kafka enriquecida con evidencias de configuración, listeners consumidores y expresiones productoras. La presencia de ambos roles se marca como candidato, nunca como conexión runtime demostrada.
 
 ## Límites
-El parser Java no sustituye a javac ni resuelve el grafo completo de tipos, sobrecargas, proxies Spring o dispatch dinámico. Las coincidencias de topic/contrato son candidatos, no prueba de conexión o compatibilidad. El informe HTML estructura la evidencia disponible; el mapeo de payload campo a campo, la semántica de isLast/UUID y la compatibilidad real de schemas requieren extracción/validación adicional y no se deben dar por demostrados. No se ejecutan tests, SQL, Maven/Gradle, contenedores ni servicios. No se leen valores .env. El análisis no certifica comportamiento runtime.
+El parser Java sigue siendo heurístico: las llamadas se asocian por nombre y la asociación método-clase usa la declaración de clase anterior más cercana, no resolución semántica del compilador. La correlación Kafka ahora separa indicios de configuración, consumidores y productores, pero no demuestra conexión activa ni compatibilidad de payload. Los contratos se agrupan por nombre, sin comparación formal campo a campo. El informe documenta la evidencia disponible y diferencia hallazgos, inferencias y pendientes; la trazabilidad completa de payloads, la semántica de isLast/UUID y la validación de schemas requieren extracción y pruebas adicionales. No se ejecutan tests, SQL, Maven/Gradle, contenedores ni servicios. No se leen valores .env ni se certifica comportamiento runtime.
 
 ## Windows
     git pull origin main
