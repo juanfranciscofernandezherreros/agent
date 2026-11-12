@@ -1,15 +1,15 @@
 # Software Reconstruction Platform — Analysis Edition
 
-La aplicación se ha simplificado para centrarse exclusivamente en la descarga y el análisis estático profundo de un microservicio.
+La aplicación se centra exclusivamente en descargar y analizar en profundidad un microservicio. La versión 4.1 añade análisis funcional estático y exportación HTML.
 
 ## Qué hace
 
 1. Clona un repositorio Git mediante HTTPS en un workspace separado.
 2. Inventaría archivos, tamaños, lenguajes y manifiestos.
 3. Detecta candidatos de arquitectura, puntos de entrada, rutas HTTP, modelos de datos, migraciones, dependencias, configuración, variables de entorno, tests, seguridad e integraciones.
-4. Genera dos artefactos:
+4. Genera cuatro artefactos:
    - workspaces/<project_id>/analysis.json: análisis estructurado con evidencias.
-   - workspaces/<project_id>/analysis.md: informe legible.
+   - workspaces/<project_id>/analysis.md: informe legible.\n   - workspaces/<project_id>/analysis.html: informe HTML autocontenido, apto para abrir en navegador o cargar en otra herramienta.\n   - El análisis funcional identifica operaciones, ramas condicionales, validaciones, errores, posibles efectos sobre estado y referencias de llamadas, con fichero, línea y confianza.
 5. Conserva el estado del análisis en SQLite para consultarlo mediante API.
 
 ## Lo que NO hace
@@ -20,7 +20,7 @@ La aplicación se ha simplificado para centrarse exclusivamente en la descarga y
 - No reconstruye ni compara una nueva implementación.
 - No necesita una API key de OpenAI para el análisis estático.
 
-Las detecciones de endpoints, seguridad, modelos e integraciones son candidatos respaldados por referencias a fichero y línea. Deben revisarse; los patrones estáticos no descubren necesariamente código dinámico, configuración externa o comportamiento oculto.
+Las detecciones de endpoints, seguridad, modelos, integraciones y comportamiento funcional son inferencias estáticas respaldadas por referencias a fichero y línea. La confianza se indica por detección; no debe interpretarse como una especificación funcional validada. Deben revisarse; los patrones estáticos no descubren necesariamente código dinámico, configuración externa o comportamiento oculto.
 
 ## Windows
 
