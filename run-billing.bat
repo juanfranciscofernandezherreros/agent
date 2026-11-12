@@ -18,7 +18,12 @@ curl.exe --fail --silent "%API%/openapi.json" -o nul
 if not errorlevel 1 goto API_READY
 
 echo La API no esta levantada. Iniciando el analizador en el puerto 8001...
-if not exist "%ROOT%.venv\Scripts\python.exe" goto MISSING_VENV
+if not exist "%ROOT%.venv\Scripts\python.exe" (
+  echo Preparando entorno Python automaticamente...
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-Location -LiteralPath '%ROOT%'; & '.\setup-windows.ps1'"
+  if errorlevel 1 goto SETUP_FAILED
+  if not exist "%ROOT%.venv\Scripts\python.exe" goto SETUP_FAILED
+)
 start "Billing Analyzer API" powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-Location -LiteralPath '%ROOT%'; & '.\run-windows.ps1'"
 echo Esperando a que arranque la API...
 set /a ATTEMPTS=0
@@ -69,9 +74,8 @@ goto FAIL
 :MISSING_CURL
 echo [ERROR] curl no esta disponible en PATH.
 goto FAIL
-:MISSING_VENV
-echo [ERROR] No existe el entorno .venv.
-echo Ejecuta setup-windows.ps1 una vez para instalar las dependencias.
+:SETUP_FAILED
+echo [ERROR] No se pudo preparar el entorno Python automaticamente.
 goto FAIL
 :API_TIMEOUT
 echo [ERROR] La API no ha arrancado en 120 segundos. Revisa la ventana Billing Analyzer API.
