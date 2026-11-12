@@ -17,7 +17,7 @@ ALLOWED_SUFFIXES = {
     ".md", ".txt", ".html", ".css", ".sh", ".ps1", ".ini", ".cfg"
 }
 SECRET_PATTERNS = [
-    (re.compile(r"(?i)(api[_-]?key|client[_-]?secret|password|passwd|access[_-]?token|refresh[_-]?token)\s*[:=]\s*(['\"]?)[^\s,'\";]+"), r"\1=\2[REDACTED]"),
+    (re.compile(r"(?i)(api[_-]?key|client[_-]?secret|password|passwd|access[_-]?token|refresh[_-]?token)\s*[:=]\s*(?:\"[^\"]*\"|'[^']*'|[^\s,;]+)"), r"\1=[REDACTED]"),
     (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----"), "[REDACTED PRIVATE KEY]"),
     (re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16})\b"), "[REDACTED TOKEN]")
 ]
