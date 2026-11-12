@@ -184,6 +184,42 @@ def build_integral_html(name, analysis):
     average_quality = round(sum(r.get("quality_analysis", {}).get("score", 0) for r in repos) / len(repos)) if repos else 0
     total_bug_candidates = sum(r.get("quality_analysis", {}).get("summary", {}).get("bug_candidates", 0) for r in repos)
     high_bug_candidates = sum(r.get("quality_analysis", {}).get("summary", {}).get("high", 0) for r in repos)
+    service_scores = sorted(repos, key=lambda r: r.get("quality_analysis", {}).get("score", -1))
+    score_cards = "".join(
+        "<article class='score-card'><div class='score-card-head'><h3>" + _e(repo.get("name", "Microservicio")) +
+        "</h3><strong>" + _e(repo.get("quality_analysis", {}).get("score", "N/D")) +
+        "<small>/100</small></strong></div><div class='score-track'><span style='width:" +
+        str(max(0, min(100, int(repo.get("quality_analysis", {}).get("score", 0))))) +
+        "%'></span></div><p>" + _e(repo.get("quality_analysis", {}).get("rating", "Sin datos")) +
+        " · " + str(repo.get("quality_analysis", {}).get("summary", {}).get("bug_candidates", 0)) +
+        " posibles bugs</p></article>" for repo in service_scores
+    )
+    priority_order = {"high": 0, "medium": 1, "low": 2}
+    task_titles = {
+        "BUG001": "Revisar la excepción ignorada y decidir cómo registrar, propagar o tratar el error.",
+        "BUG002": "Revisar la comparación con None/null y comprobar los casos de valor nulo.",
+        "BUG003": "Resolver o documentar el TODO/FIXME y añadir una prueba que cubra el comportamiento esperado.",
+        "BUG004": "Sustituir assert por una validación explícita cuando proteja una condición de negocio o entrada.",
+        "BUG005": "Corregir la comparación de identidad si se pretendía comparar valores.",
+        "BUG006": "Eliminar la credencial del código, rotarla si es real y cargarla desde un gestor seguro."
+    }
+    tasks = []
+    for repo in repos:
+        for finding in repo.get("quality_analysis", {}).get("bug_candidates", []):
+            tasks.append({
+                "priority": finding.get("severity", "low"),
+                "service": repo.get("name", "Microservicio"),
+                "task": task_titles.get(finding.get("code"), "Revisar el hallazgo y añadir una prueba de regresión."),
+                "finding": finding.get("title", finding.get("code", "Posible bug")),
+                "file": finding.get("file", ""),
+                "line": finding.get("line", ""),
+                "code": finding.get("code", ""),
+                "excerpt": finding.get("excerpt", "")
+            })
+    tasks.sort(key=lambda item: (priority_order.get(item["priority"], 3), item["service"], item["file"], str(item["line"])))
+    for index, task in enumerate(tasks, 1):
+        task["order"] = index
+    task_rows = _table(tasks, [("order", "Orden"), ("priority", "Prioridad"), ("service", "Microservicio"), ("task", "Tarea recomendada"), ("finding", "Hallazgo"), ("file", "Archivo"), ("line", "Línea"), ("excerpt", "Evidencia")], "No se han detectado candidatos de bug con los patrones actuales.")
     topics = integration.get("topic_candidates", [])
     contracts = integration.get("shared_contract_candidates", [])
     service_sections = []
@@ -221,7 +257,7 @@ def build_integral_html(name, analysis):
     flow_nodes = "".join("<article class='service-node'><span class='node-number'>" + str(i + 1).zfill(2) + "</span><div><h3>" + _e(repo.get("name")) + "</h3><p>" + str(repo.get("java_analysis", {}).get("summary", {}).get("classes", 0)) + " clases · " + str(repo.get("java_analysis", {}).get("summary", {}).get("methods", 0)) + " métodos</p><small>Commit " + _e((repo.get("inventory", {}).get("commit_sha") or "no disponible")[:12]) + "</small></div></article>" for i, repo in enumerate(repos))
     return """<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light"><title>Informe técnico integral · """ + _e(name) + """</title>
+<meta name="color-scheme" content="light"><title>Informe técnico de arquitectura y calidad de microservicios</title>
 <style>
 :root{--ink:#17243a;--muted:#62718a;--line:#dce4ef;--blue:#234f91;--teal:#087e83;--paper:#fff;--canvas:#f2f5fa;--soft:#edf3fb;--gold:#a66a17;--red:#a23c3c}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:22px}body{margin:0;background:var(--canvas);color:var(--ink);font:14px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -230,7 +266,7 @@ def build_integral_html(name, analysis):
 .shell{max-width:1600px;margin:auto;display:grid;grid-template-columns:250px minmax(0,1fr);gap:24px;padding:26px 24px 80px}.sidebar{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:17px;box-shadow:0 4px 16px #1023440a}.sidebar strong{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}.sidebar a{display:block;text-decoration:none;color:#35577e;padding:7px 8px;border-radius:5px;font-size:12px;overflow-wrap:anywhere}.sidebar a:hover{background:var(--soft);color:var(--blue)}
 main{min-width:0}.report-section,.service{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:27px;margin-bottom:18px;box-shadow:0 5px 20px #142c4a08}.section-kicker{color:var(--teal);margin-bottom:7px}h2{font-size:23px;letter-spacing:-.02em;line-height:1.2;margin:0 0 17px;padding-bottom:13px;border-bottom:1px solid var(--line)}h3{font-size:16px;color:#234675;margin:27px 0 10px}h4{font-size:13px;margin:12px 0 7px}p{margin:8px 0 13px}.lead{color:var(--muted);max-width:950px}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:20px 0}
-.quality-banner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border:1px solid #d7e5e6;background:linear-gradient(120deg,#f0f8f8,#f4f7fc);border-radius:10px;padding:16px 20px;margin:18px 0}.quality-score{display:block;font-size:34px;line-height:1.1;font-weight:850;color:#176b70}.quality-score small{font-size:13px;color:#738596;margin-left:3px}.quality-banner b{display:block;margin-top:5px}.quality-banner p{font-size:11px;color:#65768a;margin:3px 0}.quality-counts{display:flex;gap:8px;flex-wrap:wrap}.quality-counts span{background:#fff;border:1px solid #dce6ec;border-radius:6px;padding:7px 10px;font-size:11px;color:#3f566b}.metric{background:linear-gradient(180deg,#f7faff,#edf3fa);border:1px solid #e0e8f2;border-radius:7px;padding:13px 14px;min-height:91px}.metric strong{display:block;font-size:27px;line-height:1.2;letter-spacing:-.03em;color:#214d86}.metric span{display:block;font-size:11px;color:#53657e;margin-top:5px;font-weight:650}.metric small{display:block;color:#8390a2;font-size:10px}
+.report-context{font-size:13px!important;color:#d5e5f2!important;margin-top:0}.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px;margin:16px 0 24px}.score-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:15px;min-width:0}.score-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.score-card h3{font-size:13px;margin:0;overflow-wrap:anywhere}.score-card-head strong{font-size:25px;line-height:1;color:#176b70;white-space:nowrap}.score-card-head small{font-size:11px;color:#738596;margin-left:2px}.score-track{height:7px;background:#e8eef4;border-radius:8px;overflow:hidden;margin:13px 0 8px}.score-track span{display:block;height:100%;background:linear-gradient(90deg,#b7791f,#0b8580);border-radius:8px}.score-card p{font-size:11px;color:var(--muted);margin:0}.task-intro{color:var(--muted);font-size:12px}.task-table td:nth-child(2){font-weight:800;text-transform:uppercase}.task-table tr:has(td:nth-child(2)){ }\n.quality-banner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border:1px solid #d7e5e6;background:linear-gradient(120deg,#f0f8f8,#f4f7fc);border-radius:10px;padding:16px 20px;margin:18px 0}.quality-score{display:block;font-size:34px;line-height:1.1;font-weight:850;color:#176b70}.quality-score small{font-size:13px;color:#738596;margin-left:3px}.quality-banner b{display:block;margin-top:5px}.quality-banner p{font-size:11px;color:#65768a;margin:3px 0}.quality-counts{display:flex;gap:8px;flex-wrap:wrap}.quality-counts span{background:#fff;border:1px solid #dce6ec;border-radius:6px;padding:7px 10px;font-size:11px;color:#3f566b}.metric{background:linear-gradient(180deg,#f7faff,#edf3fa);border:1px solid #e0e8f2;border-radius:7px;padding:13px 14px;min-height:91px}.metric strong{display:block;font-size:27px;line-height:1.2;letter-spacing:-.03em;color:#214d86}.metric span{display:block;font-size:11px;color:#53657e;margin-top:5px;font-weight:650}.metric small{display:block;color:#8390a2;font-size:10px}
 .subgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0}.panel{border:1px solid var(--line);background:#fbfcfe;border-radius:7px;padding:15px}.panel h3,.panel h4{margin-top:0}.facts{display:grid;grid-template-columns:125px minmax(0,1fr);gap:7px 12px;font-size:12px}.facts dt{color:var(--muted)}.facts dd{margin:0;overflow-wrap:anywhere;font-weight:600}
 .compact{padding-left:19px;margin:7px 0 15px}.compact li{margin:4px 0}.empty{color:#8591a2;font-style:italic;background:#f8fafc;border:1px dashed var(--line);padding:11px;border-radius:5px;font-size:12px}.note{border-left:3px solid #9ab2d2;background:#f3f7fc;padding:10px 13px;color:#566a85;font-size:12px}
 .table-wrap{width:100%;overflow:auto;margin:10px 0 18px;border:1px solid var(--line);border-radius:6px}table{border-collapse:collapse;width:100%;font-size:11px;line-height:1.5}th,td{padding:9px 10px;border-bottom:1px solid #e7ecf3;text-align:left;vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap;min-width:75px}th{background:#edf2f8;color:#314b6c;font-weight:750;position:sticky;top:0}tbody tr:nth-child(even){background:#fafbfd}tbody tr:last-child td{border-bottom:0}
@@ -241,11 +277,18 @@ main{min-width:0}.report-section,.service{background:var(--paper);border:1px sol
 @media print{body{background:#fff;font-size:10px}.hero{padding:25px;background:#18365e!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.shell{display:block;padding:0}.sidebar,.catalog-tools{display:none}.report-section,.service{box-shadow:none;break-inside:auto;border:0;padding:15px}.class-card,.panel,.risk-card{break-inside:avoid}.table-wrap{overflow:visible}th{position:static}a{color:inherit}.footer{display:none}}
 </style></head><body>
 <header class='hero'><div class='hero-inner'><div class='eyebrow'>Software intelligence · Reverse engineering · Informe técnico</div>
-<h1>""" + _e(name) + """</h1>
+<h1>Informe de arquitectura y calidad de microservicios</h1>
+<p class='report-context'>Conjunto analizado: <strong>""" + _e(name) + """</strong></p>
 <p>Documento integral de arquitectura, comportamiento, integraciones y evidencias de código. El objetivo es explicar qué contiene cada servicio, cómo se relacionan las piezas y qué aspectos necesitan validación adicional, separando los hallazgos de las hipótesis.</p>
 <div class='hero-meta'><span>""" + str(len(repos)) + """ repositorios incluidos</span><span>""" + str(total_classes) + """ clases Java</span><span>""" + str(total_methods) + """ métodos</span><span>""" + str(total_sql) + """ sentencias SQL</span><span>Estado: """ + _e(status_label) + """</span><span>Validación runtime: no realizada</span></div></div></header>
 <div class='shell'><aside class='sidebar'><strong>Índice del informe</strong>""" + "".join(nav) + """</aside><main>
-<section class='report-section' id='executive'><div class='section-kicker'>01 · VISIÓN EJECUTIVA</div><h2>Resumen ejecutivo</h2>
+<section class='report-section' id='executive'><div class='section-kicker'>01 · VISIÓN EJECUTIVA</div><h2>Calidad global de los microservicios</h2>
+<p class='task-intro'>Puntuación estática individual de cada repositorio. Los servicios aparecen ordenados de menor a mayor puntuación para facilitar la priorización.</p>
+<div class='score-grid'>""" + score_cards + """</div>
+<h3>Plan de tareas priorizado: posibles bugs</h3>
+<p class='task-intro'>Lista de revisión ordenada por prioridad (alta, media y baja), con servicio, ubicación y acción recomendada. Cada tarea debe confirmarse manualmente antes de modificar código.</p>
+<div class='task-table'>""" + task_rows + """</div>
+<h2>Resumen ejecutivo del análisis</h2>
 <p>Este documento consolida el análisis de """ + str(len(repos)) + """ repositorios. Las cifras describen elementos detectados por los analizadores; no equivalen a cobertura funcional ni a validación de ejecución.</p>
 <div class='metrics'>""" + _metric(len(repos), "Repositorios") + _metric(total_classes, "Clases Java") + _metric(total_methods, "Métodos Java") + _metric(total_ops, "Operaciones detectadas") + _metric(total_rules, "Reglas / ramas") + _metric(total_sql, "Sentencias SQL") + _metric(len(topics), "Topics candidatos") + _metric(len(contracts), "Contratos candidatos") + _metric(total_tests, "Ficheros de test") + _metric(average_quality, "Puntuación media /100", "Heurística estática") + _metric(total_bug_candidates, "Posibles bugs", str(high_bug_candidates) + " prioridad alta") + """</div>
 <div class='two-col'><article class='panel'><h3>Resultado del proceso</h3><p><span class='status """ + ("partial" if failures else "") + """'>""" + _e(status_label) + """</span></p><p>Repositorios procesados: """ + str(len(repos)) + """ de """ + str(len(repos) + len(failures)) + """. Fallos: """ + str(len(failures)) + """</p><p>El análisis es estático. No se ha ejecutado el software ni se han lanzado sus pruebas.</p></article>
