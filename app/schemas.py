@@ -10,3 +10,7 @@ class EquivalenceRequest(BaseModel):
     reconstructed_url: HttpUrl
     cases: list[dict[str, Any]] = Field(min_length=1, max_length=100)
     timeout_seconds: float = Field(default=10, ge=1, le=60)
+
+class CodeGenerationRequest(BaseModel):
+    brief: str = Field(min_length=20, max_length=12000)
+    max_files: int = Field(default=12, ge=1, le=20)
