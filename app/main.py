@@ -9,9 +9,10 @@ import uuid
 from .config import APP_NAME, APP_VERSION, WORKSPACES_DIR
 from .database import init_db, connect
 from .schemas import ProjectCreate, AnalysisGroupCreate, GitLabGroupAnalysisCreate
-from .engines import clone_repository, analyze_repository
-from .deep_analysis import analyze_repository_deep, build_analysis_markdown
-from .functional_analysis import analyze_functional_behavior, build_analysis_html
+from .engines import clone_repository
+from .deep_analysis import build_analysis_markdown
+from .functional_analysis import build_analysis_html
+from .agents import AnalysisContext, InventoryAgent, DeepAnalysisAgent, FunctionalAnalysisAgent, JavaAnalysisAgent
 from .analysis_orchestrator import run_group_analysis
 from .gitlab import gitlab_settings, list_group_projects
 
@@ -37,10 +38,11 @@ def run_analysis(project_id: str):
     try:
         source=clone_repository(project_id,git_url)
         with connect() as con: con.execute("UPDATE projects SET status='ANALYZING' WHERE id=?",(project_id,))
-        inventory=analyze_repository(source); deep=analyze_repository_deep(source,inventory)
-        functional=analyze_functional_behavior(source)
-        from .java_analysis import analyze_java_repository
-        java=analyze_java_repository(source)
+        context = AnalysisContext(root=source)
+        inventory = InventoryAgent().run(context)
+        deep = DeepAnalysisAgent().run(context)
+        functional = FunctionalAnalysisAgent().run(context)
+        java = JavaAnalysisAgent().run(context)
         analysis={"analysis_version":"5.0","functional_analysis":functional,"project_name":name,
           "source_path":str(source),"repository_inventory":inventory,"deep_analysis":deep,
           "java_analysis":java,"completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
