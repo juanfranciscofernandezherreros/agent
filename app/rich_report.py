@@ -124,13 +124,20 @@ def _service_section(repo, index):
     parts.append("<h3>Java / Spring: catálogo completo de clases y métodos</h3>")
     classes = java.get("classes", [])
     methods = java.get("methods", [])
+    methods_by_class = {}
     methods_by_file = {}
+    classes_per_file = {}
+    for cls in classes:
+        classes_per_file[cls.get("file")] = classes_per_file.get(cls.get("file"), 0) + 1
     for method in methods:
+        methods_by_class.setdefault(method.get("class_name"), []).append(method)
         methods_by_file.setdefault(method.get("file"), []).append(method)
     parts.append("<div class='catalog-tools'><input class='class-search' data-target='" + _e(anchor) + "' placeholder='Filtrar por clase, método, archivo o llamada...' aria-label='Filtrar catálogo Java'><span>" + str(len(classes)) + " clases · " + str(len(methods)) + " métodos</span></div>")
     cards = []
     for cls in classes:
-        class_methods = methods_by_file.get(cls.get("file"), [])
+        class_methods = methods_by_class.get(cls.get("name"), [])
+        if not class_methods and classes_per_file.get(cls.get("file")) == 1:
+            class_methods = methods_by_file.get(cls.get("file"), [])
         method_html = []
         for method in class_methods:
             method_html.append("<li><div><code>" + _e(method.get("name")) + "(" + _e(method.get("parameters")) + ")</code> <span class='line-ref'>" + _e(method.get("file")) + ":" + _e(method.get("line")) + "–" + _e(method.get("end_line")) + "</span></div><p><b>Llamadas candidatas:</b> " + _e(", ".join(method.get("calls", [])[:30]) + ("…" if len(method.get("calls", [])) > 30 else "")) + "</p><p><b>Ramas / errores:</b> " + _e(_pretty(method.get("branches_and_errors", []))) + "</p><p><b>Efectos posibles:</b> " + _e(", ".join(method.get("possible_effects", [])) or "No detectados") + " · <b>Confianza:</b> " + _e(method.get("confidence", "inferred")) + "</p></li>")
