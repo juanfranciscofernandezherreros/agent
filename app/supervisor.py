@@ -5,7 +5,7 @@ from .agents import (
     AnalysisContext, InventoryAgent, DeepAnalysisAgent, FunctionalAnalysisAgent,
     JavaAnalysisAgent, QualityAnalysisAgent, IntegrationAnalysisAgent,
     FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
-    EvidenceCorrelationAgent,
+    EvidenceCorrelationAgent, CrossValidationAgent, GroupCrossValidationAgent,
 )
 from .agents.context import AnalyzerAgent
 from .communication import AgentMessage, AgentSkipped, AgentStatus, SharedStore
@@ -25,7 +25,7 @@ class Supervisor:
                 raise SupervisorError(f"Agente duplicado: {agent.name}")
             self._agents[agent.name] = agent
         for agent in agents:
-            for dep in agent.requires:
+            for dep in (*agent.requires, *agent.after):
                 if dep not in self._agents:
                     raise SupervisorError(f"{agent.name} depende de un agente desconocido: {dep}")
                 if self._agents[dep].scope == "group" and agent.scope == "repository":
@@ -41,6 +41,7 @@ class Supervisor:
              available: set[str] | frozenset[str] = frozenset()) -> list[AnalyzerAgent]:
         """Orden de ejecución (topológico y estable según el orden de registro).
 
+        Un agente va detrás de sus ``requires`` (dependencias) y de sus ``after`` (solo orden).
         ``only`` limita el plan a esos agentes y a sus dependencias transitivas.
         ``available`` son resultados que ya existen en el contexto y no hay que recalcular.
         """
@@ -64,7 +65,7 @@ class Supervisor:
         pending = [a for a in in_scope if a.name not in done]
         while pending:
             ready = [a for a in pending
-                     if all(d in done or d not in names for d in a.requires)]
+                     if all(d in done or d not in names for d in (*a.requires, *a.after))]
             if not ready:
                 raise SupervisorError("Dependencias cíclicas entre: " + ", ".join(a.name for a in pending))
             nxt = ready[0]
@@ -143,10 +144,11 @@ class Supervisor:
 
 
 def default_supervisor(llm_client=None) -> Supervisor:
-    """Agentes estáticos (obligatorios) + agentes LLM (opcionales, SKIPPED si no hay LLM)."""
+    """Agentes estáticos (obligatorios) + LLM (opcionales, SKIPPED sin LLM) + validación cruzada."""
     return Supervisor([
         InventoryAgent(), DeepAnalysisAgent(), FunctionalAnalysisAgent(),
         JavaAnalysisAgent(), QualityAnalysisAgent(), IntegrationAnalysisAgent(),
         FunctionalInterpretationAgent(llm_client), BugReviewAgent(llm_client),
         ArchitectureExplanationAgent(llm_client), EvidenceCorrelationAgent(llm_client),
+        CrossValidationAgent(), GroupCrossValidationAgent(),
     ])

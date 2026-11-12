@@ -57,9 +57,9 @@ def test_store_persists_and_reloads(tmp_path):
 
 def test_supervisor_publishes_states_and_evidence(sample_repo):
     ctx = AnalysisContext(root=sample_repo, repository="svc")
-    default_supervisor().run(ctx)
+    default_supervisor().run(ctx, only=["quality_analysis"])
     store = ctx.store
-    assert {m.agent: m.status for m in store.messages("svc") if not m.agent.startswith("llm_")} == {
+    assert {m.agent: m.status for m in store.messages("svc")} == {
         n: "COMPLETED" for n in ("inventory", "deep_analysis", "functional_analysis", "java_analysis", "quality_analysis")}
     assert store.payload("quality_analysis", "svc") == ctx.results["quality_analysis"]
     kinds = {e["kind"] for e in store.evidence("svc")}

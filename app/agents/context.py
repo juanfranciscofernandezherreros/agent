@@ -26,6 +26,7 @@ class AnalyzerAgent:
     Cada agente declara:
     - ``name``: clave única bajo la que publica su resultado en ``context.results``.
     - ``requires``: nombres de los resultados que necesita antes de ejecutarse.
+    - ``after``: agentes tras los que debe ejecutarse si están en el plan (orden, no dependencia).
     - ``scope``: ``"repository"`` (se ejecuta por microservicio) o ``"group"``.
     - ``optional``: si es True, su fallo u omisión no aborta el análisis.
 
@@ -34,6 +35,7 @@ class AnalyzerAgent:
     """
     name: str = "unnamed"
     requires: tuple[str, ...] = ()
+    after: tuple[str, ...] = ()
     scope: str = "repository"
     optional: bool = False
 

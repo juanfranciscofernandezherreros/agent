@@ -10,10 +10,12 @@ from .llm_agents import (
     FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
     EvidenceCorrelationAgent,
 )
+from .validation import CrossValidationAgent, GroupCrossValidationAgent
 
 __all__ = [
     "AnalysisContext", "InventoryAgent", "DeepAnalysisAgent",
     "FunctionalAnalysisAgent", "JavaAnalysisAgent", "QualityAnalysisAgent",
     "IntegrationAnalysisAgent", "FunctionalInterpretationAgent", "BugReviewAgent",
     "ArchitectureExplanationAgent", "EvidenceCorrelationAgent",
+    "CrossValidationAgent", "GroupCrossValidationAgent",
 ]
