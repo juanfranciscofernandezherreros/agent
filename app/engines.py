@@ -1,4 +1,5 @@
 from pathlib import Path
+import base64
 import subprocess
 from collections import Counter
 from urllib.parse import urlparse
@@ -40,7 +41,8 @@ def clone_repository(project_id: str, git_url: str, auth_token: str | None = Non
         # Git reads the header from its environment; the token is never put in the URL or argv.
         env["GIT_CONFIG_COUNT"] = "1"
         env["GIT_CONFIG_KEY_0"] = f"http.https://{auth_host.lower()}/.extraheader"
-        env["GIT_CONFIG_VALUE_0"] = f"PRIVATE-TOKEN: {auth_token}"
+        encoded = base64.b64encode(f"oauth2:{auth_token}".encode("utf-8")).decode("ascii")
+        env["GIT_CONFIG_VALUE_0"] = f"Authorization: Basic {encoded}"
         env["GIT_TERMINAL_PROMPT"] = "0"
     try:
         subprocess.run(cmd, check=True, capture_output=True, text=True,
