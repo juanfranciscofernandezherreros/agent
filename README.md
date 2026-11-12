@@ -43,6 +43,7 @@ El análisis no ejecuta ni modifica los repositorios inspeccionados.
 - Evidencia de cada candidato: identificador de patrón, prioridad, archivo, línea, fragmento y explicación.
 - Resumen de puntuaciones al principio del informe, ordenado de menor a mayor.
 - Plan de tareas derivado de los candidatos detectados, ordenado por prioridad.
+- Un informe HTML independiente por cada microservicio que tenga al menos un candidato a bug, más un índice HTML con los enlaces.
 
 La puntuación no es una certificación ni una probabilidad de defectos. Los candidatos son indicios heurísticos y necesitan revisión humana.
 
@@ -58,6 +59,7 @@ El informe HTML consolidado incluye:
 - Riesgos y agenda de validación.
 - Fichas detalladas por microservicio: arquitectura, dependencias, endpoints, configuración, persistencia, seguridad, integraciones, comportamiento funcional, tests e incidencias del análisis.
 - Catálogo Java filtrable por clase, método, archivo y llamadas.
+- Informes individuales de posibles bugs en `workspaces/{analysis_group_id}/bug-reports/`; solo se genera un informe de servicio si hay candidatos.
 
 El diseño HTML es adaptable a escritorio, tablet y móvil. El nombre del grupo o análisis se muestra como contexto del informe; no se utiliza un nombre de proyecto fijo.
 
