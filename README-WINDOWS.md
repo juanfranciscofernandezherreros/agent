@@ -3,24 +3,27 @@
 ## Requisitos
 - Python 3.11 o superior: https://www.python.org/downloads/windows/
 - Git for Windows: https://git-scm.com/download/win
-- Internet durante la instalación de paquetes.
-
-Al instalar Python, activa **Add Python to PATH**.
+- Un proveedor LLM: OpenAI API o Ollama local.
 
 ## Instalar
-1. Clona o descomprime este repositorio.
+1. Clona este repositorio.
 2. Abre PowerShell en la carpeta del proyecto.
-3. Si PowerShell bloquea scripts: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
-4. Ejecuta ` .\setup-windows.ps1 `
+3. Ejecuta `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`.
+4. Ejecuta `.\\setup-windows.ps1`.
+5. Copia el archivo de configuración: `Copy-Item .env.example .env`.
+6. Edita `.env` y configura OpenAI u Ollama.
 
 ## Arrancar
-Ejecuta ` .\run-windows.ps1 `.
+`.\\run-windows.ps1`
 
 Aplicación: http://127.0.0.1:8000  
-API interactiva: http://127.0.0.1:8000/docs  
-Health: http://127.0.0.1:8000/health
+API interactiva: http://127.0.0.1:8000/docs
 
-Detén con Ctrl+C.
+## Generar código
+Primero analiza un repositorio desde la interfaz. Después llama al endpoint `POST /api/projects/{project_id}/generate` desde /docs con:
+```json
+{"brief":"Reconstruye el servicio manteniendo el comportamiento observado. Añade tests.","max_files":12}
+```
+Consulta el estado con `GET /api/generations/{generation_id}`. Los archivos aparecen bajo `workspaces/<project_id>/generations/<generation_id>/`.
 
-## Límites
-El análisis es inventario estático inicial; no ejecuta el código clonado. La reconstrucción genera paquete y tareas, no código autónomamente. El comparador actual solo evalúa status y body HTTP, no DB, eventos, integraciones ni rendimiento. No expongas el servidor a Internet.
+No se ejecuta código generado automáticamente.
