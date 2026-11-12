@@ -67,6 +67,12 @@ def test_integral_report_contains_executive_architecture_and_evidence_sections()
     assert "Calidad estática: Mejorable" in report
     assert "Posibles bugs detectados" in report
     assert "Puntuación /100" in report
+    assert "Informe de arquitectura y calidad de microservicios" in report
+    assert "Conjunto analizado: <strong>Billing platform</strong>" in report
+    assert "Calidad global de los microservicios" in report
+    assert "Plan de tareas priorizado: posibles bugs" in report
+    assert "Sustituir assert por una validación explícita" in report
+    assert "BUG004" in report
 
 
 def test_integral_report_escapes_untrusted_repository_names():
