@@ -16,8 +16,11 @@ def repair_generated_workspace(generation_result: dict[str, Any], equivalence_re
         if not isinstance(item, dict) or not isinstance(item.get("path"), str):
             continue
         rel = _safe_relative_path(item["path"])
-        target = (root / rel).resolve()
-        if root not in target.parents or not target.is_file() or target.is_symlink():
+        candidate = root / rel
+        if candidate.is_symlink():
+            continue
+        target = candidate.resolve()
+        if root not in target.parents or not target.is_file():
             continue
         allowed[rel.as_posix()] = target
     if not allowed:
@@ -49,10 +52,8 @@ def repair_generated_workspace(generation_result: dict[str, Any], equivalence_re
         raise CodeGenerationError("El modelo devolvió una lista de cambios no válida.")
     if len(changes) > max_files:
         changes = changes[:max_files]
-    repair_id = str(uuid.uuid4())
-    history = root / "repairs" / repair_id
-    history.mkdir(parents=True, exist_ok=False)
-    applied = []
+    validated = []
+    seen = set()
     for change in changes:
         if not isinstance(change, dict):
             continue
@@ -60,13 +61,23 @@ def repair_generated_workspace(generation_result: dict[str, Any], equivalence_re
         key = rel.as_posix()
         if key not in allowed:
             raise CodeGenerationError(f"El modelo intentó modificar un archivo no autorizado: {key}")
+        if key in seen:
+            raise CodeGenerationError(f"El modelo repitió el archivo en la misma reparación: {key}")
+        seen.add(key)
         content = change.get("content")
         if not isinstance(content, str) or not content.strip() or len(content) > 60000:
             raise CodeGenerationError(f"Contenido de reparación no válido para {key}.")
         if SENSITIVE.search(content):
             raise CodeGenerationError(f"Se rechazó contenido con apariencia de secreto en {key}.")
+        validated.append((key, content, str(change.get("reason", ""))[:1200]))
+
+    repair_id = str(uuid.uuid4())
+    history = root / "repairs" / repair_id
+    history.mkdir(parents=True, exist_ok=False)
+    applied = []
+    for key, content, reason in validated:
         target = allowed[key]
-        backup = history / "backup" / rel
+        backup = history / "backup" / _safe_relative_path(key)
         backup.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(target, backup)
         temp = target.with_name(target.name + ".repair-tmp")
@@ -74,8 +85,8 @@ def repair_generated_workspace(generation_result: dict[str, Any], equivalence_re
             temp.unlink()
         temp.write_text(content, encoding="utf-8")
         temp.replace(target)
-        applied.append({"path": key, "reason": str(change.get("reason", ""))[:1200],
-                        "backup": (Path("backup") / rel).as_posix()})
+        applied.append({"path": key, "reason": reason,
+                        "backup": (Path("backup") / key).as_posix()})
     result = {
         "repair_id": repair_id,
         "status": "PATCHED_AWAITING_RETEST" if applied else "NO_SAFE_PATCH",
