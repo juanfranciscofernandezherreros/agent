@@ -19,8 +19,11 @@ def _agent(name, requires=(), scope="repository", log=None):
 def test_default_plan_respects_dependencies():
     sup = default_supervisor()
     order = [a.name for a in sup.plan("repository")]
-    assert order == ["inventory", "deep_analysis", "functional_analysis", "java_analysis", "quality_analysis"]
-    assert [a.name for a in sup.plan("group")] == ["integration_analysis"]
+    assert order[:5] == ["inventory", "deep_analysis", "functional_analysis", "java_analysis", "quality_analysis"]
+    assert [a.name for a in sup.plan("group")][0] == "integration_analysis"
+    for agent in sup.agents:  # todo agente va después de sus dependencias
+        plan = [a.name for a in sup.plan(agent.scope)]
+        assert all(plan.index(d) < plan.index(agent.name) for d in agent.requires)
     assert sup.describe_plan()[1] == {"step": 2, "agent": "deep_analysis", "scope": "repository", "requires": ["inventory"]}
 
 

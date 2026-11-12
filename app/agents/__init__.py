@@ -6,9 +6,14 @@ from .functional import FunctionalAnalysisAgent
 from .java import JavaAnalysisAgent
 from .quality import QualityAnalysisAgent
 from .integration import IntegrationAnalysisAgent
+from .llm_agents import (
+    FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
+    EvidenceCorrelationAgent,
+)
 
 __all__ = [
     "AnalysisContext", "InventoryAgent", "DeepAnalysisAgent",
     "FunctionalAnalysisAgent", "JavaAnalysisAgent", "QualityAnalysisAgent",
-    "IntegrationAnalysisAgent",
+    "IntegrationAnalysisAgent", "FunctionalInterpretationAgent", "BugReviewAgent",
+    "ArchitectureExplanationAgent", "EvidenceCorrelationAgent",
 ]

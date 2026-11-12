@@ -41,13 +41,17 @@ def run_analysis(project_id: str):
         source=clone_repository(project_id,git_url)
         with connect() as con: con.execute("UPDATE projects SET status='ANALYZING' WHERE id=?",(project_id,))
         context = AnalysisContext(root=source, repository=name, store=SharedStore(WORKSPACES_DIR/project_id/"agent-runs", run_id=project_id))
-        # El análisis individual no incluye calidad: se pide al supervisor solo lo necesario.
-        default_supervisor().run(context, only=["inventory", "deep_analysis", "functional_analysis", "java_analysis"])
+        # El análisis individual no incluye calidad: se pide al supervisor solo lo necesario
+        # (los agentes LLM se omiten solos si no están activados).
+        default_supervisor().run(context, only=["inventory", "deep_analysis", "functional_analysis", "java_analysis",
+            "llm_functional_interpretation", "llm_architecture_explanation"])
         inventory = context.results["inventory"]; deep = context.results["deep_analysis"]
         functional = context.results["functional_analysis"]; java = context.results["java_analysis"]
         analysis={"analysis_version":"5.0","functional_analysis":functional,"project_name":name,
           "source_path":str(source),"repository_inventory":inventory,"deep_analysis":deep,
-          "java_analysis":java,"completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
+          "java_analysis":java,
+          "agent_insights":{k:v for k,v in context.results.items() if k not in ("inventory","deep_analysis","functional_analysis","java_analysis")},
+          "completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
         folder=WORKSPACES_DIR/project_id; folder.mkdir(parents=True,exist_ok=True)
         (folder/"analysis.json").write_text(json.dumps(analysis,indent=2,ensure_ascii=False),encoding="utf-8")
         report=build_analysis_markdown(name,inventory,deep)

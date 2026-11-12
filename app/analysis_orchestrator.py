@@ -48,11 +48,13 @@ def html_report(name,a):
     cards="".join("<article><h3>"+html.escape(r["name"])+"</h3><p>Clases Java: "+str(r["java_analysis"]["summary"]["classes"])+" · Métodos: "+str(r["java_analysis"]["summary"]["methods"])+" · SQL: "+str(r["java_analysis"]["summary"]["sql_statements"])+"</p></article>" for r in a["repositories"])
     return """<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>"""+title+"""</title><style>body{font:15px/1.55 system-ui;margin:0;background:#f4f7fb;color:#172033}.hero{padding:36px 5%;background:linear-gradient(120deg,#10254c,#2457c5,#087e8b);color:white}main{max-width:1100px;margin:28px auto;padding:0 18px}article,section{background:white;border:1px solid #dce4ef;border-radius:12px;padding:16px;margin:12px 0}.metrics{display:flex;gap:12px;flex-wrap:wrap}.metric{font-size:1.7rem;color:#2457c5;font-weight:bold}input{padding:10px;width:80%;border:1px solid #ccd5e3;border-radius:8px}pre{white-space:pre-wrap}</style><header class="hero"><h1>"""+title+"""</h1><p>Deep Reverse Engineering & Analysis Orchestrator</p><p>Informe estático; las correlaciones son candidatos con evidencia.</p></header><main><section><h2>Flujo coordinado</h2><p>Repositorios Git → parsers por stack → análisis funcional → correlación de contratos → documentación técnica.</p></section><section><h2>Microservicios</h2>"""+cards+"""</section><section><h2>Topics y contratos compartidos</h2><input id="q" placeholder="Filtrar"><div id="results"></div></section><section><h2>Alcance</h2><p>No ejecuta código ni valida el comportamiento runtime. Las coincidencias de nombres no demuestran compatibilidad de mensajes.</p></section></main><script>const d="""+data+""";const rows=[...d.integration_analysis.topic_candidates.map(x=>({k:"topic",n:x.topic,r:x.repositories})),...d.integration_analysis.shared_contract_candidates.map(x=>({k:"contrato",n:x.contract,r:x.repositories}))];function draw(){let q=document.getElementById("q").value.toLowerCase();document.getElementById("results").innerHTML=rows.filter(x=>(x.n+x.r.join(" ")).toLowerCase().includes(q)).map(x=>"<p><b>"+x.k+": "+x.n+"</b> — "+x.r.join(", ")+"</p>").join("")||"<p>Sin resultados</p>"}document.getElementById("q").addEventListener("input",draw);draw()</script></html>"""
 
-def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=None):
+STATIC_AGENTS=("inventory","deep_analysis","functional_analysis","java_analysis","quality_analysis")
+
+def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=None,supervisor=None):
     folder=WORKSPACES_DIR/group_id; folder.mkdir(parents=True,exist_ok=True)
     results,failures=[],[]
     bug_reports=[]
-    supervisor=default_supervisor()
+    supervisor=supervisor or default_supervisor()
     # Fase 3: almacén compartido; cada agente publica un mensaje con estado, evidencias y errores.
     store=SharedStore(folder/"agent-runs",run_id=group_id)
     for item in repositories:
@@ -64,6 +66,8 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
             inv = context.results["inventory"]; deep = context.results["deep_analysis"]
             functional = context.results["functional_analysis"]; java = context.results["java_analysis"]
             quality = context.results["quality_analysis"]
+            # Resultados de agentes no estáticos (LLM, validación...) que hayan terminado.
+            insights = {k: v for k, v in context.results.items() if k not in STATIC_AGENTS}
             dest=folder/"repositories"/slug(item["name"]); dest.mkdir(parents=True,exist_ok=True)
             report_file = None
             candidates = quality.get("bug_candidates") or []
@@ -81,17 +85,21 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
             member={"project_name":item["name"],"inventory":inv,"deep_analysis":deep,
               "functional_analysis":functional,"java_analysis":java,"quality_analysis":quality,
               "bug_report": ("bug-reports/" + report_file) if report_file else None,
+              "agent_insights":insights,
               "completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
             (dest/"analysis.json").write_text(json.dumps(member,indent=2,ensure_ascii=False),encoding="utf-8")
             write_individual_reports(dest,item["name"],inv,deep,functional,java,member)
             results.append({"name":item["name"],"inventory":inv,"deep_analysis":deep,
               "functional_analysis":functional,"java_analysis":java,"quality_analysis":quality,
               "artifact_dir":str(dest.relative_to(folder)),
-              "bug_report": ("bug-reports/" + report_file) if report_file else None})
+              "bug_report": ("bug-reports/" + report_file) if report_file else None,
+              "agent_insights":insights})
         except Exception as exc: failures.append({"repository":item["name"],"error":str(exc)})
     if not results: raise RuntimeError("No se pudo analizar ningún repositorio: "+json.dumps(failures,ensure_ascii=False))
+    group_results=supervisor.run(AnalysisContext(data={"repositories": results},store=store),scope="group")
     result={"analysis_version":"5.0","group_name":name,"repositories":results,
-      "integration_analysis":supervisor.run(AnalysisContext(data={"repositories": results},store=store),scope="group")["integration_analysis"],"failures":failures,
+      "integration_analysis":group_results["integration_analysis"],
+      "agent_insights":{k:v for k,v in group_results.items() if k!="integration_analysis"},"failures":failures,
       "completion_status":"STATIC_ANALYSIS_COMPLETED" if not failures else "PARTIAL_ANALYSIS_COMPLETED",
       "runtime_validation":"NOT_PERFORMED"}
     result["agent_runs"]=store.manifest()

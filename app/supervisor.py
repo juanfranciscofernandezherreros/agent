@@ -4,6 +4,8 @@ from __future__ import annotations
 from .agents import (
     AnalysisContext, InventoryAgent, DeepAnalysisAgent, FunctionalAnalysisAgent,
     JavaAnalysisAgent, QualityAnalysisAgent, IntegrationAnalysisAgent,
+    FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
+    EvidenceCorrelationAgent,
 )
 from .agents.context import AnalyzerAgent
 from .communication import AgentMessage, AgentSkipped, AgentStatus, SharedStore
@@ -140,8 +142,11 @@ class Supervisor:
         return context.results
 
 
-def default_supervisor() -> Supervisor:
+def default_supervisor(llm_client=None) -> Supervisor:
+    """Agentes estáticos (obligatorios) + agentes LLM (opcionales, SKIPPED si no hay LLM)."""
     return Supervisor([
         InventoryAgent(), DeepAnalysisAgent(), FunctionalAnalysisAgent(),
         JavaAnalysisAgent(), QualityAnalysisAgent(), IntegrationAnalysisAgent(),
+        FunctionalInterpretationAgent(llm_client), BugReviewAgent(llm_client),
+        ArchitectureExplanationAgent(llm_client), EvidenceCorrelationAgent(llm_client),
     ])

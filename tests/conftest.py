@@ -1,6 +1,12 @@
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def _llm_agents_off(monkeypatch):
+    """Las pruebas nunca llaman a un LLM real salvo que inyecten un cliente falso."""
+    monkeypatch.delenv("LLM_AGENTS_ENABLED", raising=False)
+
+
 @pytest.fixture
 def sample_repo(tmp_path):
     """Repositorio mínimo con Java, Python, SQL y configuración Kafka."""
@@ -35,3 +41,39 @@ def sample_repo(tmp_path):
     (root / "schema.sql").write_text("CREATE TABLE orders (id INT);\n", encoding="utf-8")
     (root / "pom.xml").write_text("<project/>\n", encoding="utf-8")
     return root
+
+
+class FakeLLM:
+    """Cliente LLM de prueba: responde según el esquema pedido, sin red."""
+    model = "fake-model"
+
+    def __init__(self, overrides=None, fail_on=None):
+        self.calls, self.overrides, self.fail_on = [], overrides or {}, fail_on
+
+    def complete_json(self, task, schema, data, max_tokens=3000):
+        self.calls.append({"task": task, "schema": schema, "data": data})
+        if self.fail_on and self.fail_on in schema:
+            raise RuntimeError("LLM caído")
+        for key, value in self.overrides.items():
+            if key in schema:
+                return value(data) if callable(value) else value
+        if '"reviews"' in schema:
+            return {"reviews": [{"ref": x["ref"], "verdict": "needs_review", "rationale": "revisar", "suggested_fix": ""} for x in data]}
+        if '"purpose"' in schema:
+            ep = data["spring_endpoints"][0]
+            return {"purpose": "Gestiona pedidos", "capabilities": [{"name": "Listar pedidos", "description": "GET /orders",
+                    "evidence": [{"file": ep["file"], "line": ep["line"]}]}], "business_rules": [], "open_questions": ["¿Paginación?"]}
+        if '"overview"' in schema:
+            cls = data["classes"][0]
+            return {"overview": "Servicio Spring", "components": [{"name": cls["name"], "responsibility": "API",
+                    "evidence": [{"file": cls["file"], "line": cls["line"]}]}], "integrations": [], "risks": ["Sin tests"]}
+        if '"flows"' in schema:
+            t = data["topic_candidates"][0]; e = t["evidence"][0]
+            return {"flows": [{"description": "Flujo " + t["topic"], "from": e["repository"], "to": e["repository"], "via": t["topic"],
+                    "confidence": "media", "evidence": [{"repository": e["repository"], "file": e["file"], "line": e["line"]}]}], "observations": []}
+        return {}
+
+
+@pytest.fixture
+def fake_llm():
+    return FakeLLM()
