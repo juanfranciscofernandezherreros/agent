@@ -9,7 +9,7 @@ from typing import Any
 
 import httpx
 
-SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".next", "vendor", ".idea"}
+SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".next", "vendor", ".idea", ".ssh", ".aws", ".azure"}
 SKIP_NAMES = {".env", ".env.local", ".env.production", "id_rsa", "id_ed25519", "credentials", "secrets.json"}
 ALLOWED_SUFFIXES = {
     ".py", ".js", ".jsx", ".ts", ".tsx", ".java", ".go", ".rs", ".cs", ".php",
@@ -40,7 +40,7 @@ def collect_source_context(source_root: Path, max_chars: int = 90000) -> str:
     for path in sorted(source_root.rglob("*")):
         if not path.is_file() or any(part.lower() in SKIP_DIRS for part in path.parts):
             continue
-        if path.name.lower() in SKIP_NAMES or path.suffix.lower() not in ALLOWED_SUFFIXES:
+        if path.name.lower() in SKIP_NAMES or path.name.lower().startswith(".env") or any(token in path.name.lower() for token in ("secret", "credential", "id_rsa", "id_ed25519")) or path.suffix.lower() not in ALLOWED_SUFFIXES:
             continue
         try:
             if path.stat().st_size > 200_000:
@@ -139,6 +139,9 @@ def _safe_relative_path(value: str) -> Path:
         raise CodeGenerationError(f"Ruta de archivo no permitida: {value}")
     if rel.name.lower() in SKIP_NAMES or rel.name.lower().startswith(".env"):
         raise CodeGenerationError(f"No se permite generar archivos de secretos: {value}")
+    reserved = {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
+    if rel.name.split(".")[0].upper() in reserved or rel.name.endswith((" ", ".")):
+        raise CodeGenerationError(f"Nombre de archivo no válido en Windows: {value}")
     if rel.suffix.lower() in {".pem", ".key", ".p12", ".pfx", ".exe", ".dll", ".so", ".bin"}:
         raise CodeGenerationError(f"Tipo de archivo no permitido: {value}")
     return rel
@@ -164,6 +167,7 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
     output_root.mkdir(parents=True, exist_ok=False)
     written: list[dict[str, str]] = []
     warnings: list[str] = []
+    generated_context: list[str] = []
 
     with httpx.Client(timeout=httpx.Timeout(180.0, connect=20.0)) as client:
         plan_raw = _chat(
@@ -211,7 +215,8 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
                 f"INSTRUCCIONES DEL USUARIO: {brief}\n"
                 f"PLAN GENERAL: {plan.get('summary', '')}\n"
                 f"PAQUETE DE RECONSTRUCCIÓN: {package_text}\n"
-                f"CONTEXTO ORIGINAL: {source_context[:50000]}",
+                f"CONTEXTO ORIGINAL: {source_context[:50000]}\\n"
+                f"ARCHIVOS YA GENERADOS (para mantener coherencia): {chr(10).join(generated_context)[-30000:]}",
                 max_tokens=7000
             )
             parsed = _parse_json(file_raw)
@@ -226,6 +231,7 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
                 raise CodeGenerationError(f"Ruta fuera del directorio de salida: {rel.as_posix()}")
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(content, encoding="utf-8")
+            generated_context.append(f"--- {rel.as_posix()} ---\\n{content[:10000]}")
             written.append({
                 "path": rel.as_posix(),
                 "purpose": purpose,
