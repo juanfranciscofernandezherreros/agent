@@ -16,14 +16,6 @@
 ## Arrancar
 `.\\run-windows.ps1`
 
-Aplicación: http://127.0.0.1:8000  
-API interactiva: http://127.0.0.1:8000/docs
+Aplicación: http://127.0.0.1:8001  
+API interactiva: http://127.0.0.1:8001/docs
 
-## Generar código
-Primero analiza un repositorio desde la interfaz. Después llama al endpoint `POST /api/projects/{project_id}/generate` desde /docs con:
-```json
-{"brief":"Reconstruye el servicio manteniendo el comportamiento observado. Añade tests.","max_files":12}
-```
-Consulta el estado con `GET /api/generations/{generation_id}`. Los archivos aparecen bajo `workspaces/<project_id>/generations/<generation_id>/`.
-
-No se ejecuta código generado automáticamente.
