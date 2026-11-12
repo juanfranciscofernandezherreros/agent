@@ -148,7 +148,7 @@ try {
 
     # Preserve the server workspace's relative layout so links work offline.
     foreach ($Repository in @($AnalysisData.repositories)) {
-        $ArtifactDir = [string]$Repository.artifact_dir
+        $ArtifactDir = ([string]$Repository.artifact_dir) -replace '\\', '/'
         if ($ArtifactDir -notmatch '^repositories/[A-Za-z0-9_-]+$') { continue }
         $RepositorySlug = ($ArtifactDir -split '/')[-1]
         $ServiceDir = Join-Path $BundleDir $ArtifactDir
