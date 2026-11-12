@@ -15,5 +15,5 @@ DATA_DIR.mkdir(exist_ok=True)
 WORKSPACES_DIR.mkdir(exist_ok=True)
 
 APP_NAME = "Software Reconstruction Platform"
-APP_VERSION = "4.0.0"
+APP_VERSION = "4.1.0"
 MAX_CLONE_SECONDS = int(os.getenv("MAX_CLONE_SECONDS", "180"))
