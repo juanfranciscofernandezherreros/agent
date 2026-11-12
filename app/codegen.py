@@ -146,7 +146,7 @@ def _safe_relative_path(value: str) -> Path:
 
 def generate_codebase(project_id: str, project_name: str, source_root: Path,
                       reconstruction_package: dict[str, Any], brief: str,
-                      max_files: int = 12) -> dict[str, Any]:
+                      max_files: int = 12, generation_id: str | None = None) -> dict[str, Any]:
     provider, model, api_key, base_url = _provider_settings()
     source_context = collect_source_context(source_root)
     package_text = json.dumps(reconstruction_package, ensure_ascii=False)[:45000]
@@ -159,7 +159,7 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
         "Genera código mantenible y pruebas cuando haya evidencia suficiente."
     )
 
-    run_id = str(uuid.uuid4())
+    run_id = generation_id or str(uuid.uuid4())
     output_root = source_root.parent / "generations" / run_id
     output_root.mkdir(parents=True, exist_ok=False)
     written: list[dict[str, str]] = []
