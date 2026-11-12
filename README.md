@@ -49,4 +49,4 @@ La API interactiva está en /docs. No requiere API key de LLM.
 
 
 ## Generar y abrir el informe integral de Billing en Windows
-Con la API ya arrancada en `http://127.0.0.1:8001`, ejecuta `run-billing.bat`. El BAT envía `billing-platform-full-analysis.json` mediante `curl` a `POST /api/analysis-groups`, espera a que finalice el análisis, descarga `report.html` y abre el informe. Sustituye `ORGANIZACION` por la organización GitHub real en el JSON.
+La primera vez, instala el entorno ejecutando `setup-windows.ps1`. Después, ejecuta `run-billing.bat`: el BAT comprueba si la API está activa y, si no lo está, arranca `run-windows.ps1` en el puerto 8001. Cuando la API responde, envía `billing-platform-full-analysis.json` mediante `curl` a `POST /api/analysis-groups`, espera a que termine el análisis, descarga el informe HTML y lo abre. El JSON utiliza los dos repositorios privados de GitLab SIX; el equipo debe tener acceso y credenciales GitLab configuradas para clonarlos.
