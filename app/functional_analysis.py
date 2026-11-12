@@ -4,7 +4,7 @@ import html
 import json
 import re
 
-SECRET = re.compile(r"(?i)(password|secret|token|api[_-]?key|private[_-]?key)(\\s*[=:]\\s*)[^\\s,;]+")
+SECRET = re.compile(r"(?i)(password|secret|token|api[_-]?key|private[_-]?key)(\s*[=:]\s*)[^\s,;]+")
 
 def analyze_functional_behavior(root: Path) -> dict:
     result = {
@@ -75,7 +75,7 @@ def analyze_functional_behavior(root: Path) -> dict:
                             "return_type": returns, "docstring": doc[:500], "calls": sorted(set(calls))[:40],
                             "conditions": conditions[:30], "raises": raises[:20], "exception_handlers": handlers[:20],
                             "validation_calls": sorted(set(validators)), "possible_state_mutations": sorted(set(mutations)),
-                            "confidence": "medium", "evidence": SECRET.sub(r"\\1\\2[REDACTED]", body[:900])}
+                            "confidence": "medium", "evidence": SECRET.sub(r"\1\2[REDACTED]", body[:900])}
                     key = (rel, start, node.name)
                     if key not in seen:
                         result["operations"].append(item); seen.add(key)
@@ -91,7 +91,7 @@ def analyze_functional_behavior(root: Path) -> dict:
                         result["state_changes"].append({"operation": node.name, "action_candidate": mutation, "file": rel, "line": start, "confidence": "inferred"})
         else:
             ext = path.suffix.lower()
-            pattern = re.compile(r"(?:function\\s+([A-Za-z_$][\\w$]*)|(?:const|let|var)\\s+([A-Za-z_$][\\w$]*)\\s*=\\s*(?:async\\s*)?\\([^)]*\\)\\s*=>|(?:public|private|protected)?\\s*(?:static\\s+)?[\\w<>\\[\\]?]+\\s+([A-Za-z_$][\\w$]*)\\s*\\([^)]*\\)\\s*\\{)")
+            pattern = re.compile(r"(?:function\s+([A-Za-z_$][\w$]*)|(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?\([^)]*\)\s*=>|(?:public|private|protected)?\s*(?:static\s+)?[\w<>\[\]?]+\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{)")
             for n, line in enumerate(lines, 1):
                 match = pattern.search(line)
                 if match:
@@ -102,10 +102,10 @@ def analyze_functional_behavior(root: Path) -> dict:
                             "start_line": n, "end_line": n, "parameters": [], "return_type": None,
                             "docstring": "", "calls": [], "conditions": [], "raises": [],
                             "exception_handlers": [], "validation_calls": [], "possible_state_mutations": [],
-                            "confidence": "low", "evidence": SECRET.sub(r"\\1\\2[REDACTED]", line.strip())[:900]})
+                            "confidence": "low", "evidence": SECRET.sub(r"\1\2[REDACTED]", line.strip())[:900]})
                         seen.add(key)
-                if re.search(r"\\b(if|switch|case|throw|catch|validate|assert|save|update|insert|delete)\\b", line, re.I):
-                    category = "business_rules" if re.search(r"\\b(if|switch|case)\\b", line) else "error_handling" if re.search(r"\\b(throw|catch)\\b", line) else "validations" if re.search(r"\\b(validate|assert)\\b", line, re.I) else "state_changes"
+                if re.search(r"\b(if|switch|case|throw|catch|validate|assert|save|update|insert|delete)\b", line, re.I):
+                    category = "business_rules" if re.search(r"\b(if|switch|case)\b", line) else "error_handling" if re.search(r"\b(throw|catch)\b", line) else "validations" if re.search(r"\b(validate|assert)\b", line, re.I) else "state_changes"
                     result[category].append({"description": line.strip()[:240], "file": rel, "line": n, "confidence": "inferred"})
     for key in ("operations", "business_rules", "validations", "error_handling", "state_changes", "call_references"):
         result[key] = result[key][:5000]
