@@ -5,7 +5,7 @@ from .engines import clone_repository, analyze_repository
 from .deep_analysis import analyze_repository_deep
 from .functional_analysis import analyze_functional_behavior
 from .java_analysis import analyze_java_repository
-from .report_details import java_catalog
+from .report_details import java_catalog, write_individual_reports
 
 def slug(s):
     return re.sub(r"[^a-zA-Z0-9_-]+","-",s).strip("-_")[:60] or "service"
@@ -77,6 +77,7 @@ def run_group_analysis(group_id,name,repositories):
               "functional_analysis":functional,"java_analysis":java,
               "completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
             (dest/"analysis.json").write_text(json.dumps(member,indent=2,ensure_ascii=False),encoding="utf-8")
+            write_individual_reports(dest,item["name"],inv,deep,functional,java,member)
             results.append({"name":item["name"],"inventory":inv,"deep_analysis":deep,
               "functional_analysis":functional,"java_analysis":java,"artifact_dir":str(dest.relative_to(folder))})
         except Exception as exc: failures.append({"repository":item["name"],"error":str(exc)})
