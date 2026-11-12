@@ -34,7 +34,7 @@ def clone_repository(project_id: str, git_url: str, auth_token: str | None = Non
         raise ValueError("Ya existe un clon para este proyecto.")
     cmd = ["git", "clone", "--depth", "1", "--no-recurse-submodules", git_url, str(dest)]
     env = None
-    parsed_host = urlparse(git_url).hostname.lower()
+    parsed_host = urlparse(git_url).netloc.lower()
     if auth_token and auth_host and parsed_host == auth_host.lower():
         import os
         env = os.environ.copy()
