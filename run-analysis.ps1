@@ -126,6 +126,41 @@ try {
 
     Write-Host "Descargando informe HTML..." -ForegroundColor Cyan
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/report.html" -OutFile $ReportPath -UseBasicParsing
+
+    # Descarga un HTML independiente por cada microservicio con candidatos a bugs.
+    $BugReportsDir = Join-Path $ReportDir "$SafeName-bug-reports"
+    $AnalysisData = Invoke-ApiJson -Uri "$Api/api/analysis-groups/$AnalysisGroupId/analysis"
+    $BugReports = @($AnalysisData.bug_reports)
+    if ($BugReports.Count -gt 0) {
+        New-Item -ItemType Directory -Force -Path $BugReportsDir | Out-Null
+        foreach ($BugReport in $BugReports) {
+            $BugFile = [string]$BugReport.file
+            if ($BugFile -notmatch '^[A-Za-z0-9_-]+\.html    if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
+        Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
+    } else {
+        Write-Host "Análisis completado correctamente." -ForegroundColor Green
+    }
+    Write-Host "Informe: $ReportPath" -ForegroundColor Green
+    Start-Process -FilePath $ReportPath
+    Write-Host "El informe se ha abierto en el navegador." -ForegroundColor Green
+    exit 0
+}
+catch {
+    Write-Host ""
+    Write-Host ("ERROR: " + $_.Exception.Message) -ForegroundColor Red
+    Write-Host "Comprueba .env y, si falla el arranque de la API, revisa logs/api.stderr.log."
+    exit 1
+}
+) { continue }
+            $BugUrl = "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$BugFile"
+            Invoke-WebRequest -Uri $BugUrl -OutFile (Join-Path $BugReportsDir $BugFile) -UseBasicParsing
+        }
+        Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/index.html" -OutFile (Join-Path $BugReportsDir "index.html") -UseBasicParsing
+        Write-Host "Informes individuales de posibles bugs: $(Join-Path $BugReportsDir 'index.html')" -ForegroundColor Green
+    } else {
+        Write-Host "No se han detectado candidatos a bugs; no hay informes individuales que generar." -ForegroundColor Green
+    }
+
     Write-Host ""
     if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
         Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
