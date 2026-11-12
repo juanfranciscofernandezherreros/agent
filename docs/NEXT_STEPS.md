@@ -1,14 +1,17 @@
-# Evolución a la plataforma v3 completa
+# Roadmap de evolución
 
-1. Conectar proveedor LLM mediante adaptador y gestión segura de secretos.
-2. Implementar agentes con contratos tipados y evidencias.
-3. Profundizar análisis por lenguaje/framework: AST, rutas, modelos, migraciones e integraciones.
-4. Hacer que Reconstruction Planner ejecute tareas de desarrollo con revisión humana.
-5. Añadir Docker sandbox limitado para build/test.
-6. Crear manifiestos reproducibles de ambos entornos.
-7. Añadir comparadores de DB, eventos, integraciones, seguridad y rendimiento.
-8. Añadir normalizadores explícitos, cobertura por dimensión y oráculos versionados.
-9. Implementar ciclos de root-cause/repair con presupuesto y gates.
-10. Migrar SQLite a PostgreSQL y tareas background a workers durables.
+## Implementado en la versión 3.1
+- Generación de código asistida por LLM: planificación de archivos y generación de contenido en un workspace separado.
+- Proveedores configurables: OpenAI y Ollama mediante API compatible con Chat Completions.
+- Registro de ejecuciones, consulta de estado e informe de archivos.
+- Protección inicial frente a rutas inseguras, archivos de secretos y prompt injection en el contexto del repositorio.
+- El código generado no se ejecuta automáticamente.
 
-No habilitar ejecución automática de repositorios no confiables antes de implementar el sandbox.
+## Pendiente
+1. Sandbox aislado para instalar dependencias, compilar y ejecutar pruebas del código generado.
+2. Comparación de bases de datos, eventos, colas e integraciones.
+3. Reparación automática guiada por diferencias y con límite de iteraciones.
+4. Análisis semántico y dinámico más profundo del repositorio original.
+5. Workers durables, cancelación, reintentos e historial de artefactos.
+
+No ejecutar código de repositorios o generado sin un sandbox con límites de recursos, red y filesystem.
