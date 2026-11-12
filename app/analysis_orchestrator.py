@@ -2,11 +2,8 @@ from pathlib import Path
 import html, json, re, uuid
 from .config import WORKSPACES_DIR
 from .engines import clone_repository
-from .agents import (
-    AnalysisContext, InventoryAgent, DeepAnalysisAgent,
-    FunctionalAnalysisAgent, JavaAnalysisAgent, QualityAnalysisAgent,
-    IntegrationAnalysisAgent,
-)
+from .agents import AnalysisContext
+from .supervisor import default_supervisor
 from .report_details import java_catalog, write_individual_reports
 from .rich_report import build_integral_html
 from .bug_report import build_bug_report_html, build_bug_reports_index
@@ -54,17 +51,16 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
     folder=WORKSPACES_DIR/group_id; folder.mkdir(parents=True,exist_ok=True)
     results,failures=[],[]
     bug_reports=[]
+    supervisor=default_supervisor()
     for item in repositories:
         try:
             member_id=str(uuid.uuid4()); source=clone_repository(member_id,item["git_url"],auth_token=clone_token,auth_host=clone_host)
-            # Fase 1: los analizadores se invocan mediante adaptadores con interfaz común.
-            # Se conserva explícitamente el orden y las dependencias actuales; aún no hay supervisor.
+            # Fase 2: el supervisor decide qué agentes ejecutar y en qué orden según sus dependencias.
             context = AnalysisContext(root=source)
-            inv = InventoryAgent().run(context)
-            deep = DeepAnalysisAgent().run(context)
-            functional = FunctionalAnalysisAgent().run(context)
-            java = JavaAnalysisAgent().run(context)
-            quality = QualityAnalysisAgent().run(context)
+            supervisor.run(context, scope="repository")
+            inv = context.results["inventory"]; deep = context.results["deep_analysis"]
+            functional = context.results["functional_analysis"]; java = context.results["java_analysis"]
+            quality = context.results["quality_analysis"]
             dest=folder/"repositories"/slug(item["name"]); dest.mkdir(parents=True,exist_ok=True)
             report_file = None
             candidates = quality.get("bug_candidates") or []
@@ -92,7 +88,7 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
         except Exception as exc: failures.append({"repository":item["name"],"error":str(exc)})
     if not results: raise RuntimeError("No se pudo analizar ningún repositorio: "+json.dumps(failures,ensure_ascii=False))
     result={"analysis_version":"5.0","group_name":name,"repositories":results,
-      "integration_analysis":IntegrationAnalysisAgent().run(AnalysisContext(data={"repositories": results})),"failures":failures,
+      "integration_analysis":supervisor.run(AnalysisContext(data={"repositories": results}),scope="group")["integration_analysis"],"failures":failures,
       "completion_status":"STATIC_ANALYSIS_COMPLETED" if not failures else "PARTIAL_ANALYSIS_COMPLETED",
       "runtime_validation":"NOT_PERFORMED"}
     (folder/"analysis.json").write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding="utf-8")

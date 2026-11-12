@@ -12,7 +12,8 @@ from .schemas import ProjectCreate, AnalysisGroupCreate, GitLabGroupAnalysisCrea
 from .engines import clone_repository
 from .deep_analysis import build_analysis_markdown
 from .functional_analysis import build_analysis_html
-from .agents import AnalysisContext, InventoryAgent, DeepAnalysisAgent, FunctionalAnalysisAgent, JavaAnalysisAgent
+from .agents import AnalysisContext
+from .supervisor import default_supervisor
 from .analysis_orchestrator import run_group_analysis
 from .gitlab import gitlab_settings, list_group_projects
 
@@ -39,10 +40,10 @@ def run_analysis(project_id: str):
         source=clone_repository(project_id,git_url)
         with connect() as con: con.execute("UPDATE projects SET status='ANALYZING' WHERE id=?",(project_id,))
         context = AnalysisContext(root=source)
-        inventory = InventoryAgent().run(context)
-        deep = DeepAnalysisAgent().run(context)
-        functional = FunctionalAnalysisAgent().run(context)
-        java = JavaAnalysisAgent().run(context)
+        # El análisis individual no incluye calidad: se pide al supervisor solo lo necesario.
+        default_supervisor().run(context, only=["inventory", "deep_analysis", "functional_analysis", "java_analysis"])
+        inventory = context.results["inventory"]; deep = context.results["deep_analysis"]
+        functional = context.results["functional_analysis"]; java = context.results["java_analysis"]
         analysis={"analysis_version":"5.0","functional_analysis":functional,"project_name":name,
           "source_path":str(source),"repository_inventory":inventory,"deep_analysis":deep,
           "java_analysis":java,"completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
