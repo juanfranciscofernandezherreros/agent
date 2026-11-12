@@ -1,13 +1,13 @@
 from pathlib import Path
 import html, json, re, uuid
 from .config import WORKSPACES_DIR
-from .engines import clone_repository, analyze_repository
-from .deep_analysis import analyze_repository_deep
-from .functional_analysis import analyze_functional_behavior
-from .java_analysis import analyze_java_repository
+from .engines import clone_repository
+from .agents import (
+    AnalysisContext, InventoryAgent, DeepAnalysisAgent,
+    FunctionalAnalysisAgent, JavaAnalysisAgent, QualityAnalysisAgent,
+)
 from .report_details import java_catalog, write_individual_reports
 from .rich_report import build_integral_html
-from .quality_analysis import analyze_quality
 from .bug_report import build_bug_report_html, build_bug_reports_index
 
 def slug(s):
@@ -142,9 +142,14 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
     for item in repositories:
         try:
             member_id=str(uuid.uuid4()); source=clone_repository(member_id,item["git_url"],auth_token=clone_token,auth_host=clone_host)
-            inv=analyze_repository(source); deep=analyze_repository_deep(source,inv)
-            functional=analyze_functional_behavior(source); java=analyze_java_repository(source)
-            quality=analyze_quality(source,deep,functional,java)
+            # Fase 1: los analizadores se invocan mediante adaptadores con interfaz común.
+            # Se conserva explícitamente el orden y las dependencias actuales; aún no hay supervisor.
+            context = AnalysisContext(root=source)
+            inv = InventoryAgent().run(context)
+            deep = DeepAnalysisAgent().run(context)
+            functional = FunctionalAnalysisAgent().run(context)
+            java = JavaAnalysisAgent().run(context)
+            quality = QualityAnalysisAgent().run(context)
             dest=folder/"repositories"/slug(item["name"]); dest.mkdir(parents=True,exist_ok=True)
             report_file = None
             candidates = quality.get("bug_candidates") or []
