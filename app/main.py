@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, HTMLResponse
 from datetime import datetime, timezone
 from pathlib import Path
 import json
@@ -10,6 +10,7 @@ from .database import init_db, connect
 from .schemas import ProjectCreate
 from .engines import clone_repository, analyze_repository
 from .deep_analysis import analyze_repository_deep, build_analysis_markdown
+from .functional_analysis import analyze_functional_behavior, build_analysis_html
 
 app = FastAPI(
     title=APP_NAME,
@@ -37,8 +38,10 @@ def run_analysis(project_id: str):
             con.execute("UPDATE projects SET status='ANALYZING' WHERE id=?", (project_id,))
         inventory = analyze_repository(source)
         deep = analyze_repository_deep(source, inventory)
+        functional = analyze_functional_behavior(source)
         analysis = {
-            "analysis_version": "2.0",
+            "analysis_version": "3.0",
+            "functional_analysis": functional,
             "project_name": name,
             "source_path": str(source),
             "repository_inventory": inventory,
@@ -51,6 +54,8 @@ def run_analysis(project_id: str):
         (folder / "analysis.json").write_text(json.dumps(analysis, indent=2, ensure_ascii=False), encoding="utf-8")
         report = build_analysis_markdown(name, inventory, deep)
         (folder / "analysis.md").write_text(report, encoding="utf-8")
+        html_report = build_analysis_html(name, analysis)
+        (folder / "analysis.html").write_text(html_report, encoding="utf-8")
         with connect() as con:
             con.execute(
                 "UPDATE projects SET status='ANALYSIS_COMPLETED',source_path=?,analysis_json=?,reconstruction_json=NULL,last_error=NULL WHERE id=?",
@@ -124,4 +129,16 @@ def get_report(project_id: str):
         if not row:
             raise HTTPException(404, "Proyecto no encontrado")
         raise HTTPException(409, "El informe todavía no está disponible. Estado: " + row["status"])
+    return report_path.read_text(encoding="utf-8")
+
+
+@app.get("/api/projects/{project_id}/report.html", response_class=HTMLResponse)
+def get_html_report(project_id: str):
+    report_path = WORKSPACES_DIR / project_id / "analysis.html"
+    if not report_path.is_file():
+        with connect() as con:
+            row = con.execute("SELECT status,last_error FROM projects WHERE id=?", (project_id,)).fetchone()
+        if not row:
+            raise HTTPException(404, "Proyecto no encontrado")
+        raise HTTPException(409, "El informe HTML todavía no está disponible. Estado: " + row["status"])
     return report_path.read_text(encoding="utf-8")
