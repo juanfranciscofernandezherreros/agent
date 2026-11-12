@@ -6,3 +6,6 @@ data/*
 !data/.gitkeep
 workspaces/*
 !workspaces/.gitkeep
+reports/*
+!reports/.gitkeep
+logs/
