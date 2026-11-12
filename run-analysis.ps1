@@ -138,28 +138,70 @@ try {
     New-Item -ItemType Directory -Force -Path $ReportDir | Out-Null
     $SafeName = ($AnalysisName -replace '[^A-Za-z0-9._-]+','-').Trim('-')
     if ([string]::IsNullOrWhiteSpace($SafeName)) { $SafeName = "analysis" }
-    $ReportPath = Join-Path $ReportDir "$SafeName-$Timestamp.html"
-
-    Write-Host "Descargando informe HTML principal..." -ForegroundColor Cyan
+    $BundleDir = Join-Path $ReportDir "$SafeName-$Timestamp-documentacion"
+    New-Item -ItemType Directory -Force -Path $BundleDir | Out-Null
+    $ReportPath = Join-Path $BundleDir "analysis.html"
+    Write-Host "Descargando documentación HTML completa..." -ForegroundColor Cyan
+    $AnalysisData = Invoke-ApiJson -Uri "$Api/api/analysis-groups/$AnalysisGroupId/analysis"
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/report.html" -OutFile $ReportPath -UseBasicParsing
 
-    Write-Host "Descargando informes individuales de posibles bugs..." -ForegroundColor Cyan
-    $BugReportsDir = Join-Path $ReportDir "$SafeName-bug-reports"
-    $AnalysisData = Invoke-ApiJson -Uri "$Api/api/analysis-groups/$AnalysisGroupId/analysis"
-    $BugReports = @($AnalysisData.bug_reports)
-    if ($BugReports.Count -gt 0) {
-        New-Item -ItemType Directory -Force -Path $BugReportsDir | Out-Null
-        foreach ($BugReport in $BugReports) {
-            $BugFile = [string]$BugReport.file
-            if ($BugFile -notmatch '^[A-Za-z0-9_-]+[.]html$') { continue }
-            $BugUrl = "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$BugFile"
-            Invoke-WebRequest -Uri $BugUrl -OutFile (Join-Path $BugReportsDir $BugFile) -UseBasicParsing
-        }
-        Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/index.html" -OutFile (Join-Path $BugReportsDir "index.html") -UseBasicParsing
-        Write-Host "Índice de informes individuales: $(Join-Path $BugReportsDir 'index.html')" -ForegroundColor Green
+    # Preserve the server workspace's relative layout so links work offline.
+    foreach ($Repository in @($AnalysisData.repositories)) {
+        $ArtifactDir = [string]$Repository.artifact_dir
+        if ($ArtifactDir -notmatch '^repositories/[A-Za-z0-9_-]+
+
+    if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
+        Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
     } else {
-        Write-Host "No se han detectado candidatos a bugs; no hay informes individuales." -ForegroundColor Green
+        Write-Host "Análisis completado correctamente." -ForegroundColor Green
     }
+    Write-Host "Documentación completa: $BundleDir" -ForegroundColor Green
+    Write-Host "Índice de documentación: $(Join-Path $BundleDir 'index.html')" -ForegroundColor Green
+    Start-Process -FilePath (Join-Path $BundleDir "index.html")
+    exit 0
+}
+catch {
+    Write-Host ""
+    Write-Host ("ERROR: " + $_.Exception.Message) -ForegroundColor Red
+    Write-Host "Comprueba .env y, si falla el arranque de la API, revisa logs/api.stderr.log."
+    exit 1
+}
+) { continue }
+        $RepositorySlug = ($ArtifactDir -split '/')[-1]
+        $ServiceDir = Join-Path $BundleDir $ArtifactDir
+        New-Item -ItemType Directory -Force -Path $ServiceDir | Out-Null
+        $ServiceUrl = "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/report.html"
+        Invoke-WebRequest -Uri $ServiceUrl -OutFile (Join-Path $ServiceDir "analysis.html") -UseBasicParsing
+    }
+
+    $BugReportsDir = Join-Path $BundleDir "bug-reports"
+    New-Item -ItemType Directory -Force -Path $BugReportsDir | Out-Null
+    foreach ($BugReport in @($AnalysisData.bug_reports)) {
+        $BugFile = [string]$BugReport.file
+        if ($BugFile -notmatch '^[A-Za-z0-9_-]+[.]html
+
+    if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
+        Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
+    } else {
+        Write-Host "Análisis completado correctamente." -ForegroundColor Green
+    }
+    Write-Host "Informe principal: $ReportPath" -ForegroundColor Green
+    Start-Process -FilePath $ReportPath
+    exit 0
+}
+catch {
+    Write-Host ""
+    Write-Host ("ERROR: " + $_.Exception.Message) -ForegroundColor Red
+    Write-Host "Comprueba .env y, si falla el arranque de la API, revisa logs/api.stderr.log."
+    exit 1
+}
+) { continue }
+        Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$BugFile" -OutFile (Join-Path $BugReportsDir $BugFile) -UseBasicParsing
+    }
+    Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/index.html" -OutFile (Join-Path $BugReportsDir "index.html") -UseBasicParsing
+    Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/documentation/index.html" -OutFile (Join-Path $BundleDir "index.html") -UseBasicParsing
+    Write-Host "Índice de documentación: $(Join-Path $BundleDir 'index.html')" -ForegroundColor Green
+    Write-Host "Documentación completa: $BundleDir" -ForegroundColor Green
 
     if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
         Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow
