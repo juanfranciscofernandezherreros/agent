@@ -6,11 +6,12 @@ import uuid, json
 
 from .config import APP_NAME, APP_VERSION, WORKSPACES_DIR
 from .database import init_db, connect
-from .schemas import ProjectCreate, EquivalenceRequest, CodeGenerationRequest, StateSnapshotComparisonRequest
+from .schemas import ProjectCreate, EquivalenceRequest, CodeGenerationRequest, StateSnapshotComparisonRequest, RepairRequest
 from .engines import clone_repository, analyze_repository, build_reconstruction_package
 from .equivalence import compare_services
 from .state_equivalence import compare_state_snapshots
 from .codegen import generate_codebase
+from .repair import repair_generated_workspace
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION, description="Reverse engineering, code reconstruction and HTTP/state equivalence MVP")
 
@@ -75,7 +76,7 @@ button{background:#172b4d;color:white;cursor:pointer}pre{white-space:pre-wrap;ov
 .small{color:#596579;font-size:.92rem}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:700px){.grid{grid-template-columns:1fr}}</style></head><body>
 <h1>Software Reconstruction Platform <small>v3.2</small></h1>
-<p class="small">Análisis, generación LLM y comparación diferencial HTTP, DB, eventos e integraciones.</p>
+<p class="small">Análisis, generación LLM, comparación diferencial y reparación guiada.</p>
 <div class="card"><h2>1 · Crear proyecto y analizar Git</h2><label>Nombre</label><input id="name" placeholder="Mi microservicio"><label>URL Git HTTPS</label><input id="git" placeholder="https://github.com/usuario/repositorio.git"><button onclick="createProject()">Clonar y analizar</button><pre id="createOut">Esperando...</pre></div>
 <div class="card"><h2>2 · Proyectos</h2><button onclick="loadProjects()">Actualizar</button><pre id="projectsOut">Pulsa actualizar.</pre></div>
 <div class="card"><h2>3 · Generar código reconstruido</h2><label>ID del proyecto analizado</label><input id="generationProject" placeholder="UUID del proyecto">
@@ -84,7 +85,13 @@ button{background:#172b4d;color:white;cursor:pointer}pre{white-space:pre-wrap;ov
 <div class="card"><h2>4 · Comparación HTTP</h2><p class="small">Introduce URLs base locales y casos method, path, headers, params y json.</p>
 <div class="grid"><div><label>Original</label><input id="orig" placeholder="http://127.0.0.1:8001"></div><div><label>Reconstruido</label><input id="recon" placeholder="http://127.0.0.1:8002"></div></div>
 <label>Casos JSON</label><textarea id="cases" rows="5">[{"method":"GET","path":"/health"},{"method":"GET","path":"/"}]</textarea><button onclick="compareHttp()">Comparar HTTP</button><pre id="compareOut">Esperando...</pre></div>
-<div class="card"><h2>5 · Comparación DB, eventos e integraciones</h2>
+<div class="card"><h2>5 · Reparación guiada de diferencias</h2>
+<p class="small">Introduce el ID de generación y el ID del informe de equivalencia con diferencias. Los cambios solo afectan al workspace generado.</p>
+<label>ID de generación</label><input id="repairGeneration" placeholder="UUID de generación">
+<label>ID del informe de equivalencia</label><input id="repairComparison" placeholder="run_id">
+<label>Máximo de archivos a corregir (1-10)</label><input id="repairMaxFiles" type="number" min="1" max="10" value="5">
+<button onclick="repairCode()">Diagnosticar y reparar</button><pre id="repairOut">Esperando...</pre></div>
+<div class="card"><h2>6 · Comparación DB, eventos e integraciones</h2>
 <p class="small">Pega los snapshots exportados de ambos entornos. DB compara esquema y filas sin depender del orden; eventos e integraciones comparan secuencia, payloads y resultados.</p>
 <div class="grid"><div><label>Snapshot original</label><textarea id="snapshotOriginal" rows="14">{"database":{"schema":{},"tables":{}},"events":[],"integrations":[]}</textarea></div>
 <div><label>Snapshot reconstruido</label><textarea id="snapshotReconstructed" rows="14">{"database":{"schema":{},"tables":{}},"events":[],"integrations":[]}</textarea></div></div>
@@ -94,6 +101,12 @@ async function createProject(){let o=document.getElementById('createOut');o.text
 async function loadProjects(){let r=await fetch('/api/projects');document.getElementById('projectsOut').textContent=JSON.stringify(await r.json(),null,2)}
 async function generateCode(){let o=document.getElementById('generationOut');o.textContent='Encolando generación...';try{let id=document.getElementById('generationProject').value;let r=await fetch('/api/projects/'+encodeURIComponent(id)+'/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brief:document.getElementById('brief').value,max_files:Number(document.getElementById('maxFiles').value)})});let d=await r.json();o.textContent=JSON.stringify(d,null,2);if(d.generation_id){let run=async()=>{let q=await fetch('/api/generations/'+d.generation_id);let v=await q.json();o.textContent=JSON.stringify(v,null,2);if(['QUEUED','RUNNING'].includes(v.status))setTimeout(run,3000)};setTimeout(run,2500)}}catch(e){o.textContent=String(e)}}
 async function compareHttp(){let o=document.getElementById('compareOut');o.textContent='Ejecutando...';try{let body={original_url:document.getElementById('orig').value,reconstructed_url:document.getElementById('recon').value,cases:JSON.parse(document.getElementById('cases').value)};let r=await fetch('/api/equivalence/compare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});o.textContent=JSON.stringify(await r.json(),null,2)}catch(e){o.textContent=String(e)}}
+async function repairCode(){let o=document.getElementById('repairOut');o.textContent='Encolando reparación...';try{
+let id=document.getElementById('repairGeneration').value;
+let r=await fetch('/api/generations/'+encodeURIComponent(id)+'/repair',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({equivalence_run_id:document.getElementById('repairComparison').value,max_files:Number(document.getElementById('repairMaxFiles').value)})});
+let d=await r.json();o.textContent=JSON.stringify(d,null,2);
+if(d.repair_id){let poll=async()=>{let q=await fetch('/api/repairs/'+d.repair_id);let v=await q.json();o.textContent=JSON.stringify(v,null,2);if(['QUEUED','RUNNING'].includes(v.status))setTimeout(poll,2500)};setTimeout(poll,2000)}
+}catch(e){o.textContent=String(e)}}
 async function compareState(){let o=document.getElementById('stateOut');o.textContent='Comparando snapshots...';try{let body={original:JSON.parse(document.getElementById('snapshotOriginal').value),reconstructed:JSON.parse(document.getElementById('snapshotReconstructed').value)};let r=await fetch('/api/equivalence/compare-state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});o.textContent=JSON.stringify(await r.json(),null,2)}catch(e){o.textContent=String(e)}}
 loadProjects();
 </script></body></html>""")
@@ -176,6 +189,72 @@ def equivalence_state(payload: StateSnapshotComparisonRequest):
         con.execute("INSERT INTO equivalence_runs(id,created_at,result_json) VALUES(?,?,?)",
                     (run_id,now(),json.dumps(result,ensure_ascii=False)))
     return {"run_id":run_id,**result}
+
+
+def run_repair(repair_id: str, generation_id: str, equivalence_run_id: str, max_files: int):
+    try:
+        with connect() as con:
+            con.execute("UPDATE repair_runs SET status='RUNNING' WHERE id=?", (repair_id,))
+            generation = con.execute("SELECT result_json,status FROM generation_runs WHERE id=?", (generation_id,)).fetchone()
+            comparison = con.execute("SELECT result_json FROM equivalence_runs WHERE id=?", (equivalence_run_id,)).fetchone()
+        if not generation or generation["status"] != "COMPLETED" or not generation["result_json"]:
+            raise RuntimeError("La generación debe estar completada antes de repararla.")
+        if not comparison:
+            raise RuntimeError("No existe el informe de equivalencia indicado.")
+        report = json.loads(comparison["result_json"])
+        has_mismatch = (
+            report.get("overall_status") == "MISMATCH"
+            or any(v in {"MISMATCH", "PARTIALLY_VERIFIED"} for v in (report.get("dimension_status") or {}).values())
+            or report.get("summary", {}).get("failed", 0) > 0
+        )
+        if not has_mismatch:
+            raise RuntimeError("El informe no contiene diferencias reparables.")
+        result = repair_generated_workspace(json.loads(generation["result_json"]), report, max_files=max_files)
+        with connect() as con:
+            con.execute("UPDATE repair_runs SET status=?,result_json=? WHERE id=?",
+                        (result["status"], json.dumps(result, ensure_ascii=False), repair_id))
+    except Exception as exc:
+        with connect() as con:
+            con.execute("UPDATE repair_runs SET status='FAILED',error=? WHERE id=?", (str(exc), repair_id))
+
+@app.post("/api/generations/{generation_id}/repair", status_code=202)
+def start_repair(generation_id: str, payload: RepairRequest, background_tasks: BackgroundTasks):
+    with connect() as con:
+        generation = con.execute("SELECT status,result_json FROM generation_runs WHERE id=?", (generation_id,)).fetchone()
+        comparison = con.execute("SELECT result_json FROM equivalence_runs WHERE id=?", (payload.equivalence_run_id,)).fetchone()
+        if not generation:
+            raise HTTPException(404, "Generación no encontrada")
+        if generation["status"] != "COMPLETED" or not generation["result_json"]:
+            raise HTTPException(409, "La generación debe estar completada antes de repararla.")
+        if not comparison:
+            raise HTTPException(404, "Informe de equivalencia no encontrado")
+        report = json.loads(comparison["result_json"])
+        has_mismatch = (
+            report.get("overall_status") == "MISMATCH"
+            or any(v in {"MISMATCH", "PARTIALLY_VERIFIED"} for v in (report.get("dimension_status") or {}).values())
+            or report.get("summary", {}).get("failed", 0) > 0
+        )
+        if not has_mismatch:
+            raise HTTPException(409, "El informe no contiene diferencias detectadas.")
+        repair_id = str(uuid.uuid4())
+        con.execute("INSERT INTO repair_runs(id,generation_id,equivalence_run_id,status,created_at) VALUES(?,?,?,?,?)",
+                    (repair_id, generation_id, payload.equivalence_run_id, "QUEUED", now()))
+    background_tasks.add_task(run_repair, repair_id, generation_id, payload.equivalence_run_id, payload.max_files)
+    return {"repair_id": repair_id, "generation_id": generation_id, "status": "QUEUED",
+            "message": "Reparación guiada iniciada. Los cambios solo afectan al workspace generado; no se ejecuta código."}
+
+@app.get("/api/repairs/{repair_id}")
+def get_repair(repair_id: str):
+    with connect() as con:
+        row = con.execute("SELECT * FROM repair_runs WHERE id=?", (repair_id,)).fetchone()
+    if not row:
+        raise HTTPException(404, "Reparación no encontrada")
+    result = dict(row)
+    if result.get("result_json"):
+        result["result"] = json.loads(result.pop("result_json"))
+    else:
+        result.pop("result_json", None)
+    return result
 
 @app.get("/api/equivalence/{run_id}")
 def get_equivalence(run_id: str):
