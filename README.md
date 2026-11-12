@@ -1,6 +1,6 @@
 # Deep Reverse Engineering & Analysis Orchestrator
 
-Versión 5.0: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
+Versión 5.1: plataforma de análisis estático profundo para uno o varios microservicios. Coordina inventario, análisis funcional, extracción Java/Spring, SQL, Kafka/Avro y correlación entre repositorios. No ejecuta ni modifica el código analizado.
 
 ## Capacidades
 - Clonado Git HTTPS aislado por repositorio.
@@ -8,10 +8,10 @@ Versión 5.0: plataforma de análisis estático profundo para uno o varios micro
 - Análisis funcional estático: operaciones, ramas, validaciones, errores, efectos y referencias de llamadas.
 - Parser Java heurístico: clases, métodos, llamadas por nombre, inyección de dependencias, mappings Spring, listeners/productores Kafka, SQL y contratos Avro/Proto.
 - Análisis coordinado de hasta 10 repositorios en una ejecución: candidatos de topics y contratos compartidos.
-- Artefactos JSON, Markdown y HTML con búsqueda de correlaciones.
+- Informes HTML integrales y por microservicio: resumen ejecutivo, arquitectura, flujo, integraciones, API, configuración, seguridad, persistencia, reglas/ramas inferidas, errores, inventario Java clase/método filtrable, riesgos y limitaciones. También se generan JSON y Markdown.
 
 ## Límites
-El parser Java no sustituye a javac ni resuelve el grafo completo de tipos, sobrecargas, proxies Spring o dispatch dinámico. Las coincidencias de topic/contrato son candidatos, no prueba de conexión o compatibilidad. No se ejecutan tests, SQL, Maven/Gradle, contenedores ni servicios. No se leen valores .env. El análisis no certifica comportamiento runtime.
+El parser Java no sustituye a javac ni resuelve el grafo completo de tipos, sobrecargas, proxies Spring o dispatch dinámico. Las coincidencias de topic/contrato son candidatos, no prueba de conexión o compatibilidad. El informe HTML estructura la evidencia disponible; el mapeo de payload campo a campo, la semántica de isLast/UUID y la compatibilidad real de schemas requieren extracción/validación adicional y no se deben dar por demostrados. No se ejecutan tests, SQL, Maven/Gradle, contenedores ni servicios. No se leen valores .env. El análisis no certifica comportamiento runtime.
 
 ## Windows
     git pull origin main
