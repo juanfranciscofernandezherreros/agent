@@ -215,7 +215,7 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
                 f"INSTRUCCIONES DEL USUARIO: {brief}\n"
                 f"PLAN GENERAL: {plan.get('summary', '')}\n"
                 f"PAQUETE DE RECONSTRUCCIÓN: {package_text}\n"
-                f"CONTEXTO ORIGINAL: {source_context[:50000]}\\n"
+                f"CONTEXTO ORIGINAL: {source_context[:50000]}\n"
                 f"ARCHIVOS YA GENERADOS (para mantener coherencia): {chr(10).join(generated_context)[-30000:]}",
                 max_tokens=7000
             )
@@ -231,7 +231,7 @@ def generate_codebase(project_id: str, project_name: str, source_root: Path,
                 raise CodeGenerationError(f"Ruta fuera del directorio de salida: {rel.as_posix()}")
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(content, encoding="utf-8")
-            generated_context.append(f"--- {rel.as_posix()} ---\\n{content[:10000]}")
+            generated_context.append(f"--- {rel.as_posix()} ---\n{content[:10000]}")
             written.append({
                 "path": rel.as_posix(),
                 "purpose": purpose,
