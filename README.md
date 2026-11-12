@@ -115,8 +115,9 @@ El lanzador invoca run-analysis.ps1, que:
 3. Arranca la API local en el puerto 8001 si no está disponible.
 4. Envía el ID configurado a GitLab para descubrir el grupo y sus subgrupos.
 5. Espera a que termine el análisis.
-6. Descarga el informe HTML en la carpeta configurada, con nombre y marca temporal.
-7. Abre el informe en el navegador predeterminado.
+6. Descarga el informe HTML principal en la carpeta configurada.
+7. Descarga también un HTML por cada microservicio con posibles bugs, junto con un índice navegable, en una subcarpeta con sufijo `-bug-reports`.
+8. Abre el informe principal en el navegador predeterminado.
 
 No es necesario editar scripts para cambiar de grupo: modifica GITLAB_GROUP_ID en .env. Si ANALYSIS_NAME está vacío, el nombre se genera automáticamente a partir del grupo y la fecha/hora.
 
