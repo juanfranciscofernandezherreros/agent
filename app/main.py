@@ -15,6 +15,7 @@ from .functional_analysis import build_analysis_html
 from .agents import AnalysisContext
 from .supervisor import default_supervisor
 from .communication import SharedStore
+from . import llm
 from .analysis_orchestrator import run_group_analysis
 from .gitlab import gitlab_settings, list_group_projects
 
@@ -95,7 +96,18 @@ STARTED_AT=datetime.now(timezone.utc).isoformat()
 STARTED_EPOCH=int(datetime.now(timezone.utc).timestamp())
 
 @app.get("/health")
-def health(): return {"status":"ok","version":APP_VERSION,"mode":"deep_analysis_orchestrator","started_at":STARTED_AT,"started_epoch":STARTED_EPOCH}
+def health(): return {"status":"ok","version":APP_VERSION,"mode":"deep_analysis_orchestrator","started_at":STARTED_AT,"started_epoch":STARTED_EPOCH,"llm":llm.status()}
+
+@app.get("/api/llm")
+def get_llm_configuration():
+    """Proveedor y modelo activos para los agentes LLM (sin claves)."""
+    return llm.status()
+
+@app.get("/api/llm/models")
+def get_llm_models(provider: str | None = None):
+    """Modelos que ofrece el proveedor configurado (o el indicado) a esta cuenta."""
+    try: return {"provider": llm.normalize_provider(provider or os.getenv("LLM_PROVIDER")), "models": llm.list_models(provider=provider)}
+    except llm.LLMError as exc: raise HTTPException(400, str(exc))
 
 @app.post("/api/projects",status_code=202)
 def create_project(payload:ProjectCreate,background_tasks:BackgroundTasks):

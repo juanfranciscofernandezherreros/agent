@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 
 from . import config
 from .config import APP_VERSION
-from .llm import agents_enabled
+from .llm import status as llm_status
 
 # Resultados que no se guardan: cambian aunque el código no cambie, o dependen de la ejecución.
 NOT_CACHED = ("activity_analysis", "repository_report")
@@ -32,7 +32,10 @@ def _dir(item: dict):
 
 
 def _signature(commit: str) -> dict:
-    return {"commit": commit, "app_version": APP_VERSION, "llm_agents": agents_enabled()}
+    # Cambiar de proveedor o de modelo invalida la caché: las interpretaciones LLM dependen de ellos.
+    info = llm_status()
+    llm = (info.get("provider", "") + ":" + info.get("model", "")) if info["active"] else False
+    return {"commit": commit, "app_version": APP_VERSION, "llm_agents": llm}
 
 
 def load(item: dict, commit: str | None):

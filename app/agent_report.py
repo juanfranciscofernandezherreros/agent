@@ -87,8 +87,10 @@ def build_sections(insights: dict, runs: list[dict], scope: str) -> list[dict]:
         if c.get("observations"):
             sections.append({"title": "Observaciones de correlación (LLM)", "bullets": c["observations"]})
     if llm_ran:
+        used = sorted({str(v.get("provider", "?")) + " · " + str(v.get("model", "?"))
+                       for k, v in insights.items() if k.startswith("llm_") and isinstance(v, dict)})
         sections.append({"title": "Cómo leer las secciones LLM",
-                         "note": "Son interpretaciones generadas por un modelo a partir de resultados estáticos, no hechos verificados. "
+                         "note": "Modelo utilizado: " + ", ".join(used) + ". Son interpretaciones generadas por un modelo a partir de resultados estáticos, no hechos verificados. "
                                  "La validación cruzada comprueba sus citas contra el repositorio."})
 
     if insights.get("group_activity"):

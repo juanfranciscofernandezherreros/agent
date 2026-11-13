@@ -25,7 +25,10 @@ def test_enabled_flag_alone_is_not_enough(monkeypatch):
     monkeypatch.delenv("LLM_API_KEY", raising=False)
     assert LLMClient.from_env() is None
     monkeypatch.setenv("LLM_API_KEY", "k")
-    assert LLMClient.from_env().model
+    monkeypatch.delenv("LLM_MODEL", raising=False)
+    assert LLMClient.from_env() is None  # sin modelo tampoco
+    monkeypatch.setenv("LLM_MODEL", "modelo-x")
+    assert LLMClient.from_env().model == "modelo-x"
 
 
 def test_llm_agents_produce_normalised_payloads_and_evidence(sample_repo, fake_llm):

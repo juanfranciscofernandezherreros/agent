@@ -4,7 +4,9 @@ import pytest
 @pytest.fixture(autouse=True)
 def _llm_agents_off(monkeypatch):
     """Las pruebas nunca llaman a un LLM real salvo que inyecten un cliente falso."""
-    monkeypatch.delenv("LLM_AGENTS_ENABLED", raising=False)
+    for name in ("LLM_AGENTS_ENABLED", "LLM_PROVIDER", "LLM_MODEL", "LLM_API_KEY", "LLM_BASE_URL", "OLLAMA_BASE_URL",
+                 "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "GEMINI_API_KEY", "LLM_TEMPERATURE", "LLM_MAX_TOKENS"):
+        monkeypatch.delenv(name, raising=False)
 
 
 @pytest.fixture
@@ -46,6 +48,7 @@ def sample_repo(tmp_path):
 class FakeLLM:
     """Cliente LLM de prueba: responde según el esquema pedido, sin red."""
     model = "fake-model"
+    provider = "fake"
 
     def __init__(self, overrides=None, fail_on=None):
         self.calls, self.overrides, self.fail_on = [], overrides or {}, fail_on

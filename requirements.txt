@@ -3,3 +3,9 @@ uvicorn[standard]>=0.30,<1
 pydantic>=2.8,<3
 httpx>=0.27,<1
 python-dotenv>=1.0,<2
+# Agentes LLM (opcionales): un proveedor por paquete, seleccionable con LLM_PROVIDER
+langchain>=1.0,<2
+langchain-openai>=1.0,<2
+langchain-anthropic>=1.0,<2
+langchain-google-genai>=4.0,<5
+langchain-ollama>=1.0,<2

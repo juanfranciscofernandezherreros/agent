@@ -8,10 +8,17 @@ from __future__ import annotations
 
 from ..codegen import _redact
 from ..communication.contracts import AgentSkipped, Evidence
-from ..llm import LLMClient, compact
+from ..llm import LLMClient, compact, status as llm_status
 from .context import AnalysisContext, AnalyzerAgent
 
 VERDICTS = ("likely_bug", "false_positive", "needs_review")
+
+
+def skip_reason() -> str:
+    info = llm_status()
+    if not info["enabled"]:
+        return "Agentes LLM desactivados (LLM_AGENTS_ENABLED=false)."
+    return "Agentes LLM sin configurar: " + info.get("problem", "revisa LLM_PROVIDER y LLM_MODEL.")
 
 
 def _as_list(value) -> list:
@@ -41,12 +48,13 @@ class LLMAgent(AnalyzerAgent):
     def client(self) -> LLMClient:
         client = self._client or LLMClient.from_env()
         if client is None:
-            raise AgentSkipped("Agentes LLM desactivados o sin configurar (LLM_AGENTS_ENABLED / LLM_API_KEY).")
+            raise AgentSkipped(skip_reason())
         return client
 
     def finish(self, context: AnalysisContext, client: LLMClient, payload: dict) -> dict:
         payload["generated_by"] = "llm"
         payload["model"] = getattr(client, "model", "unknown")
+        payload["provider"] = getattr(client, "provider", "unknown")
         payload["confidence"] = "llm_inferred"
         payload["limitations"] = [
             "Interpretación generada por un LLM a partir de resultados estáticos; puede contener errores.",
