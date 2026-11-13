@@ -28,15 +28,70 @@ def build_bug_report_html(repository, group_name, quality, service_slug=None):
     counts = {s: sum(1 for x in findings if str(x.get("severity", "")).lower() == s) for s in ("high", "medium", "low")}
     cards = "".join(
         "<article class='finding " + _e(str(x.get("severity", "low")).lower()) + "'>"
-        "<div class='top'><b>" + _e(str(x.get("severity", "low")).upper()) + "</b><span>" + _e(x.get("code", "N/D")) + "</span></div>"
-        "<h2>" + _e(x.get("title", "Posible bug")) + "</h2><p>" + _e(x.get("description", "")) + "</p>"
-        "<dl><dt>Archivo</dt><dd><code>" + _e(x.get("file", "N/D")) + "</code></dd>"
-        "<dt>Línea</dt><dd>" + _e(x.get("line", "N/D")) + "</dd><dt>Confianza</dt><dd>" + _e(x.get("confidence", "heuristic_candidate")) + "</dd></dl>"
-        "<h3>Evidencia</h3><pre>" + _e(x.get("excerpt", "")) + "</pre>"
-        "<h3>Tarea recomendada</h3><p>" + _e(TASKS.get(x.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")) + "</p></article>"
-        for x in findings
+        + ("<label class='select-finding'><input class='bug-select' type='checkbox' value='" + str(index) + "'> Seleccionar para exportar</label>" if service_slug else "")
+        + "<div class='top'><b>" + _e(str(x.get("severity", "low")).upper()) + "</b><span>" + _e(x.get("code", "N/D")) + "</span></div>"
+        + "<h2>" + _e(x.get("title", "Posible bug")) + "</h2><p>" + _e(x.get("description", "")) + "</p>"
+        + "<dl><dt>Archivo</dt><dd><code>" + _e(x.get("file", "N/D")) + "</code></dd>"
+        + "<dt>Línea</dt><dd>" + _e(x.get("line", "N/D")) + "</dd><dt>Confianza</dt><dd>" + _e(x.get("confidence", "heuristic_candidate")) + "</dd></dl>"
+        + "<h3>Evidencia</h3><pre>" + _e(x.get("excerpt", "")) + "</pre>"
+        + "<h3>Tarea recomendada</h3><p>" + _e(TASKS.get(x.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")) + "</p></article>"
+        for index, x in enumerate(findings)
     )
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    toolbar = """<section id="export-panel" class="notice export-panel">
+<label><input id="select-all-bugs" type="checkbox"> Seleccionar todos</label>
+<button id="export-selected-bugs" type="button">Exportar selección (JSON + HTML)</button>
+<span id="export-status" role="status" aria-live="polite">Selecciona uno o varios hallazgos.</span>
+</section>"""
+    script = r"""<script>
+(function () {
+  const checks = Array.from(document.querySelectorAll(".bug-select"));
+  const selectAll = document.getElementById("select-all-bugs");
+  const button = document.getElementById("export-selected-bugs");
+  const status = document.getElementById("export-status");
+  if (!button || !checks.length) return;
+  selectAll.addEventListener("change", () => checks.forEach((item) => { item.checked = selectAll.checked; }));
+  checks.forEach((item) => item.addEventListener("change", () => {
+    selectAll.checked = checks.every((entry) => entry.checked);
+    selectAll.indeterminate = checks.some((entry) => entry.checked) && !selectAll.checked;
+  }));
+  button.addEventListener("click", async () => {
+    const selected = checks.filter((item) => item.checked).map((item) => Number(item.value));
+    if (!selected.length) { status.textContent = "Selecciona al menos un hallazgo."; return; }
+    const parts = window.location.pathname.split("/");
+    const groupId = parts[3];
+    const reportName = parts[5];
+    if (!groupId || !reportName) { status.textContent = "No se pudo identificar el análisis actual."; return; }
+    button.disabled = true;
+    status.textContent = "Generando los ficheros…";
+    try {
+      const response = await fetch("/api/analysis-groups/" + encodeURIComponent(groupId) + "/bug-reports/export", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ report_name: reportName, finding_indexes: selected })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.detail || "No se pudo generar la exportación.");
+      const download = (content, type, filename) => {
+        const url = URL.createObjectURL(new Blob([content], { type }));
+        const anchor = document.createElement("a");
+        anchor.href = url; anchor.download = filename; document.body.appendChild(anchor); anchor.click(); anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      };
+      download(JSON.stringify(result.json_data, null, 2), "application/json;charset=utf-8", result.json_filename);
+      download(result.html_content, "text/html;charset=utf-8", result.html_filename);
+      status.textContent = "Exportación completada: JSON y HTML descargados.";
+    } catch (error) {
+      status.textContent = error.message || "Error de conexión con la API local.";
+    } finally { button.disabled = false; }
+  });
+})();
+</script>"""
+    styles = """
+.export-panel{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.export-panel button{background:#2457c5;color:white;border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
+.export-panel button:disabled{opacity:.6;cursor:wait}
+.select-finding{display:inline-flex;align-items:center;gap:8px;font-weight:650;color:#2457c5;margin-bottom:10px}
+"""
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Posibles bugs - """ + _e(repository) + """</title><style>
 *{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#172033;font:15px/1.55 system-ui}
@@ -46,7 +101,8 @@ main{max-width:1000px;margin:25px auto;padding:0 18px}.metrics{display:grid;grid
 .metric span,footer{color:#5b6678}.finding{margin:14px 0;border-left:5px solid #8b96a8}.finding.high{border-left-color:#c43d4b}.finding.medium{border-left-color:#c28a23}.finding.low{border-left-color:#3975bb}
 .top{display:flex;gap:12px}.top b{font-size:.8rem;padding:3px 8px;border-radius:20px;background:#edf1f6}.high .top b{background:#fdebed;color:#a62231}.medium .top b{background:#fff3d9;color:#805500}
 h1{font-size:clamp(1.6rem,4vw,2.2rem);margin:0}h2{font-size:1.2rem}dl{display:grid;grid-template-columns:100px 1fr;gap:5px 12px}dt{font-weight:650;color:#5b6678}dd{margin:0;overflow-wrap:anywhere}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff;padding:13px;border-radius:8px}.notice{margin:16px 0;color:#5b6678}footer{padding:22px 0;font-size:.85rem}.doc-links{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.doc-links a{color:#2457c5;text-decoration:none;border:1px solid #dce3ed;border-radius:7px;padding:7px 10px;font-weight:650}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff;padding:13px;border-radius:8px}.notice{margin:16px 0;color:#5b6678}.doc-links{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.doc-links a{color:#2457c5;text-decoration:none;border:1px solid #dce3ed;border-radius:7px;padding:7px 10px;font-weight:650}
+""" + styles + """
 @media(max-width:520px){header{padding:25px 18px}dl{grid-template-columns:1fr}dd{margin-bottom:7px}}
 </style></head><body><header><p>INFORME INDIVIDUAL DE HALLAZGOS</p><h1>""" + _e(repository) + """</h1><p>Conjunto analizado: """ + _e(group_name) + """</p></header><main><nav class="doc-links"><a href="../analysis.html">← Volver al informe global</a>""" + ("<a href='../repositories/" + _e(service_slug) + "/analysis.html'>Abrir ficha técnica del microservicio</a>" if service_slug else "") + """</nav>
 <section class="metrics"><div class="metric"><strong>""" + _e(quality.get("score", "N/D")) + """ / 100</strong><span>Calidad estática: """ + _e(quality.get("rating", "Sin puntuación")) + """</span></div>
@@ -54,7 +110,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff
 <div class="metric"><strong>""" + str(counts["high"]) + """</strong><span>Prioridad alta</span></div>
 <div class="metric"><strong>""" + str(counts["medium"]) + """</strong><span>Prioridad media</span></div></section>
 <div class="notice"><b>Importante:</b> son candidatos heurísticos, no defectos confirmados. Puede haber falsos positivos y negativos. No se ha ejecutado el servicio ni sus pruebas. Candidatos indicados por el analizador: """ + _e(summary.get("bug_candidates", len(findings))) + """.</div>
-<h2>Hallazgos y tareas recomendadas</h2>""" + cards + """<footer>Generado: """ + generated + """ · Revisar cada evidencia y validarla mediante pruebas.</footer></main></body></html>"""
+<h2>Hallazgos y tareas recomendadas</h2>""" + (toolbar if service_slug else "") + cards + """<footer>Generado: """ + generated + """ · Revisar cada evidencia y validarla mediante pruebas.</footer></main>""" + (script if service_slug else "") + """</body></html>"""
 
 def build_bug_reports_index(group_name, reports):
     rows = "".join("<li><a href='" + _e(x["file"]) + "'>" + _e(x["repository"]) + "</a><span>" + _e(x["count"]) + " posibles bugs</span></li>" for x in reports)
