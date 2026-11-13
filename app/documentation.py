@@ -73,8 +73,7 @@ SEVERITY = {"high": ("Alta", 0), "medium": ("Media", 1), "low": ("Baja", 2)}
 
 
 def _bug_selection_section(repos, bug_by_repo):
-    """Lista seleccionable de todos los posibles bugs. El botón Enviar todavía no hace nada:
-    queda preparado para que un agente posterior reciba la selección (ver window.selectedBugs())."""
+    """Lista seleccionable y exportable de todos los posibles bugs en modo offline."""
     groups, total = [], 0
     for index, repo in enumerate(repos):
         candidates = (repo.get("quality_analysis") or {}).get("bug_candidates") or []
@@ -116,7 +115,8 @@ def _bug_selection_section(repos, bug_by_repo):
   window.selectedBugs = function () {
     return boxes.filter(function (b) { return b.checked; }).map(function (b) {
       return { repository: b.dataset.repository, ref: b.dataset.ref, code: b.dataset.code, severity: b.dataset.severity,
-               file: b.dataset.file, line: Number(b.dataset.line) || null, title: b.dataset.title };
+               file: b.dataset.file, line: Number(b.dataset.line) || null, title: b.dataset.title,
+               description: b.dataset.description, excerpt: b.dataset.excerpt, confidence: b.dataset.confidence };
     });
   };
   function inGroup(g) { return Array.prototype.slice.call(document.querySelectorAll("table[data-group='" + g + "'] input.bug")); }
