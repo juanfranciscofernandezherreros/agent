@@ -74,10 +74,10 @@ function ConvertTo-GitLabItems($Response, [string[]]$Fields) {
                     }
                     $expanded += [pscustomobject]$row
                 }
-                return ,$expanded
+                return $expanded
             }
         }
-        return ,$items
+        return $items
     }
     foreach ($field in $Fields) {
         if ($Response.PSObject.Properties[$field] -and $Response.$field -is [array]) {
@@ -93,10 +93,10 @@ function ConvertTo-GitLabItems($Response, [string[]]$Fields) {
                 }
                 $expanded += [pscustomobject]$row
             }
-            return ,$expanded
+            return $expanded
         }
     }
-    return ,@($Response)
+    return @($Response)
 }
 
 try {
