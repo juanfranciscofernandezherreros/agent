@@ -64,7 +64,8 @@ def render(bundles: list[dict]) -> str:
         links = "".join("<a href='" + _href(b["folder"], f) + "'>" + _e(label) + "</a>" for f, label in b["docs"])
         rows = []
         for s in b["services"]:
-            bug = next((f for f in b["bug_files"] if f.startswith(s["name"] + "-") or f.endswith("-" + s["name"] + ".html")), None)
+            bug = next((f for f in b["bug_files"] if re.fullmatch(re.escape(s["name"]) + r"-[0-9a-f]{6}\.html", f)
+                        or re.fullmatch(r"\d{3}-" + re.escape(s["name"]) + r"\.html", f)), None)
             cells = "".join("<a href='" + _href(b["folder"], "repositories", s["name"], f) + "'>" + _e(label) + "</a>" for f, label in s["docs"])
             if bug:
                 cells += "<a href='" + _href(b["folder"], "bug-reports", bug) + "'>Posibles bugs</a>"
