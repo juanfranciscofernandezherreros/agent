@@ -29,10 +29,10 @@ def test_global_and_individual_reports_are_generated(run):
     expected = ["analysis.json", "analysis.md", "analysis.html", "agents.md", "agents.html", "index.html", "bug-reports/index.html"]
     for slug in ("team-orders", "team-billing"):
         expected += [f"repositories/{slug}/{f}" for f in ("analysis.json", "analysis.md", "analysis.html", "agents.md", "agents.html")]
-    expected += ["bug-reports/001-team-orders.html", "bug-reports/002-team-billing.html"]
+    expected += ["bug-reports/team-orders-265899.html", "bug-reports/team-billing-eb8970.html"]
     for rel in expected:
         assert (folder / rel).is_file(), rel
-    assert [b["file"] for b in result["bug_reports"]] == ["001-team-orders.html", "002-team-billing.html"]
+    assert [b["file"] for b in result["bug_reports"]] == ["team-orders-265899.html", "team-billing-eb8970.html"]
     runs = result["agent_runs"]
     assert {m["agent"]: m["status"] for m in runs["group"]}["group_report"] == "COMPLETED"
     assert all({m["agent"]: m["status"] for m in ms}["repository_report"] == "COMPLETED" for ms in runs["repositories"].values())

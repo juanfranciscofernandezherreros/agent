@@ -162,6 +162,10 @@ try {
         if (-not (Test-Path -LiteralPath $AgentsTarget)) {
             try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/agents.html" -OutFile $AgentsTarget -UseBasicParsing } catch { }
         }
+        $ActivityTarget = Join-Path $ServiceDir "activity.html"
+        if (-not (Test-Path -LiteralPath $ActivityTarget)) {
+            try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/activity.html" -OutFile $ActivityTarget -UseBasicParsing } catch { }
+        }
         $BugPath = [string]$Item.bug_report
         if ($BugPath -match '^bug-reports/([A-Za-z0-9_-]+[.]html)$') {
             $BugDir = Join-Path $BundleDir "bug-reports"

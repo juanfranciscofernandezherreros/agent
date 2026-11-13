@@ -91,8 +91,6 @@ def build_sections(insights: dict, runs: list[dict], scope: str) -> list[dict]:
                          "note": "Son interpretaciones generadas por un modelo a partir de resultados estáticos, no hechos verificados. "
                                  "La validación cruzada comprueba sus citas contra el repositorio."})
 
-    if insights.get("activity_analysis"):
-        sections += repository_activity_sections(insights["activity_analysis"])
     if insights.get("group_activity"):
         sections += group_activity_sections(insights["group_activity"])
 

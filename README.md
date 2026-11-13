@@ -144,7 +144,7 @@ El lanzador invoca run-analysis.ps1, que:
 
 Durante el análisis el lanzador muestra una barra de progreso y una línea por repositorio terminado, y descarga los HTML de cada microservicio en cuanto están listos.
 
-**Reanudación:** el análisis de cada repositorio se guarda en `workspaces/_cache`. En la siguiente ejecución, los repositorios cuyo último commit no ha cambiado se marcan como REUTILIZADO: no se clonan ni se analizan de nuevo, solo se regeneran sus informes y se actualiza el histórico de actividad. Si un análisis se interrumpe, al relanzarlo continúa a partir de lo ya hecho. Para rehacer todo desde cero, pon `ANALYSIS_CACHE=false` en `.env` o borra `workspaces/_cache`.
+**Reanudación:** el análisis y los informes de cada repositorio se guardan en `workspaces/_cache`. En la siguiente ejecución, los repositorios cuyo último commit no ha cambiado se marcan como REUTILIZADO: no se clonan ni se analizan, y su ficha técnica, su informe multiagente y su expediente de bugs se copian tal cual, sin regenerarlos. Lo único que se genera de nuevo es el histórico de Git (`activity.html` de cada repositorio y del grupo) y los documentos globales, incluido el índice con el ranking de microservicios más trabajados. Si un análisis se interrumpe, al relanzarlo continúa a partir de lo ya hecho. Para rehacer todo desde cero, pon `ANALYSIS_CACHE=false` en `.env` o borra `workspaces/_cache`.
 
 No es necesario editar scripts para cambiar de grupo: modifica GITLAB_GROUP_ID en .env. Si ANALYSIS_NAME está vacío, el nombre se genera automáticamente a partir del grupo y la fecha/hora.
 

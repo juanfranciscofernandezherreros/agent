@@ -98,11 +98,13 @@ def test_full_flow_writes_activity_reports(sample_repo, tmp_path, monkeypatch):
     html = (folder / "activity.html").read_text(encoding="utf-8")
     assert "Usuarios con más pushes" in html and "Ana G" in html and "team/manual" in html
     assert "activity.html" in (folder / "index.html").read_text(encoding="utf-8")
-    repo_md = (folder / "repositories" / "team-orders" / "agents.md").read_text(encoding="utf-8")
+    repo_md = (folder / "repositories" / "team-orders" / "activity.md").read_text(encoding="utf-8")
     assert "Ramas con actividad reciente" in repo_md and "feature/x" in repo_md
-    saved = json.loads((folder / "repositories" / "team-orders" / "analysis.json").read_text(encoding="utf-8"))
-    assert saved["agent_insights"]["activity_analysis"]["commits"]["total"] == 120
-    assert "Histórico de actividad" not in (folder / "repositories" / "team-manual" / "agents.md").read_text(encoding="utf-8").split("## Agentes inteligentes")[1]
+    saved = json.loads((folder / "repositories" / "team-orders" / "activity.json").read_text(encoding="utf-8"))
+    assert saved["commits"]["total"] == 120
+    # La ficha estática no contiene el histórico de Git (así no cambia entre ejecuciones).
+    assert "activity_analysis" not in json.loads((folder / "repositories" / "team-orders" / "analysis.json").read_text(encoding="utf-8"))["agent_insights"]
+    assert "Sin histórico disponible" in (folder / "repositories" / "team-manual" / "activity.md").read_text(encoding="utf-8")
 
 
 def test_gitlab_listing_keeps_project_id(monkeypatch):
@@ -143,10 +145,10 @@ def test_index_ranks_most_active_microservices():
     section = html.split("Microservicios más trabajados (últimos 90 días)")[1].split("Documentación por microservicio")[0]
     assert section.index("g/busy</a></b></td>") < section.index("g/branchy</a></b></td>") < section.index("g/quiet</a></b></td>")
     kpis = section.split("<table>")[0]
-    assert "Más commits</small><b><a href='repositories/g-busy/agents.html'>g/busy</a></b><span>250 commits" in kpis
-    assert "Más ramas recientes</small><b><a href='repositories/g-branchy/agents.html'>g/branchy</a></b><span>9 ramas" in kpis
+    assert "Más commits</small><b><a href='repositories/g-busy/activity.html'>g/busy</a></b><span>250 commits" in kpis
+    assert "Más ramas recientes</small><b><a href='repositories/g-branchy/activity.html'>g/branchy</a></b><span>9 ramas" in kpis
     assert "Ana G</b><span>40 pushes en 1 repositorios" in kpis
     assert "1 microservicios sin datos de actividad" in section and "width:100%" in section
-    assert "250 commits · 2 ramas" in html and "<span>Sin datos</span>" in html and "g/&lt;manual&gt;" in html
+    assert "250 commits</a> · 2 ramas" in html and "<span>Sin datos</span>" in html and "g/&lt;manual&gt;" in html
     empty = build_documentation_index("Grupo", {"repositories": repos[3:], "bug_reports": []})
     assert "No hay histórico de Git disponible" in empty

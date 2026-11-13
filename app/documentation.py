@@ -17,7 +17,8 @@ def _activity_cell(repo):
     a = _activity(repo)
     if not a:
         return "<span>Sin datos</span>"
-    return str(a["commits"]["total"]) + " commits · " + str(a["branches"]["recent"]) + " ramas<small>" + str(a["pushes"]["total"]) + " pushes</small>"
+    artifact = str(repo.get("artifact_dir", "")).replace("\\", "/")
+    return "<a href='" + _e(artifact + "/activity.html") + "'>" + str(a["commits"]["total"]) + " commits</a> · " + str(a["branches"]["recent"]) + " ramas<small>" + str(a["pushes"]["total"]) + " pushes</small>"
 
 
 def _activity_section(repos, analysis):
@@ -40,7 +41,7 @@ def _activity_section(repos, analysis):
         value = key((repo, a, artifact))
         if not value:
             return "<div class='kpi'><small>" + _e(label) + "</small><b>Sin actividad</b></div>"
-        return ("<div class='kpi'><small>" + _e(label) + "</small><b><a href='" + _e(artifact + "/agents.html") + "'>" + _e(repo.get("name")) +
+        return ("<div class='kpi'><small>" + _e(label) + "</small><b><a href='" + _e(artifact + "/activity.html") + "'>" + _e(repo.get("name")) +
                 "</a></b><span>" + _e(value) + " " + _e(unit) + "</span></div>")
 
     kpis = (leader("Más commits", lambda x: x[1]["commits"]["total"], "commits") +
@@ -54,7 +55,7 @@ def _activity_section(repos, analysis):
     for position, (repo, a, artifact) in enumerate(data, 1):
         commits, top = a["commits"]["total"], a["pushes"].get("top_user") or {}
         width = max(2, round(100 * commits / top_commits)) if commits else 0
-        rows.append("<tr><td>" + str(position) + "</td><td><b><a href='" + _e(artifact + "/agents.html") + "'>" + _e(repo.get("name")) + "</a></b></td>"
+        rows.append("<tr><td>" + str(position) + "</td><td><b><a href='" + _e(artifact + "/activity.html") + "'>" + _e(repo.get("name")) + "</a></b></td>"
                     "<td><span class='bar'><i style='width:" + str(width) + "%'></i></span> " + str(commits) + ("+" if a["commits"].get("truncated") else "") + "</td>"
                     "<td>" + str(a["branches"]["recent"]) + " de " + str(a["branches"]["total"]) + "</td><td>" + str(a["pushes"]["total"]) + "</td>"
                     "<td>" + (_e(top.get("display_name") or top.get("user")) + " (" + _e(top.get("count")) + ")" if top else "—") + "</td>"

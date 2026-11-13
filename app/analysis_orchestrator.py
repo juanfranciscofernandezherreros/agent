@@ -41,19 +41,20 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
     for item in repositories:
         progress["current"]=item["name"]; _write_progress(folder,progress)
         try:
-            # Si el repositorio no ha cambiado desde un análisis anterior, se reutiliza y no se clona.
+            # Si el repositorio no ha cambiado: no se clona ni se analiza, y sus informes se copian tal cual.
+            # Solo se actualiza su histórico de Git.
             commit=engines.remote_head(item["git_url"],clone_token,clone_host) if analysis_cache.enabled() else None
             cached=analysis_cache.load(item,commit)
             if cached:
                 context=AnalysisContext(repository=item["name"],store=store,results=cached[0],
-                    data={**shared,"repository_input":item,"cache_hit":cached[1]})
+                    data={**shared,"repository_input":item,"cached_reports":cached[2]})
                 supervisor.run(context,scope="repository",only=["activity_analysis","repository_report"])
             else:
                 member_id=str(uuid.uuid4()); source=clone_repository(member_id,item["git_url"],auth_token=clone_token,auth_host=clone_host)
                 context=AnalysisContext(root=source,repository=item["name"],store=store,data={**shared,"repository_input":item})
                 supervisor.run(context,scope="repository")
             _require(context,"repository_report",item["name"])
-            if not cached: analysis_cache.save(item,commit or engines.local_head(source),context.results)
+            if not cached: analysis_cache.save(item,commit or engines.local_head(source),context.results,folder,context.outputs["static_report_files"])
             entry=context.outputs["repository_entry"]; results.append(entry)
             progress["completed"]+=1; progress["reused"]+=1 if cached else 0
             progress["items"].append({"name":item["name"],"status":"reused" if cached else "done",
