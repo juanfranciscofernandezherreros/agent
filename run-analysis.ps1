@@ -217,8 +217,15 @@ try {
     if ([string]::IsNullOrWhiteSpace($GroupId)) {
         $Groups = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups")
         if ($Groups.Count -eq 0) { throw "El token no tiene grupos GitLab visibles." }
-        $ChosenGroup = (Select-NumberedItems $Groups "Grupos GitLab disponibles:" "full_path")[0]
-        $GroupId = [string]$ChosenGroup.id
+        Write-Host ""
+        Write-Host "Grupos GitLab disponibles:" -ForegroundColor Cyan
+        for ($i = 0; $i -lt $Groups.Count; $i++) {
+            Write-Host ("  {0}. {1}" -f ($i + 1), $Groups[$i].full_path)
+        }
+        $GroupChoice = (Read-Host "Número del grupo que quieres analizar").Trim()
+        $GroupIndex = 0
+        if (-not [int]::TryParse($GroupChoice, [ref]$GroupIndex) -or $GroupIndex -lt 1 -or $GroupIndex -gt $Groups.Count) { throw "Número de grupo no válido." }
+        $GroupId = [string]$Groups[$GroupIndex - 1].id
     }
     $EncodedGroup = [uri]::EscapeDataString($GroupId)
     $Projects = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/projects")
