@@ -36,7 +36,7 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
     results,failures,bug_reports=[],[],[]
     supervisor=supervisor or default_supervisor()
     store=SharedStore(folder/"agent-runs",run_id=group_id)
-    shared={"output_dir":folder,"group_name":name,"bug_reports":bug_reports}
+    shared={"output_dir":folder,"group_name":name,"bug_reports":bug_reports,"group_id":group_id}
     progress={"total":len(repositories),"completed":0,"failed":0,"reused":0,"current":None,"phase":"repositories","items":[]}
     for item in repositories:
         progress["current"]=item["name"]; _write_progress(folder,progress)
