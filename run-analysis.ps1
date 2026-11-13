@@ -1,7 +1,13 @@
 ﻿[CmdletBinding()]
 param(
     # Identificador del grupo GitLab. Si se indica, tiene prioridad sobre GITLAB_GROUP_ID de .env.
-    [Parameter(Position = 0)][string]$GroupIdArgument = ""
+    [Parameter(Position = 0)][string]$GroupIdArgument = "",
+    # Activa los agentes LLM con este proveedor: openai, claude, gemini u ollama (prioridad sobre .env).
+    [Alias("Llm")][string]$LlmProvider = "",
+    # Modelo a usar con ese proveedor (prioridad sobre LLM_MODEL de .env).
+    [Alias("Model")][string]$LlmModel = "",
+    # Muestra la configuración LLM y los modelos que ofrece el proveedor, y termina sin analizar.
+    [switch]$ListModels
 )
 
 $ErrorActionPreference = "Stop"
@@ -46,15 +52,30 @@ try {
     Write-Host "=== Analizador de arquitectura y calidad de microservicios ===" -ForegroundColor Cyan
     Read-DotEnv (Join-Path $Root ".env")
 
+    # Selección de proveedor y modelo LLM desde la línea de órdenes.
+    if (-not [string]::IsNullOrWhiteSpace($LlmProvider)) {
+        $LlmProvider = $LlmProvider.Trim().ToLower()
+        if ($LlmProvider -notin @("openai","claude","anthropic","gemini","google","ollama")) { throw "Proveedor LLM no válido: $LlmProvider. Opciones: openai, claude, gemini, ollama." }
+        [Environment]::SetEnvironmentVariable("LLM_PROVIDER", $LlmProvider, "Process")
+        [Environment]::SetEnvironmentVariable("LLM_AGENTS_ENABLED", "true", "Process")
+    }
+    if (-not [string]::IsNullOrWhiteSpace($LlmModel)) {
+        [Environment]::SetEnvironmentVariable("LLM_MODEL", $LlmModel.Trim(), "Process")
+        [Environment]::SetEnvironmentVariable("LLM_AGENTS_ENABLED", "true", "Process")
+    }
+
     $Token = [Environment]::GetEnvironmentVariable("GITLAB_TOKEN", "Process")
     $GroupId = [Environment]::GetEnvironmentVariable("GITLAB_GROUP_ID", "Process")
     $BaseUrl = [Environment]::GetEnvironmentVariable("GITLAB_BASE_URL", "Process")
-    if ([string]::IsNullOrWhiteSpace($Token) -or $Token -match '^<.*>$') { throw "GITLAB_TOKEN no está configurado en .env." }
-    if (-not [string]::IsNullOrWhiteSpace($GroupIdArgument)) { $GroupId = $GroupIdArgument.Trim() }
-    if ([string]::IsNullOrWhiteSpace($GroupId) -or $GroupId -match '^<.*>$') {
-        $GroupId = (Read-Host "Identificador del grupo GitLab a analizar (por ejemplo 1118)").Trim()
+    # Para listar modelos no hacen falta ni el token de GitLab ni el grupo.
+    if (-not $ListModels) {
+        if ([string]::IsNullOrWhiteSpace($Token) -or $Token -match '^<.*>$') { throw "GITLAB_TOKEN no está configurado en .env." }
+        if (-not [string]::IsNullOrWhiteSpace($GroupIdArgument)) { $GroupId = $GroupIdArgument.Trim() }
+        if ([string]::IsNullOrWhiteSpace($GroupId) -or $GroupId -match '^<.*>$') {
+            $GroupId = (Read-Host "Identificador del grupo GitLab a analizar (por ejemplo 1118)").Trim()
+        }
+        if ([string]::IsNullOrWhiteSpace($GroupId)) { throw "No se ha indicado el identificador del grupo GitLab." }
     }
-    if ([string]::IsNullOrWhiteSpace($GroupId)) { throw "No se ha indicado el identificador del grupo GitLab." }
     if ([string]::IsNullOrWhiteSpace($BaseUrl)) { $BaseUrl = "https://gitlab.com" }
 
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw "Git no está instalado o no está disponible en PATH." }
@@ -77,6 +98,11 @@ try {
         & $Python -m pip install --quiet --disable-pip-version-check -r $Requirements
         if ($LASTEXITCODE -ne 0) { throw "No se pudieron instalar las dependencias de requirements.txt." }
         Set-Content -LiteralPath $Stamp -Value $Wanted -Encoding ASCII
+    }
+
+    if ($ListModels) {
+        & $Python -m app.llm --models
+        exit $LASTEXITCODE
     }
 
     $Api = "http://127.0.0.1:8001"
@@ -129,6 +155,19 @@ try {
         # Se compara en segundos Unix para no depender de cómo cada versión de PowerShell interpreta las fechas JSON.
         $StartedEpoch = [long]$HealthInfo.started_epoch
         $ApiIsStale = ($StartedEpoch -le 0) -or ($NewestEpoch -gt $StartedEpoch)
+        # También está obsoleta si .env cambió después de arrancarla, o si usa otro proveedor o modelo LLM.
+        $EnvFile = Get-Item -LiteralPath (Join-Path $Root ".env")
+        $EnvEpoch = [DateTimeOffset]::new([DateTime]::SpecifyKind($EnvFile.LastWriteTimeUtc, [DateTimeKind]::Utc)).ToUnixTimeSeconds()
+        if ($EnvEpoch -gt $StartedEpoch) { $ApiIsStale = $true }
+        $WantedEnabled = ([string][Environment]::GetEnvironmentVariable("LLM_AGENTS_ENABLED", "Process")).Trim().ToLower() -in @("1","true","yes","si","on")
+        $WantedProvider = ([string][Environment]::GetEnvironmentVariable("LLM_PROVIDER", "Process")).Trim().ToLower()
+        if ($WantedProvider -eq "anthropic") { $WantedProvider = "claude" }
+        if ($WantedProvider -eq "google") { $WantedProvider = "gemini" }
+        if ([string]::IsNullOrWhiteSpace($WantedProvider)) { $WantedProvider = "openai" }
+        $WantedModel = ([string][Environment]::GetEnvironmentVariable("LLM_MODEL", "Process")).Trim()
+        if ($null -eq $HealthInfo.llm) { $ApiIsStale = $true }
+        elseif ([bool]$HealthInfo.llm.enabled -ne $WantedEnabled) { $ApiIsStale = $true }
+        elseif ($WantedEnabled -and (([string]$HealthInfo.llm.provider -ne $WantedProvider) -or ([string]$HealthInfo.llm.model -ne $WantedModel))) { $ApiIsStale = $true }
     } catch { $ApiIsStale = $false }
 
     if ((-not $HasDocumentationRoutes) -or $ApiIsStale) {
@@ -157,6 +196,12 @@ try {
     if ($AnalysisName.Length -gt 120) { $AnalysisName = $AnalysisName.Substring(0,120) }
 
     Write-Host "Grupo GitLab: $GroupId" -ForegroundColor Cyan
+    try {
+        $Llm = (Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 5).llm
+        if ($Llm.active) { Write-Host ("Agentes LLM: {0} · {1}" -f $Llm.provider_label, $Llm.model) -ForegroundColor Cyan }
+        elseif ($Llm.enabled) { Write-Host ("Agentes LLM activados pero sin configurar: {0}" -f $Llm.problem) -ForegroundColor Yellow }
+        else { Write-Host "Agentes LLM: desactivados (solo análisis estático)" }
+    } catch { }
     Write-Host "Nombre del análisis: $AnalysisName"
     $EncodedGroup = [uri]::EscapeDataString($GroupId)
     $Start = Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/analysis" -Method "POST" -Body @{ name = $AnalysisName }

@@ -16,12 +16,41 @@ La aplicación es un **sistema multiagente coordinado por un supervisor**. Cada 
 
 - **Supervisor** (`app/supervisor.py`): ordena los agentes topológicamente a partir de `requires` (dependencias) y `after` (solo orden), admite ejecutar un subconjunto (`only`) y rechaza ciclos o dependencias desconocidas. Si falla un agente obligatorio, el repositorio se marca como fallido; si falla o se omite uno opcional, el análisis continúa y los agentes que dependían de él se omiten.
 - **Comunicación** (`app/communication/`): cada ejecución produce un `AgentMessage` (contrato `1.0`) con estado (`PENDING`, `RUNNING`, `COMPLETED`, `FAILED`, `SKIPPED`), duración, payload, evidencias (`repositorio`, `archivo`, `línea`, `confianza`) y errores. El `SharedStore` los guarda en memoria y en `workspaces/<id>/agent-runs/` (`manifest.json` y un JSON por agente y repositorio).
-- **Agentes LLM**: desactivados por defecto. Se activan con `LLM_AGENTS_ENABLED=true` y la configuración `LLM_*`. Envían al proveedor resultados del análisis y fragmentos de código con secretos redactados; el contenido del repositorio se trata como dato no confiable. Su salida se marca siempre como `llm_inferred`.
+- **Agentes LLM**: desactivados por defecto. Funcionan sobre LangChain y admiten OpenAI, Claude, Gemini y Ollama (ver «Selección de proveedor y modelo LLM»). Envían al proveedor resultados del análisis y fragmentos de código con secretos redactados; el contenido del repositorio se trata como dato no confiable. Su salida se marca siempre como `llm_inferred`.
 - **Validación cruzada**: compara los analizadores estáticos entre sí (por ejemplo, Kafka o endpoints que ve el analizador Java y no el análisis profundo) y verifica las afirmaciones LLM: citas a archivos o líneas inexistentes, revisiones de bugs que no corresponden a ningún candidato, discrepancias en prioridad alta, integraciones sin respaldo estático y flujos entre servicios no respaldados.
 - **Histórico de actividad**: para grupos GitLab, consulta la API (solo lectura) y resume por repositorio las ramas con actividad reciente, los commits por autor y los pushes por usuario; `activity.html` ordena los repositorios por ramas recientes y commits y muestra quién hace más pushes. La ventana es de 90 días (`ACTIVITY_DAYS`).
 - **Informe multiagente**: `agents.html` / `agents.md` global y por microservicio, enlazados desde el índice de documentación.
 
 Para añadir un agente: crea una clase que herede de `AnalyzerAgent` (`name`, `requires`, `scope`, `run`) y regístrala en `default_supervisor()`.
+
+## Selección de proveedor y modelo LLM
+
+Los agentes LLM usan LangChain, de modo que el proveedor y el modelo se eligen sin tocar código. En `.env`:
+
+    LLM_AGENTS_ENABLED=true
+    LLM_PROVIDER=claude          # openai | claude | gemini | ollama
+    LLM_MODEL=claude-sonnet-5-5  # identificador exacto del modelo en ese proveedor
+
+| Proveedor | `LLM_PROVIDER` | Clave en `.env` | Notas |
+|---|---|---|---|
+| OpenAI | `openai` | `OPENAI_API_KEY` | `LLM_BASE_URL` permite usar un servicio compatible |
+| Claude (Anthropic) | `claude` | `ANTHROPIC_API_KEY` | |
+| Gemini (Google) | `gemini` | `GOOGLE_API_KEY` | |
+| Ollama (local) | `ollama` | no necesita | `OLLAMA_BASE_URL`, por defecto `http://127.0.0.1:11434`; el modelo debe estar descargado (`ollama pull`) |
+
+Si falta la clave específica se usa `LLM_API_KEY`. Se pueden dejar todas las claves en `.env` y cambiar solo `LLM_PROVIDER` y `LLM_MODEL`.
+
+También se puede elegir al lanzar, con prioridad sobre `.env`:
+
+    run-analysis.bat 1118 -Llm gemini -Model gemini-3.6-flash
+    run-analysis.bat 1118 -Llm ollama -Model qwen2.5-coder:14b
+
+Los identificadores de modelo cambian con frecuencia. Para ver los que ofrece tu cuenta (o los instalados en Ollama):
+
+    run-analysis.bat -ListModels
+    run-analysis.bat -ListModels -Llm claude
+
+Para comprobar la conexión con una llamada mínima: `.\.venv\Scripts\python.exe -m app.llm --test`. La configuración activa (sin claves) se consulta en `GET /api/llm` y aparece al inicio del lanzador y en cada informe multiagente. Cambiar de proveedor o de modelo hace que los repositorios se analicen de nuevo en la siguiente ejecución.
 
 ## Flujo de funcionamiento
 
@@ -227,7 +256,7 @@ La lista manual admite hasta 100 repositorios.
 - app/supervisor.py: planificación y ejecución de agentes.
 - app/agents/: agentes (estáticos, LLM, validación cruzada y documental) con interfaz común.
 - app/communication/: contratos JSON, estados, evidencias, errores y almacén compartido.
-- app/llm.py: cliente LLM de los agentes inteligentes.
+- app/llm.py: cliente LLM sobre LangChain; selección de proveedor (OpenAI, Claude, Gemini, Ollama) y modelo.
 - app/agent_report.py: informe multiagente (Markdown y HTML).
 - app/engines.py: clonado e inventario base.
 - app/deep_analysis.py: análisis técnico profundo.
