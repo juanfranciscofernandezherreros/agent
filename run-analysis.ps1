@@ -231,8 +231,10 @@ try {
     $Projects = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/projects")
     if ($Projects.Count -eq 0) { throw "El grupo seleccionado no contiene repositorios clonables." }
     $ChosenProjects = Select-NumberedItems $Projects "Repositorios / microservicios del grupo (cada repositorio es una unidad de análisis):" "name"
-    $SelectedProjectIds = @($ChosenProjects | ForEach-Object { [int]$_.gitlab_project_id })
-    if ($SelectedProjectIds.Count -eq 0) { throw "No se ha seleccionado ningún repositorio." }
+    if (@($ChosenProjects).Count -eq 0) { throw "No se ha seleccionado ningún repositorio." }
+    # Null means all projects; avoids the 100-ID payload limit for large groups.
+    if (@($ChosenProjects).Count -eq $Projects.Count) { $SelectedProjectIds = $null }
+    else { $SelectedProjectIds = @($ChosenProjects | ForEach-Object { [int]$_.gitlab_project_id }) }
 
     $AnalysisName = [Environment]::GetEnvironmentVariable("ANALYSIS_NAME", "Process")
     if ([string]::IsNullOrWhiteSpace($AnalysisName)) { $AnalysisName = "gitlab-group-$GroupId-$Timestamp" }
