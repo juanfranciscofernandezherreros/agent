@@ -18,6 +18,11 @@ class GitLabGroupAnalysisCreate(BaseModel):
     # None means all projects; an explicit list limits the run to selected GitLab project IDs.
     project_ids: list[int] | None = Field(default=None, min_length=1, max_length=100)
 
+
+class BugReportExportRequest(BaseModel):
+    report_name: str = Field(min_length=6, max_length=160, pattern=r"^[A-Za-z0-9_-]+\.html$")
+    finding_indexes: list[int] = Field(min_length=1, max_length=500)
+
 class EquivalenceRequest(BaseModel):
     original_url: HttpUrl
     reconstructed_url: HttpUrl
