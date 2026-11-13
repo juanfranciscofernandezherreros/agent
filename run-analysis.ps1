@@ -245,7 +245,14 @@ try {
     if (@($ChosenProjects).Count -eq $Projects.Count) { $SelectedProjectIds = $null }
     else { $SelectedProjectIds = @($ChosenProjects | ForEach-Object { [int]$_.gitlab_project_id }) }
 
-    $AnalysisName = [Environment]::GetEnvironmentVariable("ANALYSIS_NAME", "Process")
+    # En el flujo interactivo GitLab, el nombre debe reflejar la selección actual.
+    # No usar ANALYSIS_NAME del .env: suele ser un valor fijo de otro proyecto.
+    if (@($ChosenProjects).Count -eq 1) {
+        $AnalysisName = [string]$ChosenProjects[0].name
+    }
+    else {
+        $AnalysisName = "gitlab-group-$GroupId"
+    }
     if ([string]::IsNullOrWhiteSpace($AnalysisName)) { $AnalysisName = "gitlab-group-$GroupId-$Timestamp" }
     if ($AnalysisName.Length -gt 120) { $AnalysisName = $AnalysisName.Substring(0,120) }
 
