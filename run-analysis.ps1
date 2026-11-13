@@ -248,6 +248,14 @@ try {
     }
     Write-Host "Documentación completa: $BundleDir" -ForegroundColor Green
     Write-Host "Índice de documentación: $(Join-Path $BundleDir 'index.html')" -ForegroundColor Green
+    # Índice raíz que enlaza todos los análisis descargados y sus documentos.
+    $RootIndex = Join-Path $ReportDir "index.html"
+    try {
+        Push-Location $Root
+        & $Python -m app.reports_index $ReportDir | Out-Null
+        Pop-Location
+        if (Test-Path -LiteralPath $RootIndex) { Write-Host "Índice general de todos los análisis: $RootIndex" -ForegroundColor Green }
+    } catch { Pop-Location; Write-Host "No se pudo generar el índice general." -ForegroundColor Yellow }
     Start-Process -FilePath (Join-Path $BundleDir "index.html")
     exit 0
 }
