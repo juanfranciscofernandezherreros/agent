@@ -112,6 +112,44 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff
 <div class="notice"><b>Importante:</b> son candidatos heurísticos, no defectos confirmados. Puede haber falsos positivos y negativos. No se ha ejecutado el servicio ni sus pruebas. Candidatos indicados por el analizador: """ + _e(summary.get("bug_candidates", len(findings))) + """.</div>
 <h2>Hallazgos y tareas recomendadas</h2>""" + (toolbar if service_slug else "") + cards + """<footer>Generado: """ + generated + """ · Revisar cada evidencia y validarla mediante pruebas.</footer></main>""" + (script if service_slug else "") + """</body></html>"""
 
+
+def build_bug_export_html(export_data):
+    """Build a self-contained HTML report from server-validated selected findings."""
+    tasks = export_data["tasks"]
+    bugs = export_data["bugs"]
+    rows = "".join(
+        "<tr><td>" + _e(item.get("id")) + "</td><td>" + _e(item.get("title")) +
+        "</td><td>" + _e(item.get("file")) + ":" + _e(item.get("line")) +
+        "</td><td>" + _e(item.get("severity")) + "</td><td>" +
+        _e(item.get("recommended_action")) + "</td></tr>"
+        for item in tasks
+    )
+    bug_rows = "".join(
+        "<tr><td>" + _e(item.get("code")) + "</td><td>" + _e(item.get("title")) +
+        "</td><td>" + _e(item.get("description")) + "</td><td>" +
+        _e(item.get("excerpt")) + "</td></tr>"
+        for item in bugs
+    )
+    return """<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Exportación de tareas y bugs</title>
+<style>
+body{font:15px/1.5 system-ui;margin:0;background:#f4f6fa;color:#172033}
+main{max-width:1100px;margin:32px auto;padding:0 18px}
+section{background:white;border:1px solid #dce3ed;border-radius:12px;padding:20px;margin:16px 0}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;vertical-align:top;padding:9px;border-bottom:1px solid #e5eaf1;overflow-wrap:anywhere}
+th{background:#edf1f6}h1,h2{color:#172b4d}
+@media(max-width:700px){main{overflow-x:auto}table{min-width:650px}}
+</style></head><body><main><h1>Informe consolidado de tareas y posibles bugs</h1>
+<p>Conjunto: """ + _e(export_data["group_name"]) + """ · Microservicio: """ + _e(export_data["repository"]) + """</p>
+<p>Generado: """ + _e(export_data["generated_at"]) + """ · Elementos seleccionados: """ + str(len(tasks)) + """</p>
+<section><h2>Tareas pendientes (""" + str(len(tasks)) + """)</h2>
+<table><thead><tr><th>ID</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr></thead><tbody>""" + rows + """</tbody></table></section>
+<section><h2>Posibles bugs (""" + str(len(bugs)) + """)</h2>
+<table><thead><tr><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr></thead><tbody>""" + bug_rows + """</tbody></table></section>
+<p>Los elementos son candidatos heurísticos y deben validarse mediante revisión y pruebas.</p>
+</main></body></html>"""
+
 def build_bug_reports_index(group_name, reports):
     rows = "".join("<li><a href='" + _e(x["file"]) + "'>" + _e(x["repository"]) + "</a><span>" + _e(x["count"]) + " posibles bugs</span></li>" for x in reports)
     if not rows:
