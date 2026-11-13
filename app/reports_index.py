@@ -45,6 +45,10 @@ class _FindingParser(HTMLParser):
             finding = json.loads(html.unescape(data.get("data-finding", "{}")))
         except (TypeError, ValueError):
             finding = {}
+        # El índice de documentación usa atributos separados en cada checkbox.
+        for key in ("code", "severity", "file", "line", "title", "description", "excerpt", "confidence"):
+            if key not in finding and data.get("data-" + key) is not None:
+                finding[key] = data.get("data-" + key)
         self.findings.append({
             "repository": data.get("data-repository", "Microservicio"),
             "finding": finding,
