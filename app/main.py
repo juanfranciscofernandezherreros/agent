@@ -357,6 +357,7 @@ def export_selected_bug_reports(group_id: str, payload: BugReportExportRequest):
         "schema_version": "1.0",
         "analysis_group_id": group_id,
         "group_name": analysis.get("group_name", "analysis"),
+        "repository": ", ".join(sorted({task["repository"] for task in tasks})),
         "generated_at": generated,
         "total_tasks": len(tasks),
         "total_bugs": len(bugs),
