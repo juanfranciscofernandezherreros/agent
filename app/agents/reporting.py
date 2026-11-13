@@ -67,7 +67,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
         else:
             if report_file:
                 (folder / "bug-reports").mkdir(parents=True, exist_ok=True)
-                (folder / bug_report).write_text(build_bug_report_html(name, group_name, quality, service), encoding="utf-8")
+                (folder / bug_report).write_text(build_bug_report_html(name, group_name, quality, service, context.data.get("group_id"), report_file), encoding="utf-8")
             member = {"project_name": name, "inventory": inv, "deep_analysis": deep,
                       "functional_analysis": functional, "java_analysis": java, "quality_analysis": quality,
                       "bug_report": bug_report, "agent_insights": insights,
@@ -139,7 +139,7 @@ class GroupReportingAgent(AnalyzerAgent):
         (folder / "analysis.html").write_text(build_integral_html(name, result), encoding="utf-8")
         bug_dir = folder / "bug-reports"
         bug_dir.mkdir(parents=True, exist_ok=True)
-        (bug_dir / "index.html").write_text(build_bug_reports_index(name, bug_reports, repositories), encoding="utf-8")
+        (bug_dir / "index.html").write_text(build_bug_reports_index(name, bug_reports, repositories, context.data.get("group_id")), encoding="utf-8")
 
         sections = build_sections(insights, _runs(context, None, "group", self.name), "group")
         rows = []
