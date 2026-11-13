@@ -49,6 +49,56 @@ function Invoke-ApiJson([string]$Uri, [string]$Method = "GET", $Body = $null) {
     return Invoke-RestMethod -Uri $Uri -Method $Method
 }
 
+# Normaliza respuestas JSON que PowerShell puede entregar como un objeto con
+# propiedades-array en vez de como una colección de objetos.
+function ConvertTo-GitLabItems($Response, [string[]]$Fields) {
+    if ($null -eq $Response) { return @() }
+    if ($Response -is [System.Array] -or $Response -is [System.Collections.Generic.List[object]]) {
+        $items = @($Response)
+        if ($items.Count -eq 1 -and $null -ne $items[0]) {
+            $first = $items[0]
+            $arrayField = $null
+            foreach ($field in $Fields) {
+                if ($first.PSObject.Properties[$field] -and $first.$field -is [array]) { $arrayField = $field; break }
+            }
+            if ($arrayField) {
+                $count = @($first.$arrayField).Count
+                $expanded = @()
+                for ($j = 0; $j -lt $count; $j++) {
+                    $row = [ordered]@{}
+                    foreach ($field in $Fields) {
+                        if ($first.PSObject.Properties[$field]) {
+                            $value = $first.$field
+                            $row[$field] = if ($value -is [array]) { if ($j -lt $value.Count) { $value[$j] } else { $null } } else { $value }
+                        }
+                    }
+                    $expanded += [pscustomobject]$row
+                }
+                return ,$expanded
+            }
+        }
+        return ,$items
+    }
+    foreach ($field in $Fields) {
+        if ($Response.PSObject.Properties[$field] -and $Response.$field -is [array]) {
+            $count = @($Response.$field).Count
+            $expanded = @()
+            for ($j = 0; $j -lt $count; $j++) {
+                $row = [ordered]@{}
+                foreach ($name in $Fields) {
+                    if ($Response.PSObject.Properties[$name]) {
+                        $value = $Response.$name
+                        $row[$name] = if ($value -is [array]) { if ($j -lt $value.Count) { $value[$j] } else { $null } } else { $value }
+                    }
+                }
+                $expanded += [pscustomobject]$row
+            }
+            return ,$expanded
+        }
+    }
+    return ,@($Response)
+}
+
 try {
     Write-Host ""
     Write-Host "=== Analizador de arquitectura y calidad de microservicios ===" -ForegroundColor Cyan
@@ -219,7 +269,8 @@ try {
     }
 
     if ([string]::IsNullOrWhiteSpace($GroupIdArgument)) {
-        $Groups = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups")
+        $GroupsResponse = Invoke-ApiJson -Uri "$Api/api/gitlab/groups"
+        $Groups = @(ConvertTo-GitLabItems $GroupsResponse @("id","name","full_path","parent_id","web_url"))
         if ($Groups.Count -eq 0) { throw "El token no tiene grupos GitLab visibles." }
         Write-Host ""
         Write-Host "Grupos GitLab disponibles:" -ForegroundColor Cyan
@@ -241,7 +292,8 @@ try {
     $SelectedGroupLabel = "seleccionado"
     if ($GroupIndex -ge 1 -and $Groups.Count -ge $GroupIndex) { $SelectedGroupLabel = [string]$Groups[$GroupIndex - 1].full_path }
     $EncodedGroup = [uri]::EscapeDataString($GroupId)
-    $Projects = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/projects")
+    $ProjectsResponse = Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/projects"
+    $Projects = @(ConvertTo-GitLabItems $ProjectsResponse @("name","git_url","gitlab_project_id"))
     if ($Projects.Count -eq 0) { throw "El grupo seleccionado no contiene repositorios clonables." }
     $ChosenProjects = Select-NumberedItems $Projects ("Repositorios / microservicios del grupo {0} (Group ID: {1}). Selecciona los que quieres analizar:" -f $SelectedGroupLabel, $GroupId) "name"
     if (@($ChosenProjects).Count -eq 0) { throw "No se ha seleccionado ningún repositorio." }
