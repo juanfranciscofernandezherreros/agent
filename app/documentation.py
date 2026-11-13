@@ -89,7 +89,7 @@ def _bug_selection_section(repos, bug_by_repo):
             ref = str(x.get("code")) + "@" + str(x.get("file")) + ":" + str(x.get("line"))
             rows.append("<tr><td><input type='checkbox' class='bug' data-repository='" + _e(name) + "' data-ref='" + _e(ref) + "' data-code='" + _e(x.get("code")) +
                         "' data-severity='" + _e(x.get("severity")) + "' data-file='" + _e(x.get("file")) + "' data-line='" + _e(x.get("line")) +
-                        "' data-title='" + _e(x.get("title")) + "' aria-label='Seleccionar " + _e(ref) + "'></td><td><span class='sev sev-" + _e(x.get("severity")) + "'>" + _e(label) +
+                        "' data-title='" + _e(x.get("title")) + "' data-description='" + _e(x.get("description")) + "' data-excerpt='" + _e(x.get("excerpt")) + "' data-confidence='" + _e(x.get("confidence", "heuristic_candidate")) + "' aria-label='Seleccionar " + _e(ref) + "'></td><td><span class='sev sev-" + _e(x.get("severity")) + "'>" + _e(label) +
                         "</span></td><td><b>" + _e(x.get("title")) + "</b><small>" + _e(x.get("code")) + "</small></td><td><code>" + _e(x.get("file")) + ":" + _e(x.get("line")) +
                         "</code><small>" + _e(str(x.get("excerpt") or "")[:160]) + "</small></td></tr>")
         total += len(ordered)
@@ -104,8 +104,8 @@ def _bug_selection_section(repos, bug_by_repo):
             " candidatos en " + str(len(groups)) + " microservicios, ordenados por prioridad.</p>"
             "<div class='bugbar'><label><input type='checkbox' id='bug-everything'> Seleccionar todos</label>"
             "<span id='bug-count'>0 seleccionados</span>"
-            "<button type='button' id='bug-send' disabled title='El envío todavía no está disponible'>Enviar</button>"
-            "<small>El envío todavía no está disponible: la selección no se manda a ningún sitio.</small></div>" + "".join(groups) +
+            "<button type='button' id='bug-send'>Exportar selección (JSON + HTML)</button>"
+            "<span id='bug-export-status' role='status' aria-live='polite'>Selecciona los hallazgos que quieras exportar.</span></div>" + "".join(groups) +
             """<script>
 (function () {
   var boxes = Array.prototype.slice.call(document.querySelectorAll('input.bug'));
@@ -133,6 +133,44 @@ def _bug_selection_section(repos, bug_by_repo):
   groupBoxes.forEach(function (g) { g.addEventListener('change', function () {
     inGroup(g.dataset.group).forEach(function (b) { b.checked = g.checked; }); refresh(); }); });
   everything.addEventListener('change', function () { boxes.forEach(function (b) { b.checked = everything.checked; }); refresh(); });
+  var send = document.getElementById('bug-send');
+  var status = document.getElementById('bug-export-status');
+  function escapeHtml(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];
+    });
+  }
+  send.addEventListener('click', function () {
+    var selected = window.selectedBugs();
+    if (!selected.length) { status.textContent = 'Selecciona al menos un posible bug.'; return; }
+    var tasks = selected.map(function (item, i) {
+      return {id: item.repository.replace(/[^a-z0-9]+/gi, '-') + '-' + (i + 1),
+        repository: item.repository, title: item.title, description: item.description,
+        status: 'Pendiente', severity: item.severity, file: item.file, line: item.line,
+        confidence: item.confidence, excerpt: item.excerpt,
+        recommended_action: 'Revisar el hallazgo y añadir una prueba de regresión.'};
+    });
+    var data = {schema_version:'1.0', group_name: document.title.replace('Índice documental - ', ''),
+      generated_at:new Date().toISOString(), total_tasks:tasks.length, total_bugs:tasks.length,
+      tasks:tasks, bugs:tasks};
+    var taskRows = tasks.map(function (x) {
+      return '<tr>' + [x.id,x.repository,x.title,x.file + ':' + x.line,x.severity,x.recommended_action].map(function(v){return '<td>'+escapeHtml(v)+'</td>';}).join('') + '</tr>';
+    }).join('');
+    var bugRows = tasks.map(function (x) {
+      return '<tr>' + [x.repository,x.title,x.description,x.file + ':' + x.line,x.excerpt].map(function(v){return '<td>'+escapeHtml(v)+'</td>';}).join('') + '</tr>';
+    }).join('');
+    var html = '<!doctype html><html lang="es"><meta charset="utf-8"><title>Exportación de bugs</title><style>body{font:15px system-ui;margin:30px;color:#17243a}table{width:100%;border-collapse:collapse;margin:16px 0 28px}td,th{padding:8px;border:1px solid #ddd;text-align:left;vertical-align:top}th{background:#edf1f6}</style><h1>Tareas y posibles bugs seleccionados</h1><p>Conjunto: '+escapeHtml(data.group_name)+'</p><h2>Tareas</h2><table><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción</th></tr>'+taskRows+'</table><h2>Posibles bugs</h2><table><tr><th>Microservicio</th><th>Título</th><th>Detalle</th><th>Ubicación</th><th>Evidencia</th></tr>'+bugRows+'</table></html>';
+    function download(content, type, filename) {
+      var url = URL.createObjectURL(new Blob([content], {type:type}));
+      var a = document.createElement('a'); a.href=url; a.download=filename;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    }
+    send.disabled = true;
+    download(JSON.stringify(data,null,2), 'application/json;charset=utf-8', 'tareas-y-bugs.json');
+    download(html, 'text/html;charset=utf-8', 'informe-tareas-y-bugs.html');
+    send.disabled = false;
+    status.textContent = selected.length + ' hallazgos exportados en JSON y HTML.';
+  });
   refresh();
 })();
 </script></section>""")
@@ -152,7 +190,7 @@ def build_documentation_index(group_name, analysis):
         quality = repo.get("quality_analysis", {})
         rows.append("<tr><td><b>" + _e(repo.get("name")) + "</b><small>Commit: " + _e(repo.get("inventory", {}).get("commit_sha", "N/D")) + "</small></td><td>" + _e(quality.get("score", "N/D")) + "/100 · " + _e(quality.get("rating", "N/D")) + "</td><td>" + _activity_cell(repo) + "</td><td><a href='" + _e(artifact + "/analysis.html") + "'>Ficha técnica</a></td><td><a href='" + _e(artifact + "/agents.html") + "'>" + _e(_validation_label(repo)) + "</a></td><td>" + bug_link + "</td></tr>")
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Índice documental - """ + _e(group_name) + """</title><style>
-*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#17243a;font:15px/1.55 system-ui}header{background:linear-gradient(120deg,#102344,#1e477f,#087e83);color:white;padding:38px max(20px,calc((100% - 1100px)/2))}main{max-width:1100px;margin:28px auto;padding:0 18px}section{background:white;border:1px solid #dce4ef;border-radius:12px;padding:20px;margin:14px 0}a{color:#2457a6;font-weight:700;text-decoration:none}a:hover{text-decoration:underline}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:11px;border-bottom:1px solid #e6ebf2;vertical-align:top}small{display:block;color:#66758a;margin-top:4px}.actions{display:flex;gap:12px;flex-wrap:wrap}.actions a{padding:10px 14px;border:1px solid #dce4ef;border-radius:8px}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}.kpi{border:1px solid #dce4ef;border-radius:10px;padding:12px 14px;background:#f8fafd}.kpi b{display:block;font-size:1.05rem;overflow-wrap:anywhere}.kpi span{color:#3b4a61}.bar{display:inline-block;width:90px;height:8px;background:#e6ebf2;border-radius:4px;vertical-align:middle;overflow:hidden}.bar i{display:block;height:100%;background:#1e7f83}.bugbar{display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap;position:sticky;top:0;background:white;padding:10px 0;border-bottom:1px solid #e6ebf2;z-index:1}.bugbar small{margin:0}#bug-count{font-weight:700}#bug-send{font:inherit;font-weight:700;padding:9px 20px;border-radius:8px;border:1px solid #c5cfdd;background:#e9edf3;color:#7a8698;cursor:not-allowed}.buggroup{border-top:1px solid #e6ebf2;padding:10px 0}.buggroup summary{cursor:pointer}.pick{display:inline-block;padding:0 4px}.sev{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.8rem;font-weight:700;background:#e9edf3;color:#3b4a61}.sev-high{background:#fbe3e6;color:#a62231}.sev-medium{background:#fdf0d5;color:#8a5a00}code{font-size:.85rem;overflow-wrap:anywhere}input[type=checkbox]{width:17px;height:17px;vertical-align:middle}@media(max-width:700px){table,tbody,tr,td{display:block}thead{display:none}td{border:0;padding:7px 0}tr{border-bottom:1px solid #e6ebf2;padding:10px 0}}
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#17243a;font:15px/1.55 system-ui}header{background:linear-gradient(120deg,#102344,#1e477f,#087e83);color:white;padding:38px max(20px,calc((100% - 1100px)/2))}main{max-width:1100px;margin:28px auto;padding:0 18px}section{background:white;border:1px solid #dce4ef;border-radius:12px;padding:20px;margin:14px 0}a{color:#2457a6;font-weight:700;text-decoration:none}a:hover{text-decoration:underline}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:11px;border-bottom:1px solid #e6ebf2;vertical-align:top}small{display:block;color:#66758a;margin-top:4px}.actions{display:flex;gap:12px;flex-wrap:wrap}.actions a{padding:10px 14px;border:1px solid #dce4ef;border-radius:8px}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}.kpi{border:1px solid #dce4ef;border-radius:10px;padding:12px 14px;background:#f8fafd}.kpi b{display:block;font-size:1.05rem;overflow-wrap:anywhere}.kpi span{color:#3b4a61}.bar{display:inline-block;width:90px;height:8px;background:#e6ebf2;border-radius:4px;vertical-align:middle;overflow:hidden}.bar i{display:block;height:100%;background:#1e7f83}.bugbar{display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap;position:sticky;top:0;background:white;padding:10px 0;border-bottom:1px solid #e6ebf2;z-index:1}.bugbar small{margin:0}#bug-count{font-weight:700}#bug-send{font:inherit;font-weight:700;padding:9px 20px;border-radius:8px;border:0;background:#2457a6;color:white;cursor:pointer}#bug-send:disabled{opacity:.6;cursor:wait}.buggroup{border-top:1px solid #e6ebf2;padding:10px 0}.buggroup summary{cursor:pointer}.pick{display:inline-block;padding:0 4px}.sev{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.8rem;font-weight:700;background:#e9edf3;color:#3b4a61}.sev-high{background:#fbe3e6;color:#a62231}.sev-medium{background:#fdf0d5;color:#8a5a00}code{font-size:.85rem;overflow-wrap:anywhere}input[type=checkbox]{width:17px;height:17px;vertical-align:middle}@media(max-width:700px){table,tbody,tr,td{display:block}thead{display:none}td{border:0;padding:7px 0}tr{border-bottom:1px solid #e6ebf2;padding:10px 0}}
 </style></head><body><header><p>DOCUMENTACIÓN TÉCNICA · """ + _e(analysis.get("completion_status", "STATIC_ANALYSIS_COMPLETED")) + """</p><h1>""" + _e(group_name) + """</h1><p>Índice de navegación de la documentación generada para el conjunto de microservicios.</p><p>""" + str(len(repos)) + """ microservicios · """ + str(len(bugs)) + """ informes de posibles bugs</p></header><main>
 <section><h2>Visión global</h2><div class="actions"><a href="../index.html">← Todos los análisis</a><a href="analysis.html">Abrir informe global de arquitectura y calidad</a><a href="activity.html">Abrir histórico de actividad (ramas, commits y pushes)</a><a href="agents.html">Abrir informe multiagente (LLM y validación cruzada)</a><a href="bug-reports/index.html">Abrir índice de posibles bugs</a><a href="#bugs">Seleccionar posibles bugs</a></div><p>Empieza por el informe global para entender el contexto y las relaciones. Desde allí puedes abrir cada ficha técnica y cada expediente de posibles bugs.</p></section>
 """ + _activity_section(repos, analysis) + """
