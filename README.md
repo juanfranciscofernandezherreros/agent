@@ -156,13 +156,11 @@ Durante el análisis el lanzador muestra una barra de progreso y una línea por 
 
 No es necesario editar scripts para cambiar de grupo: modifica GITLAB_GROUP_ID en .env. Si ANALYSIS_NAME está vacío, el nombre se genera automáticamente a partir del grupo y la fecha/hora.
 
-Para preparar manualmente el entorno:
+`run-analysis.bat` es el único punto de entrada. `run-analysis.ps1` y `setup-windows.ps1` son piezas internas que el lanzador usa por debajo; no hace falta ejecutarlas a mano.
 
-    .\setup-windows.ps1
+Para desarrollo, la API se puede arrancar sola (sin lanzar ningún análisis) con:
 
-Para arrancar únicamente la API (sin iniciar un análisis):
-
-    .\run-windows.ps1
+    .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001
 
 ## API: endpoints principales
 
@@ -237,9 +235,8 @@ La lista manual admite hasta 100 repositorios.
 - app/java_analysis.py: extracción Java/Spring, Kafka, SQL y contratos.
 - app/quality_analysis.py: puntuación y candidatos a bugs.
 - app/rich_report.py: generación del informe HTML consolidado.
-- run-analysis.bat y run-analysis.ps1: ejecución integral de un clic en Windows.
-- setup-windows.ps1: preparación manual del entorno.
-- start-windows.bat y run-windows.ps1: arranque de la API sola (desarrollo); no lanza ningún análisis.
+- run-analysis.bat: único punto de entrada; ejecuta el flujo completo.
+- run-analysis.ps1 y setup-windows.ps1: scripts internos del lanzador (flujo y preparación del entorno).
 
 ## Desarrollo y pruebas
 
