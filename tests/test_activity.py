@@ -117,3 +117,36 @@ def test_gitlab_listing_keeps_project_id(monkeypatch):
                                   request=httpx.Request("GET", url))
     monkeypatch.setattr(gitlab.httpx, "Client", FakeClient)
     assert gitlab.list_group_projects("1118") == [{"name": "g/s", "git_url": "https://gitlab.example.com/g/s.git", "gitlab_project_id": 42}]
+
+
+def test_activity_runs_after_static_analysis():
+    plan = [a.name for a in default_supervisor().plan("repository")]
+    assert plan.index("activity_analysis") > plan.index("quality_analysis")
+    assert plan.index("activity_analysis") < plan.index("repository_report")
+
+
+def _act(commits, recent, pushes, user=None):
+    return {"agent_insights": {"activity_analysis": {
+        "window_days": 90, "branches": {"total": recent + 3, "recent": recent},
+        "commits": {"total": commits, "last_commit_at": "2026-11-10T10:00:00+00:00"},
+        "pushes": {"total": pushes, "top_user": {"user": user, "display_name": user.title(), "count": pushes} if user else None}}}}
+
+
+def test_index_ranks_most_active_microservices():
+    from app.documentation import build_documentation_index
+    repos = [{"name": "g/quiet", "artifact_dir": "repositories/g-quiet", **_act(0, 0, 0)},
+             {"name": "g/busy", "artifact_dir": "repositories/g-busy", **_act(250, 2, 40, "ana")},
+             {"name": "g/branchy", "artifact_dir": "repositories/g-branchy", **_act(30, 9, 5, "luis")},
+             {"name": "g/<manual>", "artifact_dir": "repositories/g-manual", "agent_insights": {}}]
+    html = build_documentation_index("Grupo", {"repositories": repos, "bug_reports": [], "agent_insights": {
+        "group_activity": {"top_pusher": {"user": "ana", "display_name": "Ana G", "count": 40, "repositories": 1}}}})
+    section = html.split("Microservicios más trabajados (últimos 90 días)")[1].split("Documentación por microservicio")[0]
+    assert section.index("g/busy</a></b></td>") < section.index("g/branchy</a></b></td>") < section.index("g/quiet</a></b></td>")
+    kpis = section.split("<table>")[0]
+    assert "Más commits</small><b><a href='repositories/g-busy/agents.html'>g/busy</a></b><span>250 commits" in kpis
+    assert "Más ramas recientes</small><b><a href='repositories/g-branchy/agents.html'>g/branchy</a></b><span>9 ramas" in kpis
+    assert "Ana G</b><span>40 pushes en 1 repositorios" in kpis
+    assert "1 microservicios sin datos de actividad" in section and "width:100%" in section
+    assert "250 commits · 2 ramas" in html and "<span>Sin datos</span>" in html and "g/&lt;manual&gt;" in html
+    empty = build_documentation_index("Grupo", {"repositories": repos[3:], "bug_reports": []})
+    assert "No hay histórico de Git disponible" in empty

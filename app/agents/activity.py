@@ -9,6 +9,8 @@ from .context import AnalysisContext, AnalyzerAgent
 class ActivityAnalysisAgent(AnalyzerAgent):
     """Actividad reciente de un repositorio según la API de GitLab."""
     name = "activity_analysis"
+    # Se ejecuta cuando el análisis estático del repositorio ha terminado.
+    after = ("inventory", "deep_analysis", "functional_analysis", "java_analysis", "quality_analysis")
     optional = True
 
     def run(self, context: AnalysisContext) -> dict:
@@ -25,6 +27,7 @@ class ActivityAnalysisAgent(AnalyzerAgent):
 class GroupActivityAgent(AnalyzerAgent):
     """Ranking global: repositorios con más ramas recientes y commits, y usuarios con más pushes."""
     name = "group_activity"
+    after = ("integration_analysis",)
     scope = "group"
     optional = True
 
