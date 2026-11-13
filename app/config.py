@@ -12,5 +12,5 @@ DB_PATH = DATA_DIR / "platform.db"
 DATA_DIR.mkdir(exist_ok=True)
 WORKSPACES_DIR.mkdir(exist_ok=True)
 APP_NAME = "Analizador de arquitectura y calidad de microservicios"
-APP_VERSION = "6.2.0"
+APP_VERSION = "6.3.0"
 MAX_CLONE_SECONDS = int(os.getenv("MAX_CLONE_SECONDS", "180"))
