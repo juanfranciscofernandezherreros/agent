@@ -30,8 +30,8 @@ Requisitos: Windows con PowerShell 5.1 o superior, Python 3.10 o superior, Git f
 1. Clona este repositorio.
 2. Haz doble clic en `run-analysis.bat`.
 3. La primera vez se crea `.env` y se abre en el Bloc de notas: pon tu `GITLAB_TOKEN` (y `GITLAB_BASE_URL` si tu GitLab no es gitlab.com), guarda y cierra.
-4. Si no has indicado `GITLAB_GROUP_ID`, elige un grupo de la lista que Agent obtiene de GitLab.
-5. Elige todos los repositorios/microservicios del grupo o selecciona algunos por número.
+4. Agent obtiene de GitLab y muestra la lista de grupos y subgrupos accesibles. Si `GITLAB_GROUP_ID` está configurado, Enter lo mantiene como opción predeterminada; puedes elegir otro grupo.
+5. Elige todos los repositorios/microservicios del grupo o selecciona algunos por número. También puedes indicar directamente el ID del grupo en la línea de comandos para omitir la selección de grupo.
 
 El lanzador se encarga del resto: prepara el entorno Python, instala dependencias, arranca la API local, permite seleccionar grupo y repositorios/microservicios y abre la documentación.
 
