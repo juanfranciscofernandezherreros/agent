@@ -166,11 +166,15 @@ def build_bug_export_html(export_data):
     """Build a self-contained HTML report from server-validated selected findings."""
     tasks = export_data["tasks"]
     bugs = export_data["bugs"]
-    rows = "".join(
-        "<tr><td>" + _e(item.get("id")) + "</td><td>" + _e(item.get("repository")) + "</td><td>" + _e(item.get("title")) +
-        "</td><td>" + _e(item.get("file")) + ":" + _e(item.get("line")) +
-        "</td><td>" + _e(item.get("severity")) + "</td><td>" +
-        _e(item.get("recommended_action")) + "</td></tr>"
+    task_cards = "".join(
+        "<article class='task-card " + _e(str(item.get("severity", "low")).lower()) + "'>"
+        "<div class='task-top'><span class='severity'>" + _e(str(item.get("severity", "N/D")).upper()) + "</span>"
+        "<span class='task-id'>" + _e(item.get("id")) + "</span></div>"
+        "<p class='repository'>" + _e(item.get("repository")) + "</p>"
+        "<h3>" + _e(item.get("title")) + "</h3>"
+        "<dl><dt>Archivo</dt><dd><code>" + _e(item.get("file")) + "</code></dd>"
+        "<dt>Línea</dt><dd>" + _e(item.get("line")) + "</dd></dl>"
+        "<h4>Acción recomendada</h4><p>" + _e(item.get("recommended_action")) + "</p></article>"
         for item in tasks
     )
     bug_rows = "".join(
@@ -186,16 +190,22 @@ def build_bug_export_html(export_data):
 body{font:15px/1.5 system-ui;margin:0;background:#f4f6fa;color:#172033}
 main{max-width:1100px;margin:32px auto;padding:0 18px}
 section{background:white;border:1px solid #dce3ed;border-radius:12px;padding:20px;margin:16px 0}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;vertical-align:top;padding:9px;border-bottom:1px solid #e5eaf1;overflow-wrap:anywhere}
-th{background:#edf1f6}h1,h2{color:#172b4d}
-@media(max-width:700px){main{overflow-x:auto}table{min-width:650px}}
+.task-card{background:#fff;border:1px solid #dce3ed;border-left:5px solid #3975bb;border-radius:12px;padding:16px;margin:13px 0}
+.task-card.high{border-left-color:#c43d4b}.task-card.medium{border-left-color:#c28a23}.task-card.low{border-left-color:#3975bb}
+.task-top{display:flex;gap:10px;align-items:center}.severity{font-size:.78rem;font-weight:750;padding:3px 9px;border-radius:20px;background:#edf1f6}
+.high .severity{background:#fdebed;color:#a62231}.medium .severity{background:#fff3d9;color:#805500}
+.task-id{color:#66758a;font-size:.85rem;font-weight:650}.repository{color:#5b6678;font-weight:650;margin:9px 0 0}
+.task-card h3{font-size:1.12rem;margin:5px 0 10px}.task-card h4{margin:12px 0 3px;color:#40516a}
+dl{display:grid;grid-template-columns:75px 1fr;gap:4px 12px;margin:10px 0}dt{font-weight:650;color:#5b6678}dd{margin:0;overflow-wrap:anywhere}
+code{overflow-wrap:anywhere}.bug-table{width:100%;border-collapse:collapse}.bug-table th,.bug-table td{text-align:left;vertical-align:top;padding:9px;border-bottom:1px solid #e5eaf1;overflow-wrap:anywhere}
+.bug-table th{background:#edf1f6}h1,h2{color:#172b4d}
+@media(max-width:520px){dl{grid-template-columns:1fr}dd{margin-bottom:6px}}
 </style></head><body><main><h1>Informe consolidado de tareas y posibles bugs</h1>
 <p>Conjunto: """ + _e(export_data["group_name"]) + """ · Microservicio: """ + _e(export_data["repository"]) + """</p>
 <p>Generado: """ + _e(export_data["generated_at"]) + """ · Elementos seleccionados: """ + str(len(tasks)) + """</p>
-<section><h2>Tareas pendientes (""" + str(len(tasks)) + """)</h2>
-<table><thead><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr></thead><tbody>""" + rows + """</tbody></table></section>
+<section><h2>Tareas pendientes (""" + str(len(tasks)) + """)</h2>""" + (task_cards or "<p>No hay tareas seleccionadas.</p>") + """</section>
 <section><h2>Posibles bugs (""" + str(len(bugs)) + """)</h2>
-<table><thead><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr></thead><tbody>""" + bug_rows + """</tbody></table></section>
+<table class="bug-table"><thead><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr></thead><tbody>""" + bug_rows + """</tbody></table></section>
 <p>Los elementos son candidatos heurísticos y deben validarse mediante revisión y pruebas.</p>
 </main></body></html>"""
 
