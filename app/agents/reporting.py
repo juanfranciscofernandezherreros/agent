@@ -139,7 +139,7 @@ class GroupReportingAgent(AnalyzerAgent):
         (folder / "analysis.html").write_text(build_integral_html(name, result), encoding="utf-8")
         bug_dir = folder / "bug-reports"
         bug_dir.mkdir(parents=True, exist_ok=True)
-        (bug_dir / "index.html").write_text(build_bug_reports_index(name, bug_reports), encoding="utf-8")
+        (bug_dir / "index.html").write_text(build_bug_reports_index(name, bug_reports, repositories), encoding="utf-8")
 
         sections = build_sections(insights, _runs(context, None, "group", self.name), "group")
         rows = []
