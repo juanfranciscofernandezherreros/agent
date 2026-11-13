@@ -39,9 +39,9 @@ def _bug_export_script():
   }));
   button.addEventListener("click", async () => {
     const parts = window.location.pathname.split("/");
-    const groupId = parts[3];
+    const groupId = button.dataset.groupId || parts[3];
     if (!groupId) { status.textContent = "No se pudo identificar el análisis actual."; return; }
-    const fallbackReport = parts[5];
+    const fallbackReport = button.dataset.report || parts[5];
     const byReport = new Map();
     checks.filter((item) => item.checked).forEach((item) => {
       const reportName = item.dataset.report || fallbackReport;
@@ -54,7 +54,8 @@ def _bug_export_script():
     button.disabled = true;
     status.textContent = "Generando los ficheros…";
     try {
-      const response = await fetch("/api/analysis-groups/" + encodeURIComponent(groupId) + "/bug-reports/export", {
+      const apiBase = window.location.protocol === "file:" ? "http://127.0.0.1:8001" : "";
+      const response = await fetch(apiBase + "/api/analysis-groups/" + encodeURIComponent(groupId) + "/bug-reports/export", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selections })
       });
@@ -76,13 +77,13 @@ def _bug_export_script():
 })();
 </script>"""
 
-def build_bug_report_html(repository, group_name, quality, service_slug=None):
+def build_bug_report_html(repository, group_name, quality, service_slug=None, group_id=None, report_name=None):
     findings = _sorted_findings(quality)
     summary = quality.get("summary") or {}
     counts = {s: sum(1 for x in findings if str(x.get("severity", "")).lower() == s) for s in ("high", "medium", "low")}
     cards = "".join(
         "<article class='finding " + _e(str(x.get("severity", "low")).lower()) + "'>"
-        + ("<label class='select-finding'><input class='bug-select' type='checkbox' value='" + str(index) + "'> Seleccionar para exportar</label>" if service_slug else "")
+        + ("<label class='select-finding'><input class='bug-select' type='checkbox' value='" + str(index) + "' data-report='__REPORT_NAME__'> Seleccionar para exportar</label>" if service_slug else "")
         + "<div class='top'><b>" + _e(str(x.get("severity", "low")).upper()) + "</b><span>" + _e(x.get("code", "N/D")) + "</span></div>"
         + "<h2>" + _e(x.get("title", "Posible bug")) + "</h2><p>" + _e(x.get("description", "")) + "</p>"
         + "<dl><dt>Archivo</dt><dd><code>" + _e(x.get("file", "N/D")) + "</code></dd>"
@@ -94,7 +95,7 @@ def build_bug_report_html(repository, group_name, quality, service_slug=None):
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     toolbar = """<section id="export-panel" class="notice export-panel">
 <label><input id="select-all-bugs" type="checkbox"> Seleccionar todos</label>
-<button id="export-selected-bugs" type="button">Exportar selección (JSON + HTML)</button>
+<button id="export-selected-bugs" type="button" data-group-id="__GROUP_ID__" data-report="__REPORT_NAME__">Exportar selección (JSON + HTML)</button>
 <span id="export-status" role="status" aria-live="polite">Selecciona uno o varios hallazgos.</span>
 </section>"""
     script = _bug_export_script()
@@ -123,7 +124,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff
 <div class="metric"><strong>""" + str(counts["high"]) + """</strong><span>Prioridad alta</span></div>
 <div class="metric"><strong>""" + str(counts["medium"]) + """</strong><span>Prioridad media</span></div></section>
 <div class="notice"><b>Importante:</b> son candidatos heurísticos, no defectos confirmados. Puede haber falsos positivos y negativos. No se ha ejecutado el servicio ni sus pruebas. Candidatos indicados por el analizador: """ + _e(summary.get("bug_candidates", len(findings))) + """.</div>
-<h2>Hallazgos y tareas recomendadas</h2>""" + (toolbar if service_slug else "") + cards + """<footer>Generado: """ + generated + """ · Revisar cada evidencia y validarla mediante pruebas.</footer></main>""" + (script if service_slug else "") + """</body></html>"""
+<h2>Hallazgos y tareas recomendadas</h2>""" + (toolbar.replace("__GROUP_ID__", _e(group_id or "")).replace("__REPORT_NAME__", _e(report_name or "")) if service_slug else "") + cards + """<footer>Generado: """ + generated + """ · Revisar cada evidencia y validarla mediante pruebas.</footer></main>""" + (script if service_slug else "") + """</body></html>"""
 
 
 def build_bug_export_html(export_data):
@@ -163,7 +164,7 @@ th{background:#edf1f6}h1,h2{color:#172b4d}
 <p>Los elementos son candidatos heurísticos y deben validarse mediante revisión y pruebas.</p>
 </main></body></html>"""
 
-def build_bug_reports_index(group_name, reports, repositories=None):
+def build_bug_reports_index(group_name, reports, repositories=None, group_id=None):
     rows = "".join(
         "<li><a href='" + _e(x["file"]) + "'>" + _e(x["repository"]) +
         "</a><span>" + _e(x["count"]) + " posibles bugs</span></li>"
@@ -198,7 +199,7 @@ def build_bug_reports_index(group_name, reports, repositories=None):
         selection_ui = """<section class="selection"><h2>Seleccionar tareas y posibles bugs</h2>
 <p>Marca hallazgos de uno o varios microservicios y genera un único informe consolidado.</p>
 <div class="selection-actions"><label><input id="select-all-bugs" type="checkbox"> Seleccionar todos</label>
-<button id="export-selected-bugs" type="button">Exportar selección (JSON + HTML)</button>
+<button id="export-selected-bugs" type="button" data-group-id="__GROUP_ID__">Exportar selección (JSON + HTML)</button>
 <span id="export-status" role="status" aria-live="polite">No hay hallazgos seleccionados.</span></div>
 <div class="finding-list">""" + "".join(selectable) + """</div></section>"""
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informes individuales de posibles bugs</title>
@@ -219,4 +220,4 @@ a{font-weight:700;color:#2457c5}span{display:block;color:#5b6678;font-size:.9rem
 @media(max-width:520px){main{margin:20px auto}section{padding:16px}}
 </style></head><body><main><section><nav class="actions"><a href="../analysis.html">← Informe global</a><a href="../index.html">Índice de documentación</a></nav>
 <h1>Informes individuales de posibles bugs</h1><p>Conjunto analizado: """ + _e(group_name) + """</p>
-<p>Solo aparecen microservicios con uno o más candidatos detectados. Puedes abrir un informe individual o seleccionar hallazgos de varios servicios para exportarlos juntos.</p><ul>""" + rows + """</ul></section>""" + selection_ui + """</main>""" + (_bug_export_script() if selectable else "") + """</body></html>"""
+<p>Solo aparecen microservicios con uno o más candidatos detectados. Puedes abrir un informe individual o seleccionar hallazgos de varios servicios para exportarlos juntos.</p><ul>""" + rows + """</ul></section>""" + selection_ui.replace("__GROUP_ID__", _e(group_id or "")) + """</main>""" + (_bug_export_script() if selectable else "") + """</body></html>"""
