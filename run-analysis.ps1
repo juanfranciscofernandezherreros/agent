@@ -197,7 +197,8 @@ try {
         Write-Host ""
         Write-Host $Prompt -ForegroundColor Cyan
         for ($i = 0; $i -lt $Items.Count; $i++) {
-            Write-Host ("  {0}. {1}" -f ($i + 1), [string]$Items[$i].$DisplayProperty)
+            $displayValue = $Items[$i].PSObject.Properties[$DisplayProperty].Value
+            Write-Host ("  {0}. {1}" -f ($i + 1), [string]$displayValue)
         }
         $raw = (Read-Host "Números separados por comas, o A para todos").Trim()
         if ([string]::IsNullOrWhiteSpace($raw) -or $raw -match '^(?i:a|todos)
@@ -370,7 +371,7 @@ catch {
             if (-not [int]::TryParse($part, [ref]$number) -or $number -lt 1 -or $number -gt $Items.Count) {
                 throw "Selección no válida: $part. Usa números entre 1 y $($Items.Count), o A."
             }
-            if (-not ($selected | Where-Object { $_.id -eq $Items[$number - 1].id })) { $selected += $Items[$number - 1] }
+            $selected += $Items[$number - 1]
         }
         if ($selected.Count -eq 0) { throw "No se ha seleccionado ningún elemento." }
         return ,$selected
