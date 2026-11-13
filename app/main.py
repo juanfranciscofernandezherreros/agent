@@ -18,6 +18,8 @@ from .communication import SharedStore
 from . import llm
 from .analysis_orchestrator import run_group_analysis
 from .gitlab import gitlab_settings, list_accessible_groups, list_group_projects
+from .schemas import BugReportExportRequest
+from .bug_report import TASKS, _sorted_findings, build_bug_export_html
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION,
  description="Orquestador de análisis estático profundo de uno o varios microservicios. No ejecuta el código analizado.")
@@ -278,6 +280,87 @@ def get_analysis_group_repository_html(group_id: str, repository_slug: str):
     if not path.is_file():
         raise HTTPException(404, "Ficha HTML del microservicio no encontrada")
     return path.read_text(encoding="utf-8")
+
+
+@app.post("/api/analysis-groups/{group_id}/bug-reports/export")
+def export_selected_bug_reports(group_id: str, payload: BugReportExportRequest):
+    """Exporta hallazgos seleccionados; los datos se reconstruyen desde el análisis guardado."""
+    import re
+    if not re.fullmatch(r"[A-Za-z0-9-]{1,80}", group_id):
+        raise HTTPException(404, "Grupo de análisis no encontrado")
+    if len(set(payload.finding_indexes)) != len(payload.finding_indexes) or any(i < 0 for i in payload.finding_indexes):
+        raise HTTPException(400, "La selección contiene índices duplicados o no válidos.")
+
+    with connect() as con:
+        group = con.execute("SELECT id FROM analysis_groups WHERE id=?", (group_id,)).fetchone()
+    if not group:
+        raise HTTPException(404, "Grupo de análisis no encontrado")
+
+    analysis_path = WORKSPACES_DIR / group_id / "analysis.json"
+    if not analysis_path.is_file():
+        raise HTTPException(409, "El análisis todavía no está disponible para exportar.")
+    try:
+        analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        raise HTTPException(500, "No se pudo leer el resultado del análisis.")
+
+    expected_report = "bug-reports/" + payload.report_name
+    repository = next((item for item in analysis.get("repositories", [])
+                       if item.get("bug_report") == expected_report), None)
+    if repository is None:
+        raise HTTPException(404, "El informe no pertenece a este grupo de análisis.")
+
+    findings = _sorted_findings(repository.get("quality_analysis") or {})
+    if any(index >= len(findings) for index in payload.finding_indexes):
+        raise HTTPException(400, "La selección contiene hallazgos que no existen.")
+    selected = [findings[index] for index in payload.finding_indexes]
+    tasks = []
+    bugs = []
+    for index, finding in zip(payload.finding_indexes, selected):
+        action = TASKS.get(finding.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")
+        item = {
+            "id": f"{repository.get('artifact_dir', '').split('/')[-1]}-{index + 1}",
+            "title": finding.get("title", "Posible bug"),
+            "description": finding.get("description", ""),
+            "status": "Pendiente",
+            "severity": finding.get("severity", "low"),
+            "file": finding.get("file", "N/D"),
+            "line": finding.get("line", "N/D"),
+            "recommended_action": action,
+        }
+        tasks.append(item)
+        bugs.append({
+            "code": finding.get("code", "N/D"),
+            "title": finding.get("title", "Posible bug"),
+            "description": finding.get("description", ""),
+            "severity": finding.get("severity", "low"),
+            "file": finding.get("file", "N/D"),
+            "line": finding.get("line", "N/D"),
+            "confidence": finding.get("confidence", "heuristic_candidate"),
+            "excerpt": finding.get("excerpt", ""),
+            "recommended_action": action,
+        })
+
+    generated = now()
+    export_data = {
+        "schema_version": "1.0",
+        "analysis_group_id": group_id,
+        "group_name": analysis.get("group_name", "analysis"),
+        "repository": repository.get("name", "microservicio"),
+        "generated_at": generated,
+        "total_tasks": len(tasks),
+        "total_bugs": len(bugs),
+        "tasks": tasks,
+        "bugs": bugs,
+    }
+    safe_id = group_id[:8]
+    return {
+        "status": "success",
+        "json_filename": f"tareas-y-bugs-{safe_id}.json",
+        "html_filename": f"informe-tareas-y-bugs-{safe_id}.html",
+        "json_data": export_data,
+        "html_content": build_bug_export_html(export_data),
+    }
 
 
 @app.get("/api/analysis-groups/{group_id}/bug-reports/index.html",response_class=HTMLResponse)
