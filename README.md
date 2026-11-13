@@ -30,9 +30,9 @@ Requisitos: Windows con PowerShell 5.1 o superior, Python 3.10 o superior, Git f
 1. Clona este repositorio.
 2. Haz doble clic en `run-analysis.bat`.
 3. La primera vez se crea `.env` y se abre en el Bloc de notas: pon tu `GITLAB_TOKEN` (y `GITLAB_BASE_URL` si tu GitLab no es gitlab.com), guarda y cierra.
-4. Indica el identificador numérico del grupo cuando lo pida.
+4. Si no has indicado `GITLAB_GROUP_ID`, elige un grupo de la lista que Agent obtiene de GitLab.\n5. Elige todos los repositorios/microservicios del grupo o selecciona algunos por número.
 
-El lanzador se encarga del resto: prepara el entorno Python, instala dependencias, arranca la API local, analiza y abre la documentación.
+El lanzador se encarga del resto: prepara el entorno Python, instala dependencias, arranca la API local, permite seleccionar grupo y repositorios/microservicios y abre la documentación.
 
 ```
 run-analysis.bat                 usa GITLAB_GROUP_ID de .env, o lo pregunta
@@ -160,7 +160,7 @@ El lanzador usa una API local en `http://127.0.0.1:8001`, con documentación int
 
 | Operación | Endpoint |
 |---|---|
-| Analizar un grupo de GitLab | `POST /api/gitlab/groups/{group_id}/analysis` |
+| Listar grupos visibles de GitLab | `GET /api/gitlab/groups` |\n| Listar repositorios de un grupo | `GET /api/gitlab/groups/{group_id}/projects` |\n| Analizar todos o proyectos seleccionados de un grupo | `POST /api/gitlab/groups/{group_id}/analysis` (`project_ids` opcional) |
 | Analizar una lista de hasta 100 repositorios (`name`, `git_url` HTTPS) | `POST /api/analysis-groups` |
 | Analizar un único repositorio | `POST /api/projects` |
 | Progreso de un análisis | `GET /api/analysis-groups/{id}/progress` |
