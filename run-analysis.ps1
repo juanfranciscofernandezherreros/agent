@@ -124,12 +124,11 @@ try {
     $ApiIsStale = $false
     try {
         $HealthInfo = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 5
-        $NewestCode = (Get-ChildItem -LiteralPath (Join-Path $Root "app") -Recurse -Filter *.py | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1).LastWriteTimeUtc
-        if ([string]::IsNullOrWhiteSpace([string]$HealthInfo.started_at)) { $ApiIsStale = $true }
-        else {
-            $StartedAt = [DateTimeOffset]::Parse([string]$HealthInfo.started_at, [Globalization.CultureInfo]::InvariantCulture).UtcDateTime
-            $ApiIsStale = ($NewestCode -gt $StartedAt)
-        }
+        $NewestCode = (Get-ChildItem -LiteralPath (Join-Path $Root "app") -Recurse -File | Where-Object { $_.Extension -eq ".py" } | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1).LastWriteTimeUtc
+        $NewestEpoch = [DateTimeOffset]::new([DateTime]::SpecifyKind($NewestCode, [DateTimeKind]::Utc)).ToUnixTimeSeconds()
+        # Se compara en segundos Unix para no depender de cómo cada versión de PowerShell interpreta las fechas JSON.
+        $StartedEpoch = [long]$HealthInfo.started_epoch
+        $ApiIsStale = ($StartedEpoch -le 0) -or ($NewestEpoch -gt $StartedEpoch)
     } catch { $ApiIsStale = $false }
 
     if ((-not $HasDocumentationRoutes) -or $ApiIsStale) {

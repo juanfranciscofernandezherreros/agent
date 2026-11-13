@@ -92,9 +92,10 @@ def root():
 
 # El lanzador compara esta hora con la de los ficheros de código para reiniciar una API obsoleta.
 STARTED_AT=datetime.now(timezone.utc).isoformat()
+STARTED_EPOCH=int(datetime.now(timezone.utc).timestamp())
 
 @app.get("/health")
-def health(): return {"status":"ok","version":APP_VERSION,"mode":"deep_analysis_orchestrator","started_at":STARTED_AT}
+def health(): return {"status":"ok","version":APP_VERSION,"mode":"deep_analysis_orchestrator","started_at":STARTED_AT,"started_epoch":STARTED_EPOCH}
 
 @app.post("/api/projects",status_code=202)
 def create_project(payload:ProjectCreate,background_tasks:BackgroundTasks):
