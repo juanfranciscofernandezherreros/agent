@@ -1,4 +1,4 @@
-# Roadmap — Deep Reverse Engineering
+# Hoja de ruta
 
 ## v5.0 — Orquestación de análisis estático
 - Coordinación de análisis de uno o varios repositorios.

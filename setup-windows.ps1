@@ -1,6 +1,6 @@
 ﻿$ErrorActionPreference = "Stop"
 Set-Location -LiteralPath (Split-Path -Parent $MyInvocation.MyCommand.Path)
-Write-Host "=== Instalador local - Software Reconstruction Platform ===" -ForegroundColor Cyan
+Write-Host "=== Preparación del entorno - Analizador de arquitectura y calidad de microservicios ===" -ForegroundColor Cyan
 if (Get-Command py -ErrorAction SilentlyContinue) {
     py -3 --version
     py -3 -m venv .venv

@@ -283,7 +283,7 @@ main{min-width:0}.report-section,.service{background:var(--paper);border:1px sol
 @media(max-width:600px){.hero{padding:35px 20px}.shell{padding:14px 10px 45px}.report-section,.service{padding:17px}.facts{grid-template-columns:1fr;gap:2px}.facts dd{margin-bottom:8px}.quality-banner{padding:13px;gap:12px}.quality-counts{width:100%}.quality-counts span{flex:1 1 110px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.table-wrap table{min-width:680px}.class-grid{grid-template-columns:minmax(0,1fr)}.sidebar{display:block}.sidebar a{display:inline-block;max-width:100%}}
 @media print{body{background:#fff;font-size:10px}.hero{padding:25px;background:#18365e!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.shell{display:block;padding:0}.sidebar,.catalog-tools{display:none}.report-section,.service{box-shadow:none;break-inside:auto;border:0;padding:15px}.class-card,.panel,.risk-card{break-inside:avoid}.table-wrap{overflow:visible}th{position:static}a{color:inherit}.footer{display:none}}
 </style></head><body>
-<header class='hero'><div class='hero-inner'><div class='eyebrow'>Software intelligence · Reverse engineering · Informe técnico</div>
+<header class='hero'><div class='hero-inner'><div class='eyebrow'>Arquitectura y calidad de software · Informe técnico</div>
 <h1>Informe de arquitectura y calidad de microservicios</h1>
 <p class='report-context'>Conjunto analizado: <strong>""" + _e(name) + """</strong></p>
 <p>Documento integral de arquitectura, comportamiento, integraciones y evidencias de código. El objetivo es explicar qué contiene cada servicio, cómo se relacionan las piezas y qué aspectos necesitan validación adicional, separando los hallazgos de las hipótesis.</p>
@@ -319,7 +319,7 @@ main{min-width:0}.report-section,.service{background:var(--paper);border:1px sol
 <h3>Limitaciones y advertencias de interpretación</h3><ul class='compact'>""" + "".join("<li>" + _e(x) + "</li>" for x in dict.fromkeys(limits)) + """</ul>
 </section>
 """ + "".join(service_sections) + failure_section + """
-<div class='footer'>Fin del informe · Generado por Deep Reverse Engineering &amp; Analysis Orchestrator · Evidencia estática; validación runtime no realizada.</div>
+<div class='footer'>Fin del informe · Generado por Analizador de arquitectura y calidad de microservicios · Evidencia estática; validación runtime no realizada.</div>
 </main></div>
 <script>
 (function(){

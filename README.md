@@ -1,281 +1,206 @@
-# Deep Reverse Engineering & Analysis Orchestrator
+# Analizador de arquitectura y calidad de microservicios
 
-Herramienta de **análisis estático de repositorios y grupos de microservicios**. Descubre repositorios desde GitLab, los clona, ejecuta analizadores especializados sobre el código fuente y genera resultados individuales y un informe HTML consolidado.
+Herramienta local que analiza todos los repositorios de un grupo de GitLab y genera documentación HTML navegable: arquitectura de cada servicio, relaciones entre servicios, posibles bugs y actividad reciente en Git.
 
-La aplicación es un **sistema multiagente coordinado por un supervisor**. Cada analizador es un agente con una interfaz común; el supervisor decide qué agentes ejecutar y en qué orden según sus dependencias, y todos se comunican mediante mensajes JSON publicados en un almacén compartido. Los agentes estáticos son deterministas; los agentes LLM son opcionales y sus conclusiones se contrastan con la evidencia estática mediante validación cruzada.
+Se lanza con un doble clic, trabaja en tu máquina y solo lee los repositorios: no ejecuta su código, no los modifica y no sube nada a ningún sitio, salvo que actives expresamente los agentes LLM.
 
-## Arquitectura multiagente
+```
+run-analysis.bat 1118
+```
 
-| Capa | Agentes | Módulo |
+## Qué obtienes
+
+Al terminar se abre un índice desde el que se llega a todo:
+
+| Documento | Contenido |
+|---|---|
+| Índice del análisis | Ranking de los microservicios más trabajados, enlaces a todos los documentos y lista seleccionable de posibles bugs |
+| Informe global | Visión de conjunto: servicios, tecnologías, relaciones candidatas entre servicios y puntuaciones de calidad |
+| Ficha técnica (una por servicio) | Lenguajes, estructura, dependencias, endpoints, configuración, persistencia, integraciones y catálogo de clases Java |
+| Posibles bugs (uno por servicio) | Cada candidato con su prioridad, archivo, línea, fragmento de código y explicación |
+| Histórico de Git (global y por servicio) | Ramas con actividad reciente, commits por autor y pushes por usuario |
+| Informe multiagente (global y por servicio) | Qué análisis se ejecutaron, contradicciones detectadas entre ellos y, si están activos, las interpretaciones del LLM |
+
+Todos los documentos son HTML estático con enlaces relativos: la carpeta `reports` se puede copiar o compartir y sigue funcionando sin conexión. `reports/index.html` enlaza todos los análisis que hayas hecho, el más reciente primero.
+
+## Puesta en marcha
+
+Requisitos: Windows con PowerShell 5.1 o superior, Python 3.10 o superior, Git for Windows y un token de GitLab con permisos `read_api` y `read_repository`.
+
+1. Clona este repositorio.
+2. Haz doble clic en `run-analysis.bat`.
+3. La primera vez se crea `.env` y se abre en el Bloc de notas: pon tu `GITLAB_TOKEN` (y `GITLAB_BASE_URL` si tu GitLab no es gitlab.com), guarda y cierra.
+4. Indica el identificador numérico del grupo cuando lo pida.
+
+El lanzador se encarga del resto: prepara el entorno Python, instala dependencias, arranca la API local, analiza y abre la documentación.
+
+```
+run-analysis.bat                 usa GITLAB_GROUP_ID de .env, o lo pregunta
+run-analysis.bat 1118            analiza el grupo 1118
+run-analysis.bat 1118 -Llm claude -Model claude-sonnet-5-5     con agentes LLM
+run-analysis.bat -ListModels     lista los modelos del proveedor LLM configurado
+```
+
+Durante el análisis se ve una barra de progreso y una línea por repositorio terminado. Los informes de cada servicio se descargan en cuanto están listos.
+
+## Configuración (`.env`)
+
+| Variable | Para qué sirve | Por defecto |
 |---|---|---|
-| Análisis estático (obligatorio) | `inventory`, `deep_analysis`, `functional_analysis`, `java_analysis`, `quality_analysis`, `integration_analysis` (grupo) | `app/agents/` (adaptadores sobre los analizadores originales, sin cambiar su lógica) |
-| Agentes inteligentes (opcional, LLM) | `llm_functional_interpretation`, `llm_bug_review`, `llm_architecture_explanation`, `llm_evidence_correlation` (grupo) | `app/agents/llm_agents.py`, `app/llm.py` |
-| Validación cruzada | `cross_validation`, `group_cross_validation` (grupo) | `app/agents/validation.py` |
-| Histórico de actividad (GitLab) | `activity_analysis`, `group_activity` (grupo) | `app/agents/activity.py`, `app/activity_analysis.py` |
-| Documentación | `repository_report`, `group_report` (grupo) | `app/agents/reporting.py`, `app/agent_report.py` |
-
-- **Supervisor** (`app/supervisor.py`): ordena los agentes topológicamente a partir de `requires` (dependencias) y `after` (solo orden), admite ejecutar un subconjunto (`only`) y rechaza ciclos o dependencias desconocidas. Si falla un agente obligatorio, el repositorio se marca como fallido; si falla o se omite uno opcional, el análisis continúa y los agentes que dependían de él se omiten.
-- **Comunicación** (`app/communication/`): cada ejecución produce un `AgentMessage` (contrato `1.0`) con estado (`PENDING`, `RUNNING`, `COMPLETED`, `FAILED`, `SKIPPED`), duración, payload, evidencias (`repositorio`, `archivo`, `línea`, `confianza`) y errores. El `SharedStore` los guarda en memoria y en `workspaces/<id>/agent-runs/` (`manifest.json` y un JSON por agente y repositorio).
-- **Agentes LLM**: desactivados por defecto. Funcionan sobre LangChain y admiten OpenAI, Claude, Gemini y Ollama (ver «Selección de proveedor y modelo LLM»). Envían al proveedor resultados del análisis y fragmentos de código con secretos redactados; el contenido del repositorio se trata como dato no confiable. Su salida se marca siempre como `llm_inferred`.
-- **Validación cruzada**: compara los analizadores estáticos entre sí (por ejemplo, Kafka o endpoints que ve el analizador Java y no el análisis profundo) y verifica las afirmaciones LLM: citas a archivos o líneas inexistentes, revisiones de bugs que no corresponden a ningún candidato, discrepancias en prioridad alta, integraciones sin respaldo estático y flujos entre servicios no respaldados.
-- **Histórico de actividad**: para grupos GitLab, consulta la API (solo lectura) y resume por repositorio las ramas con actividad reciente, los commits por autor y los pushes por usuario; `activity.html` ordena los repositorios por ramas recientes y commits y muestra quién hace más pushes. La ventana es de 90 días (`ACTIVITY_DAYS`).
-- **Informe multiagente**: `agents.html` / `agents.md` global y por microservicio, enlazados desde el índice de documentación.
-
-Para añadir un agente: crea una clase que herede de `AnalyzerAgent` (`name`, `requires`, `scope`, `run`) y regístrala en `default_supervisor()`.
-
-## Selección de proveedor y modelo LLM
-
-Los agentes LLM usan LangChain, de modo que el proveedor y el modelo se eligen sin tocar código. En `.env`:
-
-    LLM_AGENTS_ENABLED=true
-    LLM_PROVIDER=claude          # openai | claude | gemini | ollama
-    LLM_MODEL=claude-sonnet-5-5  # identificador exacto del modelo en ese proveedor
-
-| Proveedor | `LLM_PROVIDER` | Clave en `.env` | Notas |
-|---|---|---|---|
-| OpenAI | `openai` | `OPENAI_API_KEY` | `LLM_BASE_URL` permite usar un servicio compatible |
-| Claude (Anthropic) | `claude` | `ANTHROPIC_API_KEY` | |
-| Gemini (Google) | `gemini` | `GOOGLE_API_KEY` | |
-| Ollama (local) | `ollama` | no necesita | `OLLAMA_BASE_URL`, por defecto `http://127.0.0.1:11434`; el modelo debe estar descargado (`ollama pull`) |
-
-Si falta la clave específica se usa `LLM_API_KEY`. Se pueden dejar todas las claves en `.env` y cambiar solo `LLM_PROVIDER` y `LLM_MODEL`.
-
-También se puede elegir al lanzar, con prioridad sobre `.env`:
-
-    run-analysis.bat 1118 -Llm gemini -Model gemini-3.6-flash
-    run-analysis.bat 1118 -Llm ollama -Model qwen2.5-coder:14b
-
-Los identificadores de modelo cambian con frecuencia. Para ver los que ofrece tu cuenta (o los instalados en Ollama):
-
-    run-analysis.bat -ListModels
-    run-analysis.bat -ListModels -Llm claude
-
-Para comprobar la conexión con una llamada mínima: `.\.venv\Scripts\python.exe -m app.llm --test`. La configuración activa (sin claves) se consulta en `GET /api/llm` y aparece al inicio del lanzador y en cada informe multiagente. Cambiar de proveedor o de modelo hace que los repositorios se analicen de nuevo en la siguiente ejecución.
-
-## Flujo de funcionamiento
-
-1. **Descubrimiento:** consulta la API de GitLab para listar los proyectos de un grupo, incluyendo subgrupos y excluyendo proyectos archivados.
-2. **Clonado:** clona los repositorios HTTPS, incluidos los privados. La autenticación se realiza con un token local y no se incorpora a las URLs, argumentos de Git ni informes.
-3. **Análisis individual:** inspecciona cada repositorio con analizadores de inventario, dependencias, análisis funcional, Java/Spring, SQL, contratos y calidad.
-4. **Correlación entre repositorios:** consolida resultados y busca relaciones candidatas entre servicios, especialmente en configuración Kafka, productores, consumidores y contratos compartidos.
-5. **Calidad:** calcula una puntuación heurística por repositorio y extrae candidatos a posibles bugs con evidencias.
-6. **Interpretación LLM (opcional):** interpretación funcional, revisión de candidatos a bugs, explicación arquitectónica y correlación de evidencias entre servicios.
-7. **Validación cruzada:** los resultados de unos agentes se contrastan con los de otros y se señalan contradicciones.
-8. **Documentación enlazada:** genera un índice HTML navegable, un informe global, fichas HTML por microservicio y expedientes HTML de posibles bugs. Los documentos incluyen enlaces de ida y vuelta y conservan una estructura de carpetas común para poder consultarlos sin conexión.
+| `GITLAB_BASE_URL` | URL de tu GitLab | `https://gitlab.com` |
+| `GITLAB_TOKEN` | Token de lectura. Obligatorio | |
+| `GITLAB_GROUP_ID` | Grupo que se analiza si no se pasa como argumento | |
+| `REPORT_DIR` | Carpeta donde se guardan los informes | `reports` |
+| `ANALYSIS_NAME` | Nombre del análisis; si se deja vacío se genera con el grupo y la fecha | |
+| `ANALYSIS_CACHE` | Reutilizar el análisis de los repositorios que no han cambiado | `true` |
+| `ACTIVITY_DAYS` | Días que se consideran "actividad reciente" en Git | `90` |
+| `LLM_AGENTS_ENABLED` | Activar los agentes LLM | `false` |
 
-El análisis no ejecuta ni modifica los repositorios inspeccionados.
+El token se lee de `.env` en cada ejecución. No se guarda en la base de datos, ni en las URLs o argumentos de Git, ni en los informes. `.env` está excluido de Git.
 
-## Capacidades
+## Ejecuciones repetidas
 
-### Descubrimiento y clonado
-- Análisis de un repositorio individual mediante URL Git.
-- Análisis de una lista explícita de hasta 100 repositorios.
-- Descubrimiento automático de proyectos de un grupo GitLab y sus subgrupos mediante include_subgroups.
-- Exclusión de proyectos archivados.
-- Paginación de GitLab con un límite de seguridad de 10.000 proyectos por ejecución.
-- Soporte para GitLab autogestionado o GitLab.com mediante GITLAB_BASE_URL.
-- Autenticación de lectura mediante GITLAB_TOKEN.
+El análisis de cada repositorio se guarda en `workspaces/_cache`. En la siguiente ejecución, los repositorios cuyo último commit no ha cambiado aparecen como `REUTILIZADO`: no se clonan ni se analizan, y su ficha, su informe multiagente y su expediente de bugs se copian tal cual.
 
-### Análisis de código y arquitectura
-- Inventario de lenguajes, estructura, dependencias, configuración, despliegue y artefactos.
-- Detección de endpoints candidatos, persistencia, migraciones, integraciones, indicadores de seguridad y tests detectables.
-- Análisis funcional estático de operaciones, ramas, validaciones, errores, efectos y referencias de llamadas.
-- Extracción heurística de Java y Spring: clases, métodos, llamadas, inyección de dependencias y mappings.
-- Detección de listeners y productores Kafka, configuración relacionada y posibles topics compartidos.
-- Inspección de SQL y migraciones.
-- Inventario de contratos Avro y Protocol Buffers y agrupación de contratos por nombre.
-- Correlación entre repositorios basada en evidencias estáticas.
+Lo que se genera siempre de nuevo es el histórico de Git y los documentos globales, incluido el índice con el ranking, porque la actividad cambia aunque el código no lo haga.
 
-### Calidad y candidatos a bugs
-- Puntuación heurística de 0 a 100 por microservicio.
-- Factores de puntuación: hallazgos estáticos de prioridad alta/media, tests no detectados, incidencias de parseo e indicadores estáticos de seguridad.
-- Patrones candidatos: excepciones ignoradas, comparaciones sospechosas con valores nulos, marcadores TODO/FIXME/XXX/HACK, uso de assert, comparaciones sospechosas con is en Python y posibles credenciales literales.
-- Evidencia de cada candidato: identificador de patrón, prioridad, archivo, línea, fragmento y explicación.
-- Resumen de puntuaciones al principio del informe, ordenado de menor a mayor.
-- Plan de tareas derivado de los candidatos detectados, ordenado por prioridad.
-- Un HTML técnico independiente por cada microservicio analizado, enlazado con el informe global.
-- Un HTML de posibles bugs por cada microservicio con candidatos, enlazado con su ficha técnica y el informe global.
-- Un índice HTML de documentación que conecta todos los documentos y permite navegar el conjunto sin conexión.
+Si un análisis se interrumpe, al relanzarlo continúa a partir de lo que ya estaba hecho. Para forzar un análisis completo, pon `ANALYSIS_CACHE=false` o borra `workspaces/_cache`. La caché también se descarta al actualizar la herramienta o al cambiar de proveedor o modelo LLM.
 
-La puntuación no es una certificación ni una probabilidad de defectos. Los candidatos son indicios heurísticos y necesitan revisión humana.
+## Qué se analiza
 
-## Informe generado
+**Por repositorio**
 
-El informe HTML consolidado incluye:
-- Resumen ejecutivo y puntuaciones por microservicio.
-- Plan de tareas priorizado de posibles bugs.
-- Métricas y comparación entre repositorios.
-- Alcance, metodología, cobertura y limitaciones.
-- Mapa de servicios y relaciones candidatas.
-- Evidencias de correlaciones Kafka y contratos compartidos.
-- Riesgos y agenda de validación.
-- Fichas detalladas por microservicio: arquitectura, dependencias, endpoints, configuración, persistencia, seguridad, integraciones, comportamiento funcional, tests e incidencias del análisis.
-- Catálogo Java filtrable por clase, método, archivo y llamadas.
-- Informes individuales de posibles bugs en `workspaces/{analysis_group_id}/bug-reports/`; solo se genera un informe de servicio si hay candidatos.
+- Inventario: lenguajes, estructura, manifiestos de dependencias, configuración y despliegue.
+- Arquitectura: endpoints candidatos, modelos de datos, migraciones, integraciones (bases de datos, mensajería, APIs externas), indicadores de seguridad y tests detectables.
+- Comportamiento: operaciones, ramas, validaciones, errores y cambios de estado que se deducen del código.
+- Java y Spring: clases, métodos, llamadas, inyección de dependencias, endpoints, listeners y productores Kafka, sentencias SQL y contratos Avro o Protocol Buffers.
+- Calidad: puntuación de 0 a 100 y candidatos a bug, entre ellos excepciones ignoradas, comparaciones sospechosas con nulos, marcadores `TODO`/`FIXME`, uso de `assert` y posibles credenciales literales.
+- Actividad en Git, consultando la API de GitLab: ramas con commits recientes, commits por autor y pushes por usuario.
 
-El diseño HTML es adaptable a escritorio, tablet y móvil. El nombre del grupo o análisis se muestra como contexto del informe; no se utiliza un nombre de proyecto fijo.
+**Entre repositorios**
 
-## Límites conocidos
+- Topics de Kafka con sus productores y consumidores candidatos.
+- Contratos que aparecen en más de un servicio.
+- Ranking de servicios por commits, ramas recientes y pushes, y usuarios más activos.
 
-- Es análisis estático. No ejecuta la aplicación, pruebas, SQL, Maven, Gradle, contenedores ni servicios.
-- No demuestra el comportamiento real en runtime.
-- La detección de bugs y la puntuación pueden producir falsos positivos y falsos negativos.
-- El parser Java es heurístico y no sustituye al compilador ni a un análisis semántico completo.
-- Una coincidencia entre configuración Kafka, productor y consumidor es una relación candidata; no demuestra que estén conectados en ejecución ni que sus payloads sean compatibles.
-- Los contratos se agrupan por nombre, pero no se realiza una comparación formal campo a campo ni una validación completa de compatibilidad.
-- No se certifican semánticas de negocio ni trazabilidad completa de payloads.
-- No se leen los valores de ficheros .env de los repositorios analizados.
+**Validación cruzada**
 
-## Requisitos
+Los resultados de unos análisis se comparan con los de otros y las discrepancias se muestran en el informe multiagente. Por ejemplo: Kafka o endpoints que detecta el analizador Java y no el de arquitectura, o hallazgos que apuntan a archivos que no están en el inventario. Si los agentes LLM están activos, también se comprueba que cada archivo y línea que citan existe de verdad.
 
-- Windows PowerShell 5.1 o PowerShell 7.
-- Python 3.
-- Git for Windows.
-- Acceso HTTPS a la instancia GitLab.
-- Un token GitLab con permisos de lectura de API y repositorios, por ejemplo read_api y read_repository.
+## Agentes LLM (opcional)
 
-La API local escucha en http://127.0.0.1:8001 y publica su documentación interactiva en http://127.0.0.1:8001/docs.
+Están desactivados por defecto y la herramienta es plenamente útil sin ellos. Al activarlos se añaden cuatro interpretaciones: qué hace funcionalmente cada servicio, una revisión de cada candidato a bug (bug probable, falso positivo o requiere revisión), una explicación de la arquitectura y los flujos de datos probables entre servicios.
 
-## Configuración
+Funcionan sobre LangChain, así que el proveedor y el modelo se eligen en `.env` sin tocar código:
 
-Crea el fichero local .env a partir de .env.example y establece al menos:
+```
+LLM_AGENTS_ENABLED=true
+LLM_PROVIDER=claude
+LLM_MODEL=claude-sonnet-5-5
+```
 
-    GITLAB_BASE_URL=https://gitlab.com
-    GITLAB_TOKEN=<token_de_lectura>
-    GITLAB_GROUP_ID=<id_numerico_del_grupo>
+| Proveedor | `LLM_PROVIDER` | Clave en `.env` |
+|---|---|---|
+| OpenAI | `openai` | `OPENAI_API_KEY` |
+| Claude (Anthropic) | `claude` | `ANTHROPIC_API_KEY` |
+| Gemini (Google) | `gemini` | `GOOGLE_API_KEY` |
+| Ollama (local) | `ollama` | No necesita. El modelo debe estar descargado con `ollama pull` |
 
-Para una instancia autogestionada, sustituye GITLAB_BASE_URL por su URL HTTPS. El identificador del grupo se obtiene de GitLab. Actualmente el endpoint de grupo recibe un identificador compatible con la ruta de la API; se recomienda el ID numérico.
+Se pueden dejar varias claves puestas y cambiar solo `LLM_PROVIDER` y `LLM_MODEL`, o elegirlos al lanzar con `-Llm` y `-Model`. Si falta la clave específica se usa `LLM_API_KEY`.
 
-Opcionales:
+`LLM_MODEL` es obligatorio y no tiene valor por defecto, porque los identificadores de modelo cambian con frecuencia. `run-analysis.bat -ListModels` muestra los que ofrece tu cuenta. Para comprobar la conexión con una llamada mínima:
 
-    ANALYSIS_NAME=
-    REPORT_DIR=reports
+```
+.\.venv\Scripts\python.exe -m app.llm --test
+```
 
-Si ANALYSIS_NAME está vacío, el lanzador genera un nombre contextual automáticamente. REPORT_DIR define dónde guardar los informes descargados.
+Otras opciones: `OLLAMA_BASE_URL` (por defecto `http://127.0.0.1:11434`), `LLM_BASE_URL` para servicios compatibles con la API de OpenAI, `LLM_MAX_TOKENS` (8000), `LLM_TIMEOUT_SECONDS` (120) y `LLM_TEMPERATURE`.
 
-No guardes el token en el repositorio, en scripts, URLs, peticiones JSON ni informes. El fichero .env está excluido de Git.
+**Privacidad.** Con los agentes LLM activos se envían al proveedor elegido resultados del análisis y fragmentos de código. Antes de enviarlos se redactan contraseñas, claves y tokens reconocibles, pero el resto del código viaja tal cual. Si eso no es aceptable para tu código, usa Ollama, que se ejecuta en local, o deja los agentes desactivados.
 
-## Ejecución completa con un clic en Windows
+**Fiabilidad.** Lo que escribe el LLM es una interpretación, no un hecho comprobado, y así se etiqueta en los informes. Si un agente LLM falla, el resto del análisis termina igualmente y el error queda registrado.
 
-La forma recomendada de ejecutar el flujo completo es hacer doble clic en:
+## Cómo funciona por dentro
 
-    run-analysis.bat
+Cada análisis es un *agente*: un módulo con una única responsabilidad que declara de qué otros depende. Un supervisor calcula el orden de ejecución a partir de esas dependencias. Los agentes no se llaman entre sí: publican su resultado como un mensaje JSON con estado, evidencias y errores en un almacén compartido, que queda en `workspaces/<id>/agent-runs/`.
 
-También admite el identificador del grupo como argumento, que tiene prioridad sobre `.env`:
+| Grupo | Agentes | Usa IA |
+|---|---|---|
+| Análisis estático | `inventory`, `deep_analysis`, `functional_analysis`, `java_analysis`, `quality_analysis`, `integration_analysis` | No |
+| Actividad en Git | `activity_analysis`, `group_activity` | No |
+| Validación cruzada | `cross_validation`, `group_cross_validation` | No |
+| Interpretación | `llm_functional_interpretation`, `llm_bug_review`, `llm_architecture_explanation`, `llm_evidence_correlation` | Sí, opcional |
+| Documentación | `repository_report`, `group_report` | No |
 
-    run-analysis.bat 1118
+Conviene no sobreentender el término: salvo los cuatro de interpretación, los agentes son código determinista. El supervisor sigue un plan fijo y los agentes no dialogan entre ellos.
 
-Es el único lanzador necesario. En la primera ejecución crea `.env` desde la plantilla y lo abre para que pongas el token, prepara el entorno Python e instala las dependencias; después las actualiza solo si cambia `requirements.txt`. Si no hay grupo configurado, lo pregunta. Si encuentra una API arrancada con código anterior a la última actualización, la reinicia.
+Si falla un agente obligatorio, ese repositorio se marca como fallido y el análisis continúa con los demás. Si falla o se omite uno opcional (LLM, actividad, validación), el repositorio se completa sin esa parte.
 
-El lanzador invoca run-analysis.ps1, que:
-1. Lee la configuración local de .env.
-2. Comprueba dependencias y prepara el entorno virtual si hace falta.
-3. Arranca la API local en el puerto 8001 si no está disponible.
-4. Envía el ID configurado a GitLab para descubrir el grupo y sus subgrupos.
-5. Espera a que termine el análisis.
-6. Descarga el informe HTML principal en la carpeta configurada.
-7. Descarga un paquete autocontenido con el informe global, todas las fichas de microservicio, los informes de posibles bugs y un índice HTML que enlaza todos los documentos.
-8. Abre el índice de documentación en el navegador predeterminado.
+Para añadir un análisis nuevo, crea una clase que herede de `AnalyzerAgent` en `app/agents/` con su `name`, sus `requires` y su método `run`, y regístrala en `default_supervisor()` (`app/supervisor.py`).
 
-Durante el análisis el lanzador muestra una barra de progreso y una línea por repositorio terminado, y descarga los HTML de cada microservicio en cuanto están listos.
+## Límites
 
-**Reanudación:** el análisis y los informes de cada repositorio se guardan en `workspaces/_cache`. En la siguiente ejecución, los repositorios cuyo último commit no ha cambiado se marcan como REUTILIZADO: no se clonan ni se analizan, y su ficha técnica, su informe multiagente y su expediente de bugs se copian tal cual, sin regenerarlos. Lo único que se genera de nuevo es el histórico de Git (`activity.html` de cada repositorio y del grupo) y los documentos globales, incluido el índice con el ranking de microservicios más trabajados. Si un análisis se interrumpe, al relanzarlo continúa a partir de lo ya hecho. Para rehacer todo desde cero, pon `ANALYSIS_CACHE=false` en `.env` o borra `workspaces/_cache`.
-
-**Índice general:** al terminar, el lanzador crea `reports/index.html`, que enlaza todos los análisis descargados (el más reciente primero) y, dentro de cada uno, el índice, el informe global, el histórico de Git, los bugs y los documentos de cada microservicio. Se puede regenerar a mano con `python -m app.reports_index reports`.
-
-No es necesario editar scripts para cambiar de grupo: modifica GITLAB_GROUP_ID en .env. Si ANALYSIS_NAME está vacío, el nombre se genera automáticamente a partir del grupo y la fecha/hora.
-
-`run-analysis.bat` es el único punto de entrada. `run-analysis.ps1` y `setup-windows.ps1` son piezas internas que el lanzador usa por debajo; no hace falta ejecutarlas a mano.
-
-Para desarrollo, la API se puede arrancar sola (sin lanzar ningún análisis) con:
-
-    .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001
-
-## API: endpoints principales
-
-### Análisis individual
-
-POST /api/projects
-
-Cuerpo JSON:
-
-    {
-      "name": "service-example",
-      "git_url": "https://gitlab.com/group/service-example.git"
-    }
-
-Consulta:
-- GET /api/projects/{project_id}
-- GET /api/projects/{project_id}/analysis
-- GET /api/projects/{project_id}/report
-- GET /api/projects/{project_id}/report.html
-
-### Análisis de un grupo GitLab
-
-POST /api/gitlab/groups/{group_id}/analysis
-
-El cuerpo admite un nombre contextual opcional:
-
-    {
-      "name": "optional-analysis-label"
-    }
-
-La respuesta contiene analysis_group_id y el número de repositorios descubiertos. Consulta:
-- GET /api/analysis-groups/{analysis_group_id}
-- GET /api/analysis-groups/{analysis_group_id}/analysis
-- GET /api/analysis-groups/{analysis_group_id}/report
-- GET /api/analysis-groups/{analysis_group_id}/report.html
-- GET /api/analysis-groups/{analysis_group_id}/documentation/index.html
-- GET /api/analysis-groups/{analysis_group_id}/repositories/{repository_slug}/report.html
-
-### Lista manual de repositorios
-
-POST /api/analysis-groups
-
-    {
-      "name": "optional-analysis-label",
-      "repositories": [
-        {
-          "name": "service-one",
-          "git_url": "https://gitlab.com/group/service-one.git"
-        },
-        {
-          "name": "service-two",
-          "git_url": "https://gitlab.com/group/service-two.git"
-        }
-      ]
-    }
-
-La lista manual admite hasta 100 repositorios.
-
-## Estructura principal del proyecto
-
-- app/main.py: API, persistencia de trabajos y endpoints de análisis.
-- app/gitlab.py: descubrimiento paginado de proyectos GitLab.
-- app/analysis_orchestrator.py: prepara el entorno (clonado, almacén compartido) y delega en el supervisor.
-- app/supervisor.py: planificación y ejecución de agentes.
-- app/agents/: agentes (estáticos, LLM, validación cruzada y documental) con interfaz común.
-- app/communication/: contratos JSON, estados, evidencias, errores y almacén compartido.
-- app/llm.py: cliente LLM sobre LangChain; selección de proveedor (OpenAI, Claude, Gemini, Ollama) y modelo.
-- app/agent_report.py: informe multiagente (Markdown y HTML).
-- app/engines.py: clonado e inventario base.
-- app/deep_analysis.py: análisis técnico profundo.
-- app/functional_analysis.py: análisis funcional estático.
-- app/java_analysis.py: extracción Java/Spring, Kafka, SQL y contratos.
-- app/quality_analysis.py: puntuación y candidatos a bugs.
-- app/rich_report.py: generación del informe HTML consolidado.
-- run-analysis.bat: único punto de entrada; ejecuta el flujo completo.
-- run-analysis.ps1 y setup-windows.ps1: scripts internos del lanzador (flujo y preparación del entorno).
-
-## Desarrollo y pruebas
-
-Instalación:
-
-    python -m venv .venv
-    .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-
-Ejecución de pruebas:
-
-    .\.venv\Scripts\python.exe -m pytest
-
-La ejecución de pruebas debe realizarse en el entorno de desarrollo; el lanzador de análisis no ejecuta los tests de los microservicios que inspecciona.
+- **Es análisis estático.** No se ejecuta la aplicación, ni sus tests, ni SQL, ni compilaciones. Nada de lo que aparece en los informes está comprobado en ejecución.
+- **Los posibles bugs son indicios.** Se detectan por patrones y habrá falsos positivos y falsos negativos. Requieren revisión de una persona.
+- **La puntuación de calidad es orientativa.** Sirve para comparar servicios entre sí; no es una certificación ni una probabilidad de fallo.
+- **El análisis de Java es heurístico.** No sustituye al compilador y puede perder o malinterpretar construcciones complejas.
+- **Las relaciones entre servicios son candidatas.** Que un servicio produzca en un topic y otro consuma de uno con el mismo nombre no demuestra que estén conectados ni que sus mensajes sean compatibles.
+- **El histórico de Git solo existe para grupos GitLab** y cubre la ventana configurada. Los pushes salen de los eventos de GitLab, que se conservan durante un tiempo limitado. Commits y pushes identifican a las personas de forma distinta (nombre en Git frente a cuenta de GitLab).
+- **Solo se analiza la rama por defecto** de cada repositorio, en su último commit.
+- **El botón "Enviar" de la selección de bugs todavía no hace nada.** La lista y la selección funcionan; el envío está pendiente (ver `docs/NEXT_STEPS.md`).
+- **El lanzador es para Windows.** En otros sistemas la API funciona, pero hay que arrancarla y usarla a mano.
+
+## Uso de la API
+
+El lanzador usa una API local en `http://127.0.0.1:8001`, con documentación interactiva en `/docs`. Se puede usar directamente, por ejemplo para analizar repositorios que no están en GitLab:
+
+```
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001
+```
+
+| Operación | Endpoint |
+|---|---|
+| Analizar un grupo de GitLab | `POST /api/gitlab/groups/{group_id}/analysis` |
+| Analizar una lista de hasta 100 repositorios (`name`, `git_url` HTTPS) | `POST /api/analysis-groups` |
+| Analizar un único repositorio | `POST /api/projects` |
+| Progreso de un análisis | `GET /api/analysis-groups/{id}/progress` |
+| Resultado completo en JSON | `GET /api/analysis-groups/{id}/analysis` |
+| Estado de cada agente | `GET /api/analysis-groups/{id}/agent-runs` |
+| Índice de documentación | `GET /api/analysis-groups/{id}/documentation/index.html` |
+| Configuración LLM activa, sin claves | `GET /api/llm` |
+| Modelos del proveedor | `GET /api/llm/models` |
+
+Con una lista manual de repositorios no hay histórico de Git, porque esos datos salen de la API de GitLab.
+
+## Estructura del proyecto
+
+```
+run-analysis.bat            único punto de entrada
+run-analysis.ps1            flujo del lanzador
+setup-windows.ps1           preparación del entorno Python
+app/
+  main.py                   API y gestión de trabajos
+  gitlab.py                 descubrimiento de proyectos del grupo
+  analysis_orchestrator.py  clonado, caché, progreso y llamada al supervisor
+  supervisor.py             planificación y ejecución de agentes
+  agents/                   agentes: estáticos, actividad, LLM, validación y documentación
+  communication/            mensajes entre agentes y almacén compartido
+  llm.py                    cliente LLM sobre LangChain
+  *_analysis.py             lógica de cada analizador
+  rich_report.py, documentation.py, agent_report.py, bug_report.py, reports_index.py   generación de HTML
+tests/                      pruebas automáticas
+workspaces/                 clones, resultados y caché (no se versiona)
+reports/                    documentación descargada (no se versiona)
+```
+
+## Desarrollo
+
+```
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt pytest
+.\.venv\Scripts\python.exe -m pytest
+```
+
+Las pruebas no necesitan red, ni GitLab, ni claves de ningún proveedor: usan repositorios de ejemplo y respuestas simuladas. Eso significa que la integración con un GitLab real y con cada proveedor LLM depende de tu entorno; la forma de comprobarla es ejecutar un análisis y, para el LLM, `python -m app.llm --test`.
+
+Si algo falla al lanzar, el mensaje aparece en la ventana y el detalle de la API queda en `logs/api.stderr.log`.
