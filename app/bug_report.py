@@ -131,14 +131,14 @@ def build_bug_export_html(export_data):
     tasks = export_data["tasks"]
     bugs = export_data["bugs"]
     rows = "".join(
-        "<tr><td>" + _e(item.get("id")) + "</td><td>" + _e(item.get("title")) +
+        "<tr><td>" + _e(item.get("id")) + "</td><td>" + _e(item.get("repository")) + "</td><td>" + _e(item.get("title")) +
         "</td><td>" + _e(item.get("file")) + ":" + _e(item.get("line")) +
         "</td><td>" + _e(item.get("severity")) + "</td><td>" +
         _e(item.get("recommended_action")) + "</td></tr>"
         for item in tasks
     )
     bug_rows = "".join(
-        "<tr><td>" + _e(item.get("code")) + "</td><td>" + _e(item.get("title")) +
+        "<tr><td>" + _e(item.get("repository")) + "</td><td>" + _e(item.get("code")) + "</td><td>" + _e(item.get("title")) +
         "</td><td>" + _e(item.get("description")) + "</td><td>" +
         _e(item.get("excerpt")) + "</td></tr>"
         for item in bugs
@@ -157,9 +157,9 @@ th{background:#edf1f6}h1,h2{color:#172b4d}
 <p>Conjunto: """ + _e(export_data["group_name"]) + """ · Microservicio: """ + _e(export_data["repository"]) + """</p>
 <p>Generado: """ + _e(export_data["generated_at"]) + """ · Elementos seleccionados: """ + str(len(tasks)) + """</p>
 <section><h2>Tareas pendientes (""" + str(len(tasks)) + """)</h2>
-<table><thead><tr><th>ID</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr></thead><tbody>""" + rows + """</tbody></table></section>
+<table><thead><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr></thead><tbody>""" + rows + """</tbody></table></section>
 <section><h2>Posibles bugs (""" + str(len(bugs)) + """)</h2>
-<table><thead><tr><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr></thead><tbody>""" + bug_rows + """</tbody></table></section>
+<table><thead><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr></thead><tbody>""" + bug_rows + """</tbody></table></section>
 <p>Los elementos son candidatos heurísticos y deben validarse mediante revisión y pruebas.</p>
 </main></body></html>"""
 
