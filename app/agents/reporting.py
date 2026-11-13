@@ -63,6 +63,12 @@ class RepositoryReportingAgent(AnalyzerAgent):
             for rel in static_files:
                 target = folder / rel
                 target.parent.mkdir(parents=True, exist_ok=True)
+                if rel == bug_report:
+                    target.write_text(build_bug_report_html(
+                        name, group_name, quality, service,
+                        context.data.get("group_id"), report_file
+                    ), encoding="utf-8")
+                    continue
                 shutil.copyfile(cached / rel.replace("\\", "/").split("/")[-1], target)
         else:
             if report_file:
