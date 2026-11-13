@@ -17,7 +17,7 @@ from .supervisor import default_supervisor
 from .communication import SharedStore
 from . import llm
 from .analysis_orchestrator import run_group_analysis
-from .gitlab import gitlab_settings, list_group_projects
+from .gitlab import gitlab_settings, list_accessible_groups, list_group_projects
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION,
  description="Orquestador de análisis estático profundo de uno o varios microservicios. No ejecuta el código analizado.")
@@ -130,12 +130,45 @@ def persist_analysis_group(name: str, repositories: list[dict], background_tasks
 def create_analysis_group(payload:AnalysisGroupCreate,background_tasks:BackgroundTasks):
     return persist_analysis_group(payload.name,[x.model_dump() for x in payload.repositories],background_tasks)
 
+@app.get("/api/gitlab/groups")
+def get_gitlab_groups():
+    """List groups and subgroups visible to the configured GitLab token."""
+    try:
+        gitlab_settings()
+        return list_accessible_groups()
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(400, str(exc))
+    except Exception as exc:
+        raise HTTPException(502, f"No se pudieron consultar los grupos de GitLab: {exc}")
+
+@app.get("/api/gitlab/groups/{group_id}/projects")
+def get_gitlab_group_projects(group_id: str):
+    """List cloneable repositories in a group, including its subgroups."""
+    try:
+        gitlab_settings()
+        return list_group_projects(group_id, allow_empty=True)
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(400, str(exc))
+    except Exception as exc:
+        raise HTTPException(502, f"No se pudieron consultar los repositorios del grupo: {exc}")
+
 @app.post("/api/gitlab/groups/{group_id}/analysis",status_code=202)
 def create_gitlab_group_analysis(group_id:str,payload:GitLabGroupAnalysisCreate,background_tasks:BackgroundTasks):
     try:
         # Validate credentials/configuration before accepting the job.
         gitlab_settings()
-        repositories=list_group_projects(group_id)
+        repositories=list_group_projects(group_id, allow_empty=True)
+        if payload.project_ids is not None:
+            requested = set(payload.project_ids)
+            available = {item.get("gitlab_project_id") for item in repositories}
+            unknown = requested - available
+            if unknown:
+                raise HTTPException(400, "Hay identificadores de proyecto que no pertenecen al grupo seleccionado: " + ", ".join(map(str, sorted(unknown))))
+            repositories = [item for item in repositories if item.get("gitlab_project_id") in requested]
+        if not repositories:
+            raise HTTPException(400, "No hay repositorios seleccionados para analizar.")
+    except HTTPException:
+        raise
     except (ValueError,RuntimeError) as exc:
         raise HTTPException(400,str(exc))
     except Exception as exc:
