@@ -54,24 +54,56 @@ def _bug_export_script():
     button.disabled = true;
     status.textContent = "Generando los ficheros…";
     try {
-      if (window.location.protocol === "file:") {
-        status.textContent = "Abre el visor desde la API local (http://127.0.0.1:8001) para habilitar la exportación.";
-        return;
-      }
-      const response = await fetch("/api/analysis-groups/" + encodeURIComponent(groupId) + "/bug-reports/export", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ selections })
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.detail || "No se pudo generar la exportación.");
       const download = (content, type, filename) => {
         const url = URL.createObjectURL(new Blob([content], { type }));
         const anchor = document.createElement("a");
         anchor.href = url; anchor.download = filename; document.body.appendChild(anchor); anchor.click(); anchor.remove();
         window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       };
-      download(JSON.stringify(result.json_data, null, 2), "application/json;charset=utf-8", result.json_filename);
-      download(result.html_content, "text/html;charset=utf-8", result.html_filename);
+      let exportData, htmlContent, jsonFilename, htmlFilename;
+      if (window.location.protocol === "file:") {
+        // Los informes locales no pueden llamar a la API por las restricciones CORS de file://.
+        // Cada checkbox lleva los datos del hallazgo para construir la exportación sin conexión.
+        const selected = checks.filter((item) => item.checked);
+        const tasks = [], bugs = [];
+        selected.forEach((item) => {
+          const finding = JSON.parse(item.dataset.finding || "{}");
+          const repository = item.dataset.repository || "microservicio";
+          const action = finding.recommended_action || "Revisar el hallazgo y añadir una prueba de regresión.";
+          const index = Number(item.value);
+          const slug = item.dataset.serviceSlug || repository.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          tasks.push({ id: slug + "-" + (index + 1), repository, title: finding.title || "Posible bug",
+            description: finding.description || "", status: "Pendiente", severity: finding.severity || "low",
+            file: finding.file || "N/D", line: finding.line || "N/D", recommended_action: action });
+          bugs.push({ repository, code: finding.code || "N/D", title: finding.title || "Posible bug",
+            description: finding.description || "", severity: finding.severity || "low", file: finding.file || "N/D",
+            line: finding.line || "N/D", confidence: finding.confidence || "heuristic_candidate",
+            excerpt: finding.excerpt || "", recommended_action: action });
+        });
+        const groupName = button.dataset.groupName || "analysis";
+        exportData = { schema_version: "1.0", analysis_group_id: groupId, group_name: groupName,
+          repository: Array.from(new Set(tasks.map((item) => item.repository))).sort().join(", "),
+          generated_at: new Date().toISOString(), total_tasks: tasks.length, total_bugs: bugs.length, tasks, bugs };
+        const esc = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (ch) =>
+          ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+        const taskRows = tasks.map((x) => "<tr>" + [x.id,x.repository,x.title,x.file + ":" + x.line,x.severity,x.recommended_action].map((v) => "<td>"+esc(v)+"</td>").join("") + "</tr>").join("");
+        const bugRows = bugs.map((x) => "<tr>" + [x.repository,x.code,x.title,x.description,x.excerpt].map((v) => "<td>"+esc(v)+"</td>").join("") + "</tr>").join("");
+        htmlContent = "<!doctype html><html lang='es'><meta charset='utf-8'><title>Exportación de tareas y bugs</title><style>body{font:15px system-ui;margin:30px;color:#172033}table{width:100%;border-collapse:collapse;margin-bottom:24px}td,th{padding:8px;border:1px solid #ddd;text-align:left;vertical-align:top}th{background:#edf1f6}</style><h1>Tareas y posibles bugs</h1><p>Conjunto: "+esc(groupName)+" · Microservicios: "+esc(exportData.repository)+"</p><h2>Tareas pendientes</h2><table><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr>"+taskRows+"</table><h2>Posibles bugs</h2><table><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr>"+bugRows+"</table></html>";
+        const safeId = String(groupId).slice(0, 8);
+        jsonFilename = "tareas-y-bugs-" + safeId + ".json";
+        htmlFilename = "informe-tareas-y-bugs-" + safeId + ".html";
+      } else {
+        const response = await fetch("/api/analysis-groups/" + encodeURIComponent(groupId) + "/bug-reports/export", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ selections })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.detail || "No se pudo generar la exportación.");
+        exportData = result.json_data; htmlContent = result.html_content;
+        jsonFilename = result.json_filename; htmlFilename = result.html_filename;
+      }
+      download(JSON.stringify(exportData, null, 2), "application/json;charset=utf-8", jsonFilename);
+      download(htmlContent, "text/html;charset=utf-8", htmlFilename);
       status.textContent = "Exportación completada: JSON y HTML descargados.";
     } catch (error) {
       status.textContent = error.message || "Error de conexión con la API local.";
@@ -86,7 +118,7 @@ def build_bug_report_html(repository, group_name, quality, service_slug=None, gr
     counts = {s: sum(1 for x in findings if str(x.get("severity", "")).lower() == s) for s in ("high", "medium", "low")}
     cards = "".join(
         "<article class='finding " + _e(str(x.get("severity", "low")).lower()) + "'>"
-        + ("<label class='select-finding'><input class='bug-select' type='checkbox' value='" + str(index) + "' data-report='__REPORT_NAME__'> Seleccionar para exportar</label>" if service_slug else "")
+        + ("<label class='select-finding'><input class='bug-select' type='checkbox' value='" + str(index) + "' data-report='__REPORT_NAME__' data-repository='" + _e(repository) + "' data-service-slug='" + _e(service_slug or "") + "' data-finding='" + _e(__import__('json').dumps({**x, "recommended_action": TASKS.get(x.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")}, ensure_ascii=False)) + "'> Seleccionar para exportar</label>" if service_slug else "")
         + "<div class='top'><b>" + _e(str(x.get("severity", "low")).upper()) + "</b><span>" + _e(x.get("code", "N/D")) + "</span></div>"
         + "<h2>" + _e(x.get("title", "Posible bug")) + "</h2><p>" + _e(x.get("description", "")) + "</p>"
         + "<dl><dt>Archivo</dt><dd><code>" + _e(x.get("file", "N/D")) + "</code></dd>"
@@ -127,7 +159,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff
 <div class="metric"><strong>""" + str(counts["high"]) + """</strong><span>Prioridad alta</span></div>
 <div class="metric"><strong>""" + str(counts["medium"]) + """</strong><span>Prioridad media</span></div></section>
 <div class="notice"><b>Importante:</b> son candidatos heurísticos, no defectos confirmados. Puede haber falsos positivos y negativos. No se ha ejecutado el servicio ni sus pruebas. Candidatos indicados por el analizador: """ + _e(summary.get("bug_candidates", len(findings))) + """.</div>
-<h2>Hallazgos y tareas recomendadas</h2>""" + (toolbar.replace("__GROUP_ID__", _e(group_id or "")).replace("__REPORT_NAME__", _e(report_name or "")) if service_slug else "") + (cards.replace("__REPORT_NAME__", _e(report_name or "")) if service_slug else cards) + """<footer>Generado: """ + generated + """ · Revisar cada evidencia y validarla mediante pruebas.</footer></main>""" + (script if service_slug else "") + """</body></html>"""
+<h2>Hallazgos y tareas recomendadas</h2>""" + (toolbar.replace("__GROUP_ID__", _e(group_id or "")).replace("__REPORT_NAME__", _e(report_name or "")).replace("__GROUP_NAME__", _e(group_name)) if service_slug else "") + (cards.replace("__REPORT_NAME__", _e(report_name or "")) if service_slug else cards) + """<footer>Generado: """ + generated + """ · Revisar cada evidencia y validarla mediante pruebas.</footer></main>""" + (script if service_slug else "") + """</body></html>"""
 
 
 def build_bug_export_html(export_data):
@@ -189,7 +221,8 @@ def build_bug_reports_index(group_name, reports, repositories=None, group_id=Non
         for index, finding in enumerate(_sorted_findings(repository.get("quality_analysis") or {})):
             label = (
                 "<label class='finding-choice'><input class='bug-select' type='checkbox' data-report='" +
-                _e(report_name) + "' value='" + str(index) + "'><span><b>" +
+                _e(report_name) + "' value='" + str(index) + "' data-repository='" + _e(repository.get("name", "Microservicio")) +
+                "' data-service-slug='" + _e(slug) + "' data-finding='" + _e(__import__('json').dumps({**finding, "recommended_action": TASKS.get(finding.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")}, ensure_ascii=False)) + "'><span><b>" +
                 _e(str(finding.get("severity", "low")).upper()) + " · " + _e(repository.get("name", "Microservicio")) +
                 "</b><br>" + _e(finding.get("title", "Posible bug")) + "<small>" +
                 _e(finding.get("file", "N/D")) + ":" + _e(finding.get("line", "N/D")) +
@@ -202,7 +235,7 @@ def build_bug_reports_index(group_name, reports, repositories=None, group_id=Non
         selection_ui = """<section class="selection"><h2>Seleccionar tareas y posibles bugs</h2>
 <p>Marca hallazgos de uno o varios microservicios y genera un único informe consolidado.</p>
 <div class="selection-actions"><label><input id="select-all-bugs" type="checkbox"> Seleccionar todos</label>
-<button id="export-selected-bugs" type="button" data-group-id="__GROUP_ID__">Exportar selección (JSON + HTML)</button>
+<button id="export-selected-bugs" type="button" data-group-id="__GROUP_ID__" data-group-name="__GROUP_NAME__">Exportar selección (JSON + HTML)</button>
 <span id="export-status" role="status" aria-live="polite">No hay hallazgos seleccionados.</span></div>
 <div class="finding-list">""" + "".join(selectable) + """</div></section>"""
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informes individuales de posibles bugs</title>
@@ -223,4 +256,4 @@ a{font-weight:700;color:#2457c5}span{display:block;color:#5b6678;font-size:.9rem
 @media(max-width:520px){main{margin:20px auto}section{padding:16px}}
 </style></head><body><main><section><nav class="actions"><a href="../analysis.html">← Informe global</a><a href="../index.html">Índice de documentación</a></nav>
 <h1>Informes individuales de posibles bugs</h1><p>Conjunto analizado: """ + _e(group_name) + """</p>
-<p>Solo aparecen microservicios con uno o más candidatos detectados. Puedes abrir un informe individual o seleccionar hallazgos de varios servicios para exportarlos juntos.</p><ul>""" + rows + """</ul></section>""" + selection_ui.replace("__GROUP_ID__", _e(group_id or "")) + """</main>""" + (_bug_export_script() if selectable else "") + """</body></html>"""
+<p>Solo aparecen microservicios con uno o más candidatos detectados. Puedes abrir un informe individual o seleccionar hallazgos de varios servicios para exportarlos juntos.</p><ul>""" + rows + """</ul></section>""" + selection_ui.replace("__GROUP_ID__", _e(group_id or "")).replace("__GROUP_NAME__", _e(group_name)) + """</main>""" + (_bug_export_script() if selectable else "") + """</body></html>"""
