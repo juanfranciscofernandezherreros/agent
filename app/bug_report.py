@@ -54,8 +54,11 @@ def _bug_export_script():
     button.disabled = true;
     status.textContent = "Generando los ficheros…";
     try {
-      const apiBase = window.location.protocol === "file:" ? "http://127.0.0.1:8001" : "";
-      const response = await fetch(apiBase + "/api/analysis-groups/" + encodeURIComponent(groupId) + "/bug-reports/export", {
+      if (window.location.protocol === "file:") {
+        status.textContent = "Abre el visor desde la API local (http://127.0.0.1:8001) para habilitar la exportación.";
+        return;
+      }
+      const response = await fetch("/api/analysis-groups/" + encodeURIComponent(groupId) + "/bug-reports/export", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selections })
       });
