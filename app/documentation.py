@@ -163,13 +163,19 @@ def _bug_selection_section(repos, bug_by_repo):
     function download(content, type, filename) {
       var url = URL.createObjectURL(new Blob([content], {type:type}));
       var a = document.createElement('a'); a.href=url; a.download=filename;
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url);},1000);
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url);},60000);
+      return url;
     }
     send.disabled = true;
+    var htmlUrl = download(html, 'text/html;charset=utf-8', 'informe-tareas-y-bugs.html');
+    // Abrir una vista del HTML exportado en otra pestaña; window.open se ejecuta
+    // directamente dentro del clic para evitar que el navegador bloquee el popup.
+    var preview = window.open(htmlUrl, '_blank');
     download(JSON.stringify(data,null,2), 'application/json;charset=utf-8', 'tareas-y-bugs.json');
-    download(html, 'text/html;charset=utf-8', 'informe-tareas-y-bugs.html');
     send.disabled = false;
-    status.textContent = selected.length + ' hallazgos exportados en JSON y HTML.';
+    status.textContent = selected.length + ' hallazgos exportados. El HTML se ha descargado' +
+      (preview ? ' y abierto en otra pestaña para que puedas revisarlo.' : '. Si el navegador bloqueó la pestaña, abre informe-tareas-y-bugs.html desde Descargas.');
   });
   refresh();
 })();
