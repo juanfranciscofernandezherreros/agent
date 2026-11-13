@@ -153,13 +153,19 @@ def _bug_selection_section(repos, bug_by_repo):
     var data = {schema_version:'1.0', group_name: document.title.replace('Índice documental - ', ''),
       generated_at:new Date().toISOString(), total_tasks:tasks.length, total_bugs:tasks.length,
       tasks:tasks, bugs:tasks};
-    var taskRows = tasks.map(function (x) {
-      return '<tr>' + [x.id,x.repository,x.title,x.file + ':' + x.line,x.severity,x.recommended_action].map(function(v){return '<td>'+escapeHtml(v)+'</td>';}).join('') + '</tr>';
+    var taskCards = tasks.map(function (x) {
+      var severity = String(x.severity || 'low').toLowerCase();
+      return '<article class="task-card '+escapeHtml(severity)+'"><div class="task-top"><span class="severity">'+escapeHtml(severity.toUpperCase())+'</span><span class="task-id">'+escapeHtml(x.id)+'</span></div>'+
+        '<p class="repository">'+escapeHtml(x.repository)+'</p><h3>'+escapeHtml(x.title)+'</h3>'+
+        '<dl><dt>Archivo</dt><dd><code>'+escapeHtml(x.file)+'</code></dd><dt>Línea</dt><dd>'+escapeHtml(x.line)+'</dd></dl>'+
+        '<h4>Acción recomendada</h4><p>'+escapeHtml(x.recommended_action)+'</p></article>';
     }).join('');
     var bugRows = tasks.map(function (x) {
       return '<tr>' + [x.repository,x.title,x.description,x.file + ':' + x.line,x.excerpt].map(function(v){return '<td>'+escapeHtml(v)+'</td>';}).join('') + '</tr>';
     }).join('');
-    var html = '<!doctype html><html lang="es"><meta charset="utf-8"><title>Exportación de bugs</title><style>body{font:15px system-ui;margin:30px;color:#17243a}table{width:100%;border-collapse:collapse;margin:16px 0 28px}td,th{padding:8px;border:1px solid #ddd;text-align:left;vertical-align:top}th{background:#edf1f6}</style><h1>Tareas y posibles bugs seleccionados</h1><p>Conjunto: '+escapeHtml(data.group_name)+'</p><h2>Tareas</h2><table><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción</th></tr>'+taskRows+'</table><h2>Posibles bugs</h2><table><tr><th>Microservicio</th><th>Título</th><th>Detalle</th><th>Ubicación</th><th>Evidencia</th></tr>'+bugRows+'</table></html>';
+    var html = '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Exportación de tareas y bugs</title><style>'+
+      '*{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#172033;font:15px/1.55 system-ui}main{max-width:1000px;margin:25px auto;padding:0 18px}header{background:linear-gradient(120deg,#10254c,#2457c5);color:white;padding:30px max(20px,calc((100% - 1000px)/2))}h1{margin:0}h2{color:#172b4d}.task-card,.panel{background:white;border:1px solid #dce3ed;border-radius:12px;padding:16px;margin:14px 0}.task-card{border-left:5px solid #3975bb}.task-card.high{border-left-color:#c43d4b}.task-card.medium{border-left-color:#c28a23}.task-top{display:flex;gap:10px;align-items:center}.severity{font-size:.78rem;font-weight:750;padding:3px 9px;border-radius:20px;background:#edf1f6}.high .severity{background:#fdebed;color:#a62231}.medium .severity{background:#fff3d9;color:#805500}.task-id{color:#66758a;font-size:.85rem;font-weight:650}.repository{color:#5b6678;font-weight:650;margin:9px 0 0}.task-card h3{font-size:1.12rem;margin:5px 0 10px}.task-card h4{margin:12px 0 3px;color:#40516a}dl{display:grid;grid-template-columns:75px 1fr;gap:4px 12px;margin:10px 0}dt{font-weight:650;color:#5b6678}dd{margin:0;overflow-wrap:anywhere}code{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse}td,th{text-align:left;vertical-align:top;padding:9px;border-bottom:1px solid #e5eaf1;overflow-wrap:anywhere}th{background:#edf1f6}@media(max-width:520px){dl{grid-template-columns:1fr}}'+
+      '</style></head><body><header><p>INFORME DE EXPORTACIÓN</p><h1>Tareas y posibles bugs seleccionados</h1><p>Conjunto: '+escapeHtml(data.group_name)+'</p></header><main><p>'+tasks.length+' tareas seleccionadas</p><h2>Tareas pendientes</h2>'+(taskCards||'<p>No hay tareas seleccionadas.</p>')+'<section class="panel"><h2>Posibles bugs</h2><div style="overflow-x:auto"><table><tr><th>Microservicio</th><th>Título</th><th>Detalle</th><th>Ubicación</th><th>Evidencia</th></tr>'+bugRows+'</table></div></section></main></body></html>';
     function download(content, type, filename) {
       var url = URL.createObjectURL(new Blob([content], {type:type}));
       var a = document.createElement('a'); a.href=url; a.download=filename;
