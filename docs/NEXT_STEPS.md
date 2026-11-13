@@ -28,6 +28,13 @@ Para implementarlo:
   un envío a la API necesita que esté arrancada y que permita el origen `file://`.
 - Al implementarlo: habilitar el botón solo con selección y quitar el aviso «El envío todavía no está disponible».
 
+## Selector de grupos y repositorios GitLab
+- Descubrimiento paginado de grupos y subgrupos visibles para el token configurado.
+- Consulta paginada de repositorios clonables por grupo.
+- Selección de todos o algunos proyectos mediante sus IDs de GitLab antes de iniciar el trabajo.
+- El lanzador Windows presenta la lista de grupos cuando no se fija `GITLAB_GROUP_ID`, y después permite elegir repositorios.
+- En esta versión, cada repositorio seleccionado es una unidad de análisis/microservicio para el supervisor. La detección de varios microservicios dentro de un monorepo requiere un analizador de módulos separado.
+
 ## Siguientes mejoras
 1. Parser semántico Java basado en AST/compiler model para resolver tipos, overloads, beans y llamadas reales.
 2. Parsers específicos para Spring JDBC/JPA, MyBatis, SQL embebido, Avro schemas, Kafka producer/consumer config y OpenAPI.

@@ -389,6 +389,44 @@ catch {
     $SelectedProjectIds = @($ChosenProjects | ForEach-Object { [int]$_.gitlab_project_id })
     if ($SelectedProjectIds.Count -eq 0) { throw "No se ha seleccionado ningún repositorio." }
 
+    # Selección interactiva de grupo y repositorios. Un repositorio es la unidad de análisis
+    # del supervisor en esta versión; los monorepos se analizan como una única unidad.
+    function Select-NumberedItems($Items, [string]$Prompt, [string]$DisplayProperty) {
+        $Items = @($Items)
+        if ($Items.Count -eq 0) { throw "No hay elementos disponibles para seleccionar." }
+        Write-Host ""
+        Write-Host $Prompt -ForegroundColor Cyan
+        for ($i = 0; $i -lt $Items.Count; $i++) {
+            $displayValue = $Items[$i].PSObject.Properties[$DisplayProperty].Value
+            Write-Host ("  {0}. {1}" -f ($i + 1), [string]$displayValue)
+        }
+        $raw = (Read-Host "Números separados por comas, o A para todos").Trim()
+        if ([string]::IsNullOrWhiteSpace($raw) -or $raw -match '^(?i:a|todos)$') { return ,$Items }
+        $selected = @()
+        foreach ($part in ($raw -split '[,; ]+' | Where-Object { $_ })) {
+            $number = 0
+            if (-not [int]::TryParse($part, [ref]$number) -or $number -lt 1 -or $number -gt $Items.Count) {
+                throw "Selección no válida: $part. Usa números entre 1 y $($Items.Count), o A."
+            }
+            $selected += $Items[$number - 1]
+        }
+        if ($selected.Count -eq 0) { throw "No se ha seleccionado ningún elemento." }
+        return ,$selected
+    }
+
+    if ([string]::IsNullOrWhiteSpace($GroupId)) {
+        $Groups = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups")
+        if ($Groups.Count -eq 0) { throw "El token no tiene grupos GitLab visibles." }
+        $ChosenGroup = (Select-NumberedItems $Groups "Grupos GitLab disponibles:" "full_path")[0]
+        $GroupId = [string]$ChosenGroup.id
+    }
+    $EncodedGroup = [uri]::EscapeDataString($GroupId)
+    $Projects = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/projects")
+    if ($Projects.Count -eq 0) { throw "El grupo seleccionado no contiene repositorios clonables." }
+    $ChosenProjects = Select-NumberedItems $Projects "Repositorios / microservicios del grupo (cada repositorio es una unidad de análisis):" "name"
+    $SelectedProjectIds = @($ChosenProjects | ForEach-Object { [int]$_.gitlab_project_id })
+    if ($SelectedProjectIds.Count -eq 0) { throw "No se ha seleccionado ningún repositorio." }
+
     $Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
     $AnalysisName = [Environment]::GetEnvironmentVariable("ANALYSIS_NAME", "Process")
     if ([string]::IsNullOrWhiteSpace($AnalysisName)) { $AnalysisName = "gitlab-group-$GroupId-$Timestamp" }
@@ -403,12 +441,12 @@ catch {
     } catch { }
     Write-Host "Nombre del análisis: $AnalysisName"
     $EncodedGroup = [uri]::EscapeDataString($GroupId)
-    $Start = Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/analysis" -Method "POST" -Body @{ name = $AnalysisName }
+    $Start = Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/analysis" -Method "POST" -Body @{ name = $AnalysisName; project_ids = $SelectedProjectIds }
     $AnalysisGroupId = $Start.analysis_group_id
     if ([string]::IsNullOrWhiteSpace([string]$AnalysisGroupId)) { throw "La API no devolvió analysis_group_id." }
 
     Write-Host "Trabajo: $AnalysisGroupId"
-    Write-Host "Repositorios descubiertos: $($Start.repository_count)"
+    Write-Host "Microservicios / repositorios seleccionados: $($Start.repository_count)"
     $ReportDirValue = [Environment]::GetEnvironmentVariable("REPORT_DIR", "Process")
     if ([string]::IsNullOrWhiteSpace($ReportDirValue)) { $ReportDirValue = "reports" }
     $ReportDir = Join-Path $Root $ReportDirValue
