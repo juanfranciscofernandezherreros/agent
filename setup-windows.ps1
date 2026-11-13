@@ -1,4 +1,5 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
+Set-Location -LiteralPath (Split-Path -Parent $MyInvocation.MyCommand.Path)
 Write-Host "=== Instalador local - Software Reconstruction Platform ===" -ForegroundColor Cyan
 if (Get-Command py -ErrorAction SilentlyContinue) {
     py -3 --version
@@ -12,7 +13,9 @@ if (Get-Command py -ErrorAction SilentlyContinue) {
 }
 & .\.venv\Scripts\python.exe -m pip install --upgrade pip
 & .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+if ($LASTEXITCODE -ne 0) { Write-Host "No se pudieron instalar las dependencias." -ForegroundColor Red; exit 1 }
+Set-Content -LiteralPath ".\.venv\requirements.sha256" -Value (Get-FileHash -LiteralPath ".\requirements.txt" -Algorithm SHA256).Hash -Encoding ASCII
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     Write-Host "AVISO: instala Git for Windows para clonar repositorios." -ForegroundColor Yellow
 } else { git --version }
-Write-Host "Instalación terminada. Ejecuta .\run-windows.ps1" -ForegroundColor Green
+Write-Host "Instalación terminada. Para analizar un grupo, haz doble clic en run-analysis.bat" -ForegroundColor Green

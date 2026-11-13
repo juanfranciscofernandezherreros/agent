@@ -90,8 +90,11 @@ def root():
     return {"application":APP_NAME,"version":APP_VERSION,"mode":"deep_analysis_orchestrator",
       "message":"Usa /api/projects para un servicio, /api/analysis-groups para una lista o /api/gitlab/groups/{group_id}/analysis para un grupo GitLab.","documentation":"/docs"}
 
+# El lanzador compara esta hora con la de los ficheros de código para reiniciar una API obsoleta.
+STARTED_AT=datetime.now(timezone.utc).isoformat()
+
 @app.get("/health")
-def health(): return {"status":"ok","version":APP_VERSION,"mode":"deep_analysis_orchestrator"}
+def health(): return {"status":"ok","version":APP_VERSION,"mode":"deep_analysis_orchestrator","started_at":STARTED_AT}
 
 @app.post("/api/projects",status_code=202)
 def create_project(payload:ProjectCreate,background_tasks:BackgroundTasks):

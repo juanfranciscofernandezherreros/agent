@@ -38,5 +38,5 @@ def write_individual_reports(destination, name, inventory, deep, functional, jav
         "completion_status": member.get("completion_status", "STATIC_ANALYSIS_COMPLETED"),
         "runtime_validation": member.get("runtime_validation", "NOT_PERFORMED")
     }
-    (destination / "analysis.html").write_text(build_integral_html(name, single), encoding="utf-8")
+    (destination / "analysis.html").write_text(build_integral_html(name, single, index_href="../../index.html"), encoding="utf-8")
 

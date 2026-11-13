@@ -132,6 +132,12 @@ La forma recomendada de ejecutar el flujo completo es hacer doble clic en:
 
     run-analysis.bat
 
+También admite el identificador del grupo como argumento, que tiene prioridad sobre `.env`:
+
+    run-analysis.bat 1118
+
+Es el único lanzador necesario. En la primera ejecución crea `.env` desde la plantilla y lo abre para que pongas el token, prepara el entorno Python e instala las dependencias; después las actualiza solo si cambia `requirements.txt`. Si no hay grupo configurado, lo pregunta. Si encuentra una API arrancada con código anterior a la última actualización, la reinicia.
+
 El lanzador invoca run-analysis.ps1, que:
 1. Lee la configuración local de .env.
 2. Comprueba dependencias y prepara el entorno virtual si hace falta.
@@ -233,7 +239,7 @@ La lista manual admite hasta 100 repositorios.
 - app/rich_report.py: generación del informe HTML consolidado.
 - run-analysis.bat y run-analysis.ps1: ejecución integral de un clic en Windows.
 - setup-windows.ps1: preparación manual del entorno.
-- run-windows.ps1: arranque manual de la API.
+- start-windows.bat y run-windows.ps1: arranque de la API sola (desarrollo); no lanza ningún análisis.
 
 ## Desarrollo y pruebas
 

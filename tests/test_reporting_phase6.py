@@ -96,3 +96,16 @@ def test_api_serves_new_reports(run, monkeypatch, tmp_path):
     from fastapi import HTTPException
     with pytest.raises(HTTPException):
         main.get_analysis_group_repository_agents_html("g1", "../x")
+
+
+def test_every_link_in_the_generated_documentation_resolves(run):
+    import re, urllib.parse
+    _, folder = run()
+    checked = 0
+    for page in folder.rglob("*.html"):
+        for href in re.findall(r"""href=['"]([^'"#]+)""", page.read_text(encoding="utf-8")):
+            if href.startswith(("http", "mailto", "data:")) or href == "../index.html":  # ../index.html: índice raíz de reports
+                continue
+            checked += 1
+            assert (page.parent / urllib.parse.unquote(href)).resolve().exists(), f"{page.relative_to(folder)} -> {href}"
+    assert checked > 20

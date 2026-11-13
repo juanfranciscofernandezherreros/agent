@@ -1,14 +1,24 @@
-[CmdletBinding()]
-param()
+﻿[CmdletBinding()]
+param(
+    # Identificador del grupo GitLab. Si se indica, tiene prioridad sobre GITLAB_GROUP_ID de .env.
+    [Parameter(Position = 0)][string]$GroupIdArgument = ""
+)
 
 $ErrorActionPreference = "Stop"
+# Silencia la barra propia de Invoke-WebRequest (ralentiza las descargas); la barra del análisis se activa aparte.
 $ProgressPreference = "SilentlyContinue"
+try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch { }
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location -LiteralPath $Root
 
 function Read-DotEnv([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) {
-        throw "No existe .env. Copia .env.example a .env y configura GITLAB_TOKEN y GITLAB_GROUP_ID."
+        # Primera ejecución: se crea .env desde la plantilla y se abre para rellenarlo.
+        $Example = Join-Path (Split-Path -Parent $Path) ".env.example"
+        if (-not (Test-Path -LiteralPath $Example)) { throw "No existe .env ni .env.example." }
+        Copy-Item -LiteralPath $Example -Destination $Path
+        Write-Host "Se ha creado .env. Rellena GITLAB_TOKEN (y GITLAB_BASE_URL si no usas gitlab.com), guarda y cierra el Bloc de notas." -ForegroundColor Yellow
+        try { Start-Process -FilePath "notepad.exe" -ArgumentList "`"$Path`"" -Wait } catch { throw "Se ha creado .env. Edítalo, configura GITLAB_TOKEN y vuelve a ejecutar el lanzador." }
     }
     foreach ($line in Get-Content -LiteralPath $Path) {
         $trimmed = $line.Trim()
@@ -39,12 +49,15 @@ try {
     $Token = [Environment]::GetEnvironmentVariable("GITLAB_TOKEN", "Process")
     $GroupId = [Environment]::GetEnvironmentVariable("GITLAB_GROUP_ID", "Process")
     $BaseUrl = [Environment]::GetEnvironmentVariable("GITLAB_BASE_URL", "Process")
-    if ([string]::IsNullOrWhiteSpace($Token)) { throw "GITLAB_TOKEN no está configurado en .env." }
-    if ([string]::IsNullOrWhiteSpace($GroupId)) { throw "GITLAB_GROUP_ID no está configurado en .env." }
+    if ([string]::IsNullOrWhiteSpace($Token) -or $Token -match '^<.*>$') { throw "GITLAB_TOKEN no está configurado en .env." }
+    if (-not [string]::IsNullOrWhiteSpace($GroupIdArgument)) { $GroupId = $GroupIdArgument.Trim() }
+    if ([string]::IsNullOrWhiteSpace($GroupId) -or $GroupId -match '^<.*>$') {
+        $GroupId = (Read-Host "Identificador del grupo GitLab a analizar (por ejemplo 1118)").Trim()
+    }
+    if ([string]::IsNullOrWhiteSpace($GroupId)) { throw "No se ha indicado el identificador del grupo GitLab." }
     if ([string]::IsNullOrWhiteSpace($BaseUrl)) { $BaseUrl = "https://gitlab.com" }
 
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw "Git no está instalado o no está disponible en PATH." }
-    if (-not (Get-Command curl.exe -ErrorAction SilentlyContinue)) { throw "No se encuentra curl.exe." }
 
     $Python = Join-Path $Root ".venv\Scripts\python.exe"
     if (-not (Test-Path -LiteralPath $Python)) {
@@ -53,6 +66,18 @@ try {
         if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Falló la preparación del entorno Python." }
     }
     if (-not (Test-Path -LiteralPath $Python)) { throw "No se ha podido crear el entorno .venv." }
+
+    # Si requirements.txt ha cambiado desde la última instalación, se actualizan las dependencias.
+    $Requirements = Join-Path $Root "requirements.txt"
+    $Stamp = Join-Path $Root ".venv\requirements.sha256"
+    $Wanted = (Get-FileHash -LiteralPath $Requirements -Algorithm SHA256).Hash
+    $Installed = if (Test-Path -LiteralPath $Stamp) { (Get-Content -LiteralPath $Stamp -Raw).Trim() } else { "" }
+    if ($Wanted -ne $Installed) {
+        Write-Host "Actualizando dependencias de Python..." -ForegroundColor Yellow
+        & $Python -m pip install --quiet --disable-pip-version-check -r $Requirements
+        if ($LASTEXITCODE -ne 0) { throw "No se pudieron instalar las dependencias de requirements.txt." }
+        Set-Content -LiteralPath $Stamp -Value $Wanted -Encoding ASCII
+    }
 
     $Api = "http://127.0.0.1:8001"
 
@@ -95,16 +120,28 @@ try {
         $HasDocumentationRoutes = ($RouteNames -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/documentation/index.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/progress")
     } catch { $HasDocumentationRoutes = $false }
 
-    if (-not $HasDocumentationRoutes) {
+    # Una API arrancada antes de la última actualización del código sigue ejecutando la versión antigua.
+    $ApiIsStale = $false
+    try {
+        $HealthInfo = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 5
+        $NewestCode = (Get-ChildItem -LiteralPath (Join-Path $Root "app") -Recurse -Filter *.py | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1).LastWriteTimeUtc
+        if ([string]::IsNullOrWhiteSpace([string]$HealthInfo.started_at)) { $ApiIsStale = $true }
+        else {
+            $StartedAt = [DateTimeOffset]::Parse([string]$HealthInfo.started_at, [Globalization.CultureInfo]::InvariantCulture).UtcDateTime
+            $ApiIsStale = ($NewestCode -gt $StartedAt)
+        }
+    } catch { $ApiIsStale = $false }
+
+    if ((-not $HasDocumentationRoutes) -or $ApiIsStale) {
         $Listener = Get-NetTCPConnection -LocalAddress 127.0.0.1 -LocalPort 8001 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
         if ($null -eq $Listener) {
-            throw "La API responde, pero no publica las rutas de informes individuales. Cierra la API antigua y vuelve a ejecutar este launcher."
+            throw "Hay una API antigua en el puerto 8001 que no se puede reiniciar automáticamente. Ciérrala y vuelve a ejecutar este launcher."
         }
         $ApiProcess = Get-CimInstance Win32_Process -Filter "ProcessId = $($Listener.OwningProcess)" -ErrorAction SilentlyContinue
         if ($null -eq $ApiProcess -or $ApiProcess.CommandLine -notmatch "uvicorn.*app\.main:app") {
             throw "El puerto 8001 está ocupado por un proceso que no parece ser esta API. Libera el puerto y vuelve a ejecutar el launcher."
         }
-        Write-Host "Se ha detectado una API antigua; reiniciándola para cargar las rutas nuevas..." -ForegroundColor Yellow
+        Write-Host "Se ha detectado una API con código anterior; reiniciándola para cargar la versión actual..." -ForegroundColor Yellow
         Stop-Process -Id $Listener.OwningProcess -Force
         Start-Sleep -Seconds 2
         Start-LocalApi
@@ -135,7 +172,9 @@ try {
     New-Item -ItemType Directory -Force -Path $ReportDir | Out-Null
     $SafeName = ($AnalysisName -replace '[^A-Za-z0-9._-]+','-').Trim('-')
     if ([string]::IsNullOrWhiteSpace($SafeName)) { $SafeName = "analysis" }
-    $BundleDir = Join-Path $ReportDir "$SafeName-$Timestamp-documentacion"
+    # El nombre automático ya incluye la fecha y hora; no se repite en la carpeta.
+    $BundleName = if ($SafeName.EndsWith($Timestamp)) { "$SafeName-documentacion" } else { "$SafeName-$Timestamp-documentacion" }
+    $BundleDir = Join-Path $ReportDir $BundleName
     New-Item -ItemType Directory -Force -Path $BundleDir | Out-Null
     $ReportPath = Join-Path $BundleDir "analysis.html"
     Write-Host "Los informes se guardan uno a uno en: $BundleDir" -ForegroundColor Cyan
@@ -204,14 +243,19 @@ try {
                 }
             }
             $Percent = if ($Total -gt 0) { [int][math]::Min(100, [math]::Floor(100 * $Shown / $Total)) } else { 0 }
+            $ProgressPreference = "Continue"
             $Doing = if ($Progress.phase -eq "repositories" -and $Progress.current) { "Analizando: $($Progress.current)" } elseif ($Progress.phase -eq "global") { "Generando informes globales..." } else { "Finalizando..." }
             Write-Progress -Activity "Analisis del grupo $GroupId" -Status ("{0}/{1} repositorios ({2} reutilizados, {3} con error)" -f $Shown, $Total, [int]$Progress.reused, [int]$Progress.failed) -CurrentOperation $Doing -PercentComplete $Percent
         } else {
+            $ProgressPreference = "Continue"
             Write-Progress -Activity "Analisis del grupo $GroupId" -Status "Preparando..." -PercentComplete 0
         }
+        $ProgressPreference = "SilentlyContinue"
         if ($FinalStatus -in @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { break }
     }
+    $ProgressPreference = "Continue"
     Write-Progress -Activity "Analisis del grupo $GroupId" -Completed
+    $ProgressPreference = "SilentlyContinue"
     if ($FinalStatus -notin @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { throw "El análisis superó el tiempo máximo de seis horas. ID: $AnalysisGroupId" }
     if ($FinalStatus -eq "FAILED") {
         $Reason = $Status.last_error
@@ -256,7 +300,7 @@ try {
         Pop-Location
         if (Test-Path -LiteralPath $RootIndex) { Write-Host "Índice general de todos los análisis: $RootIndex" -ForegroundColor Green }
     } catch { Pop-Location; Write-Host "No se pudo generar el índice general." -ForegroundColor Yellow }
-    Start-Process -FilePath (Join-Path $BundleDir "index.html")
+    try { Start-Process -FilePath (Join-Path $BundleDir "index.html") } catch { Write-Host "Abre el índice manualmente en el navegador." -ForegroundColor Yellow }
     exit 0
 }
 catch {

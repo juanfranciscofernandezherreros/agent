@@ -165,16 +165,22 @@ class GroupReportingAgent(AnalyzerAgent):
                 [(r["name"], r["artifact_dir"].replace("\\", "/") + "/agents.html") for r in repositories[:40]]
         (folder / "agents.html").write_text(to_html(title, SUBTITLE, sections, links), encoding="utf-8")
 
-        activity_files = []
+        # Histórico de Git del grupo: se genera siempre para que los enlaces de cada microservicio sean válidos.
+        a_title = "Histórico de actividad: " + str(name)
         if insights.get("group_activity"):
-            a_title = "Histórico de actividad: " + str(name)
             a_sub = f"Últimos {insights['group_activity']['window_days']} días · datos de la API de GitLab"
             a_sections = group_activity_sections(insights["group_activity"])
-            (folder / "activity.md").write_text(to_markdown(a_title, a_sub, a_sections), encoding="utf-8")
-            (folder / "activity.html").write_text(to_html(a_title, a_sub, a_sections, [
-                ("← Índice de documentación", "index.html"), ("Informe global", "analysis.html"),
-                ("Informe multiagente", "agents.html")], kicker="HISTÓRICO DE ACTIVIDAD"), encoding="utf-8")
-            activity_files = ["activity.md", "activity.html"]
+        else:
+            message = context.store.get("group_activity") if context.store is not None else None
+            reason = (message.detail or "; ".join(e["message"] for e in message.errors)) if message else ""
+            a_sub = "Datos de la API de GitLab"
+            a_sections = [{"title": "Sin histórico disponible",
+                           "note": reason or "No se pudo obtener el histórico de Git de ningún repositorio."}]
+        (folder / "activity.md").write_text(to_markdown(a_title, a_sub, a_sections), encoding="utf-8")
+        (folder / "activity.html").write_text(to_html(a_title, a_sub, a_sections, [
+            ("← Índice de documentación", "index.html"), ("Informe global", "analysis.html"),
+            ("Informe multiagente", "agents.html")], kicker="HISTÓRICO DE ACTIVIDAD"), encoding="utf-8")
+        activity_files = ["activity.md", "activity.html"]
         (folder / "index.html").write_text(build_documentation_index(name, result), encoding="utf-8")
         (folder / "analysis.json").write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
         context.outputs["group_analysis"] = result  # no se publica: ya está en analysis.json
