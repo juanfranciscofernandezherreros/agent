@@ -152,3 +152,71 @@ def test_index_ranks_most_active_microservices():
     assert "250 commits</a> · 2 ramas" in html and "<span>Sin datos</span>" in html and "g/&lt;manual&gt;" in html
     empty = build_documentation_index("Grupo", {"repositories": repos[3:], "bug_reports": []})
     assert "No hay histórico de Git disponible" in empty
+
+
+
+def test_gitlab_lists_accessible_groups_with_nested_paths(monkeypatch):
+    import app.gitlab as gitlab
+
+    class FakeClient:
+        def __init__(self, *a, **k): pass
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def get(self, url, headers=None, params=None):
+            assert url.endswith("/api/v4/groups")
+            assert headers["PRIVATE-TOKEN"] == "tok"
+            assert params["all_available"] == "true" and params["top_level_only"] == "false"
+            return httpx.Response(200, json=[
+                {"id": 10, "name": "Platform", "full_path": "engineering/platform", "parent_id": None},
+                {"id": 11, "name": "Orders", "full_path": "engineering/platform/orders", "parent_id": 10},
+            ], request=httpx.Request("GET", url))
+    monkeypatch.setattr(gitlab.httpx, "Client", FakeClient)
+    assert gitlab.list_accessible_groups() == [
+        {"id": 10, "name": "Platform", "full_path": "engineering/platform", "parent_id": None, "web_url": None},
+        {"id": 11, "name": "Orders", "full_path": "engineering/platform/orders", "parent_id": 10, "web_url": None},
+    ]
+
+
+def test_gitlab_project_listing_can_return_empty_for_selector(monkeypatch):
+    import app.gitlab as gitlab
+
+    class FakeClient:
+        def __init__(self, *a, **k): pass
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def get(self, url, headers=None, params=None):
+            return httpx.Response(200, json=[], request=httpx.Request("GET", url))
+    monkeypatch.setattr(gitlab.httpx, "Client", FakeClient)
+    assert gitlab.list_group_projects("1118", allow_empty=True) == []
+
+
+def test_gitlab_analysis_restricts_run_to_selected_project_ids(monkeypatch):
+    from fastapi import BackgroundTasks
+    import app.main as main
+    from app.schemas import GitLabGroupAnalysisCreate
+
+    projects = [
+        {"name": "team/orders", "git_url": "https://gitlab.example.com/team/orders.git", "gitlab_project_id": 1},
+        {"name": "team/payments", "git_url": "https://gitlab.example.com/team/payments.git", "gitlab_project_id": 2},
+    ]
+    captured = {}
+    monkeypatch.setattr(main, "gitlab_settings", lambda: ("https://gitlab.example.com", "tok", "gitlab.example.com"))
+    monkeypatch.setattr(main, "list_group_projects", lambda group_id, allow_empty=False: projects)
+    monkeypatch.setattr(main, "persist_analysis_group", lambda name, repositories, background_tasks: captured.update(
+        name=name, repositories=repositories) or {"repository_count": len(repositories)})
+    result = main.create_gitlab_group_analysis("1118", GitLabGroupAnalysisCreate(project_ids=[2]), BackgroundTasks())
+    assert result["repository_count"] == 1
+    assert [item["gitlab_project_id"] for item in captured["repositories"]] == [2]
+
+
+def test_gitlab_analysis_rejects_project_ids_outside_group(monkeypatch):
+    from fastapi import BackgroundTasks, HTTPException
+    import app.main as main
+    from app.schemas import GitLabGroupAnalysisCreate
+
+    monkeypatch.setattr(main, "gitlab_settings", lambda: ("https://gitlab.example.com", "tok", "gitlab.example.com"))
+    monkeypatch.setattr(main, "list_group_projects", lambda group_id, allow_empty=False: [
+        {"name": "team/orders", "git_url": "https://gitlab.example.com/team/orders.git", "gitlab_project_id": 1}])
+    with pytest.raises(HTTPException) as exc:
+        main.create_gitlab_group_analysis("1118", GitLabGroupAnalysisCreate(project_ids=[999]), BackgroundTasks())
+    assert exc.value.status_code == 400
