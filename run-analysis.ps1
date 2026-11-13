@@ -200,7 +200,9 @@ try {
         Write-Host $Prompt -ForegroundColor Cyan
         for ($i = 0; $i -lt $Items.Count; $i++) {
             $displayValue = $Items[$i].PSObject.Properties[$DisplayProperty].Value
-            Write-Host ("  {0}. {1}" -f ($i + 1), [string]$displayValue)
+            $itemId = if ($Items[$i].gitlab_project_id) { $Items[$i].gitlab_project_id } elseif ($Items[$i].id) { $Items[$i].id } else { $null }
+            $suffix = if ($itemId) { "  [Project ID: $itemId]" } else { "" }
+            Write-Host ("  {0}. {1}{2}" -f ($i + 1), [string]$displayValue, $suffix)
         }
         $raw = (Read-Host "Números separados por comas, o A para todos").Trim()
         if ([string]::IsNullOrWhiteSpace($raw) -or $raw.ToLower() -in @("a", "todos")) { return ,$Items }
@@ -241,14 +243,7 @@ try {
     $EncodedGroup = [uri]::EscapeDataString($GroupId)
     $Projects = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/projects")
     if ($Projects.Count -eq 0) { throw "El grupo seleccionado no contiene repositorios clonables." }
-    Write-Host ""
-    Write-Host ("Repositorios / microservicios del grupo {0} (Group ID: {1}):" -f $SelectedGroupLabel, $GroupId) -ForegroundColor Cyan
-    for ($i = 0; $i -lt $Projects.Count; $i++) {
-        $projectId = if ($Projects[$i].gitlab_project_id) { $Projects[$i].gitlab_project_id } elseif ($Projects[$i].id) { $Projects[$i].id } else { "N/D" }
-        $projectPath = if ($Projects[$i].path_with_namespace) { $Projects[$i].path_with_namespace } else { $Projects[$i].name }
-        Write-Host ("  {0}. {1}  [Project ID: {2}]" -f ($i + 1), $projectPath, $projectId)
-    }
-    $ChosenProjects = Select-NumberedItems $Projects "Selecciona los repositorios que quieres analizar:" "name"
+    $ChosenProjects = Select-NumberedItems $Projects ("Repositorios / microservicios del grupo {0} (Group ID: {1}). Selecciona los que quieres analizar:" -f $SelectedGroupLabel, $GroupId) "name"
     if (@($ChosenProjects).Count -eq 0) { throw "No se ha seleccionado ningún repositorio." }
     # Null means all projects; avoids the 100-ID payload limit for large groups.
     if (@($ChosenProjects).Count -eq $Projects.Count) { $SelectedProjectIds = $null }
