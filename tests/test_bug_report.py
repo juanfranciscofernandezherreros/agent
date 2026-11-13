@@ -75,3 +75,27 @@ def test_consolidated_export_html_escapes_untrusted_finding_text():
     assert "<script>alert(1)</script>" not in report
     assert "Secreto literal" in report
 
+def test_bug_index_allows_selection_across_microservices():
+    from app.bug_report import build_bug_reports_index
+
+    reports = [
+        {"repository": "service-a", "file": "service-a-123456.html", "count": 1},
+        {"repository": "service-b", "file": "service-b-654321.html", "count": 1},
+    ]
+    repositories = [
+        {"name": "service-a", "artifact_dir": "repositories/service-a",
+         "bug_report": "bug-reports/service-a-123456.html",
+         "quality_analysis": {"bug_candidates": [{"code": "BUG003", "severity": "medium",
+             "title": "TODO pendiente", "file": "src/A.java", "line": 10}]}},
+        {"name": "service-b", "artifact_dir": "repositories/service-b",
+         "bug_report": "bug-reports/service-b-654321.html",
+         "quality_analysis": {"bug_candidates": [{"code": "BUG004", "severity": "high",
+             "title": "Assert en producción", "file": "src/B.java", "line": 20}]}},
+    ]
+    page = build_bug_reports_index("platform", reports, repositories)
+    assert "Exportar selección (JSON + HTML)" in page
+    assert "data-report='service-a-123456.html'" in page
+    assert "data-report='service-b-654321.html'" in page
+    assert "TODO pendiente" in page
+    assert "Assert en producción" in page
+
