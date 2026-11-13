@@ -59,7 +59,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
 
         cached = context.data.get("cached_reports")
         if cached is not None:
-            # Informes ya generados para este mismo commit: se copian tal cual, sin regenerarlos.
+            # Se reutiliza el análisis cacheado; el expediente de bugs se regenera para enlazar esta ejecución.
             for rel in static_files:
                 target = folder / rel
                 target.parent.mkdir(parents=True, exist_ok=True)
