@@ -109,3 +109,29 @@ def test_every_link_in_the_generated_documentation_resolves(run):
             checked += 1
             assert (page.parent / urllib.parse.unquote(href)).resolve().exists(), f"{page.relative_to(folder)} -> {href}"
     assert checked > 20
+
+
+def test_index_lists_every_bug_for_selection_with_inert_send_button(run):
+    import re
+    result, folder = run()
+    html = (folder / "index.html").read_text(encoding="utf-8")
+    total = sum(len(r["quality_analysis"]["bug_candidates"]) for r in result["repositories"])
+    boxes = re.findall(r"<input type='checkbox' class='bug' ([^>]+)>", html)
+    assert total > 0 and len(boxes) == total
+    first = result["repositories"][0]["quality_analysis"]["bug_candidates"][0]
+    ref = f"{first['code']}@{first['file']}:{first['line']}"
+    assert any("data-repository='team/orders'" in b and f"data-ref='{ref}'" in b for b in boxes)
+    assert html.count("class='bug-all'") == 2 and "id='bug-everything'" in html and "window.selectedBugs" in html
+    # El botón existe pero no funciona: está deshabilitado y no hay ningún envío en la página.
+    assert "<button type='button' id='bug-send' disabled" in html
+    assert "<form" not in html and "fetch(" not in html and "XMLHttpRequest" not in html and "bug-send').addEventListener" not in html
+
+
+def test_index_escapes_bug_data_and_handles_no_bugs():
+    from app.documentation import build_documentation_index
+    repo = {"name": "g/<svc>", "artifact_dir": "repositories/g-svc", "quality_analysis": {"bug_candidates": [
+        {"code": "BUG001", "severity": "high", "title": "Título '><script>alert(1)</script>", "file": "a'b.py", "line": 3, "excerpt": "x = '<b>'"}]}}
+    html = build_documentation_index("G", {"repositories": [repo], "bug_reports": []})
+    assert "<script>alert(1)</script>" not in html and "data-file='a&#x27;b.py'" in html
+    empty = build_documentation_index("G", {"repositories": [{"name": "x", "artifact_dir": "repositories/x"}], "bug_reports": []})
+    assert "No se han detectado candidatos a bug" in empty and "id='bug-send'" not in empty

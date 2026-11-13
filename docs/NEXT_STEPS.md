@@ -16,6 +16,18 @@
 - Fase 5: validación cruzada y detección de contradicciones entre agentes.
 - Fase 6: agente documental con informes globales e individuales.
 
+## Pendiente: envío de la selección de bugs
+El índice de cada análisis (`app/documentation.py`, sección `#bugs`) lista todos los posibles bugs con una casilla por bug,
+selección por microservicio y global, y un contador. El botón **Enviar está deshabilitado a propósito**: no envía nada.
+
+Para implementarlo:
+- `window.selectedBugs()` devuelve la selección como lista de `{repository, ref, code, severity, file, line, title}`.
+  `ref` (`CODIGO@archivo:línea`) coincide con el que usan `llm_bug_review` y la validación cruzada.
+- Falta decidir el destino: un endpoint nuevo de la API (p. ej. `POST /api/analysis-groups/{id}/bug-tasks`) que cree tareas
+  para un agente de corrección, o la descarga de un fichero de tareas. El índice se abre como archivo local, así que
+  un envío a la API necesita que esté arrancada y que permita el origen `file://`.
+- Al implementarlo: habilitar el botón solo con selección y quitar el aviso «El envío todavía no está disponible».
+
 ## Siguientes mejoras
 1. Parser semántico Java basado en AST/compiler model para resolver tipos, overloads, beans y llamadas reales.
 2. Parsers específicos para Spring JDBC/JPA, MyBatis, SQL embebido, Avro schemas, Kafka producer/consumer config y OpenAPI.
