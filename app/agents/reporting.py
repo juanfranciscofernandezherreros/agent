@@ -65,6 +65,12 @@ class RepositoryReportingAgent(AnalyzerAgent):
         write_individual_reports(dest, name, inv, deep, functional, java, member)
 
         sections = build_sections(insights, _runs(context, name, "repository", self.name), "repository")
+        hit = context.data.get("cache_hit")
+        if hit:
+            sections.insert(0, {"title": "Análisis reutilizado",
+                                "note": f"El repositorio no ha cambiado desde el análisis del {str(hit.get('analyzed_at'))[:10]} "
+                                        f"(commit {str(hit.get('commit'))[:8]}): se han reutilizado sus resultados sin volver a clonar "
+                                        "ni analizar. Solo se ha actualizado el histórico de actividad y se han regenerado los informes."})
         title = "Informe multiagente: " + str(name)
         (dest / "agents.md").write_text(to_markdown(title, SUBTITLE, sections), encoding="utf-8")
         links = [("← Ficha técnica", "analysis.html"), ("Informe multiagente global", "../../agents.html"),

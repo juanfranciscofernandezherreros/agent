@@ -92,7 +92,7 @@ try {
     try {
         $ApiSpec = Invoke-RestMethod -Uri "$Api/openapi.json" -TimeoutSec 5
         $RouteNames = @($ApiSpec.paths.PSObject.Properties.Name)
-        $HasDocumentationRoutes = ($RouteNames -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/documentation/index.html")
+        $HasDocumentationRoutes = ($RouteNames -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/documentation/index.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/progress")
     } catch { $HasDocumentationRoutes = $false }
 
     if (-not $HasDocumentationRoutes) {
@@ -110,7 +110,7 @@ try {
         Start-LocalApi
         $ApiSpec = Invoke-RestMethod -Uri "$Api/openapi.json" -TimeoutSec 10
         $RouteNames = @($ApiSpec.paths.PSObject.Properties.Name)
-        if (-not (($RouteNames -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/documentation/index.html"))) {
+        if (-not (($RouteNames -contains "/api/analysis-groups/{group_id}/bug-reports/{report_name}") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/documentation/index.html") -and ($RouteNames -contains "/api/analysis-groups/{group_id}/progress"))) {
             throw "La API reiniciada sigue sin publicar las rutas de informes. Revisa logs/api.stderr.log."
         }
     }
@@ -129,22 +129,6 @@ try {
 
     Write-Host "Trabajo: $AnalysisGroupId"
     Write-Host "Repositorios descubiertos: $($Start.repository_count)"
-    $FinalStatus = $null
-    $Deadline = (Get-Date).AddHours(6)
-    while ((Get-Date) -lt $Deadline) {
-        Start-Sleep -Seconds 5
-        $Status = Invoke-ApiJson -Uri "$Api/api/analysis-groups/$AnalysisGroupId"
-        $FinalStatus = $Status.status
-        if ($FinalStatus -in @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { break }
-        Write-Host ("Estado: {0}" -f $FinalStatus)
-    }
-    if ($FinalStatus -notin @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { throw "El análisis superó el tiempo máximo de seis horas. ID: $AnalysisGroupId" }
-    if ($FinalStatus -eq "FAILED") {
-        $Reason = $Status.last_error
-        if (-not $Reason) { $Reason = "El servidor marcó el análisis como FAILED." }
-        throw $Reason
-    }
-
     $ReportDirValue = [Environment]::GetEnvironmentVariable("REPORT_DIR", "Process")
     if ([string]::IsNullOrWhiteSpace($ReportDirValue)) { $ReportDirValue = "reports" }
     $ReportDir = Join-Path $Root $ReportDirValue
@@ -154,6 +138,82 @@ try {
     $BundleDir = Join-Path $ReportDir "$SafeName-$Timestamp-documentacion"
     New-Item -ItemType Directory -Force -Path $BundleDir | Out-Null
     $ReportPath = Join-Path $BundleDir "analysis.html"
+    Write-Host "Los informes se guardan uno a uno en: $BundleDir" -ForegroundColor Cyan
+
+    function Get-Bar([int]$Done, [int]$Total) {
+        $Width = 30
+        $Filled = if ($Total -gt 0) { [int][math]::Floor($Width * $Done / $Total) } else { 0 }
+        $Percent = if ($Total -gt 0) { [int][math]::Floor(100 * $Done / $Total) } else { 0 }
+        return ("[{0}{1}] {2,3}%  {3}/{4}" -f ("#" * $Filled), ("-" * ($Width - $Filled)), $Percent, $Done, $Total)
+    }
+
+    # Descarga los HTML de un microservicio en cuanto termina; no repite los que ya existen.
+    function Save-RepositoryReports($Item) {
+        $ArtifactDir = ([string]$Item.artifact_dir) -replace '\\', '/'
+        if ($ArtifactDir -notmatch '^repositories/[A-Za-z0-9_-]+$') { return }
+        $RepositorySlug = ($ArtifactDir -split '/')[-1]
+        $ServiceDir = Join-Path $BundleDir $ArtifactDir
+        New-Item -ItemType Directory -Force -Path $ServiceDir | Out-Null
+        $Target = Join-Path $ServiceDir "analysis.html"
+        if (-not (Test-Path -LiteralPath $Target)) {
+            Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/report.html" -OutFile $Target -UseBasicParsing
+        }
+        $AgentsTarget = Join-Path $ServiceDir "agents.html"
+        if (-not (Test-Path -LiteralPath $AgentsTarget)) {
+            try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/agents.html" -OutFile $AgentsTarget -UseBasicParsing } catch { }
+        }
+        $BugPath = [string]$Item.bug_report
+        if ($BugPath -match '^bug-reports/([A-Za-z0-9_-]+[.]html)$') {
+            $BugDir = Join-Path $BundleDir "bug-reports"
+            New-Item -ItemType Directory -Force -Path $BugDir | Out-Null
+            $BugTarget = Join-Path $BugDir $Matches[1]
+            if (-not (Test-Path -LiteralPath $BugTarget)) {
+                try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$($Matches[1])" -OutFile $BugTarget -UseBasicParsing } catch { }
+            }
+        }
+    }
+
+    $FinalStatus = $null
+    $Status = $null
+    $Shown = 0
+    $Total = [int]$Start.repository_count
+    $Deadline = (Get-Date).AddHours(6)
+    while ((Get-Date) -lt $Deadline) {
+        Start-Sleep -Seconds 3
+        $Status = Invoke-ApiJson -Uri "$Api/api/analysis-groups/$AnalysisGroupId/progress"
+        $FinalStatus = $Status.status
+        $Progress = $Status.progress
+        if ($null -ne $Progress) {
+            $Items = @($Progress.items)
+            if ([int]$Progress.total -gt 0) { $Total = [int]$Progress.total }
+            while ($Shown -lt $Items.Count) {
+                $Item = $Items[$Shown]
+                $Shown++
+                $Bar = Get-Bar $Shown $Total
+                if ($Item.status -eq "failed") {
+                    Write-Host ("{0}  ERROR        {1}: {2}" -f $Bar, $Item.name, $Item.error) -ForegroundColor Red
+                } else {
+                    $Label = if ($Item.status -eq "reused") { "REUTILIZADO " } else { "ANALIZADO   " }
+                    $Color = if ($Item.status -eq "reused") { "DarkGray" } else { "Green" }
+                    Write-Host ("{0}  {1} {2}" -f $Bar, $Label, $Item.name) -ForegroundColor $Color
+                    try { Save-RepositoryReports $Item } catch { Write-Host ("   No se pudo descargar todavia el informe de {0}" -f $Item.name) -ForegroundColor Yellow }
+                }
+            }
+            $Percent = if ($Total -gt 0) { [int][math]::Min(100, [math]::Floor(100 * $Shown / $Total)) } else { 0 }
+            $Doing = if ($Progress.phase -eq "repositories" -and $Progress.current) { "Analizando: $($Progress.current)" } elseif ($Progress.phase -eq "global") { "Generando informes globales..." } else { "Finalizando..." }
+            Write-Progress -Activity "Analisis del grupo $GroupId" -Status ("{0}/{1} repositorios ({2} reutilizados, {3} con error)" -f $Shown, $Total, [int]$Progress.reused, [int]$Progress.failed) -CurrentOperation $Doing -PercentComplete $Percent
+        } else {
+            Write-Progress -Activity "Analisis del grupo $GroupId" -Status "Preparando..." -PercentComplete 0
+        }
+        if ($FinalStatus -in @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { break }
+    }
+    Write-Progress -Activity "Analisis del grupo $GroupId" -Completed
+    if ($FinalStatus -notin @("ANALYSIS_COMPLETED","PARTIAL_ANALYSIS_COMPLETED","FAILED")) { throw "El análisis superó el tiempo máximo de seis horas. ID: $AnalysisGroupId" }
+    if ($FinalStatus -eq "FAILED") {
+        $Reason = $Status.last_error
+        if (-not $Reason) { $Reason = "El servidor marcó el análisis como FAILED." }
+        throw $Reason
+    }
 
     Write-Host "Descargando documentación HTML completa..." -ForegroundColor Cyan
     $AnalysisData = Invoke-ApiJson -Uri "$Api/api/analysis-groups/$AnalysisGroupId/analysis"
@@ -161,14 +221,7 @@ try {
 
     # Preserve the server workspace's relative layout so links work offline.
     foreach ($Repository in @($AnalysisData.repositories)) {
-        $ArtifactDir = ([string]$Repository.artifact_dir) -replace '\\', '/'
-        if ($ArtifactDir -notmatch '^repositories/[A-Za-z0-9_-]+$') { continue }
-        $RepositorySlug = ($ArtifactDir -split '/')[-1]
-        $ServiceDir = Join-Path $BundleDir $ArtifactDir
-        New-Item -ItemType Directory -Force -Path $ServiceDir | Out-Null
-        $ServiceUrl = "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/report.html"
-        Invoke-WebRequest -Uri $ServiceUrl -OutFile (Join-Path $ServiceDir "analysis.html") -UseBasicParsing
-        try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/agents.html" -OutFile (Join-Path $ServiceDir "agents.html") -UseBasicParsing } catch { Write-Host "Informe multiagente no disponible para $RepositorySlug" -ForegroundColor Yellow }
+        Save-RepositoryReports $Repository
     }
 
     $BugReportsDir = Join-Path $BundleDir "bug-reports"
@@ -176,6 +229,7 @@ try {
     foreach ($BugReport in @($AnalysisData.bug_reports)) {
         $BugFile = [string]$BugReport.file
         if ($BugFile -notmatch '^[A-Za-z0-9_-]+[.]html$') { continue }
+        if (Test-Path -LiteralPath (Join-Path $BugReportsDir $BugFile)) { continue }
         Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/$BugFile" -OutFile (Join-Path $BugReportsDir $BugFile) -UseBasicParsing
     }
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/bug-reports/index.html" -OutFile (Join-Path $BugReportsDir "index.html") -UseBasicParsing

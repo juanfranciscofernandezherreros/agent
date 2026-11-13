@@ -141,6 +141,16 @@ def get_analysis_group(group_id:str):
     if result.get("analysis_json"): result["analysis"]=json.loads(result.pop("analysis_json"))
     return result
 
+@app.get("/api/analysis-groups/{group_id}/progress")
+def get_analysis_group_progress(group_id:str):
+    """Estado ligero para la barra de progreso: repositorios terminados, reutilizados y fallidos."""
+    with connect() as con: row=con.execute("SELECT status,last_error FROM analysis_groups WHERE id=?",(group_id,)).fetchone()
+    if not row: raise HTTPException(404,"Grupo de análisis no encontrado")
+    path=WORKSPACES_DIR/group_id/"progress.json"
+    try: progress=json.loads(path.read_text(encoding="utf-8"))
+    except (OSError,ValueError): progress=None
+    return {"status":row["status"],"last_error":row["last_error"],"progress":progress}
+
 @app.get("/api/analysis-groups/{group_id}/analysis")
 def get_analysis_group_result(group_id:str):
     with connect() as con: row=con.execute("SELECT status,analysis_json,last_error FROM analysis_groups WHERE id=?",(group_id,)).fetchone()

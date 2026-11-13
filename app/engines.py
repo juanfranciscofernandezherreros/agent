@@ -25,6 +25,40 @@ def validate_git_url(url: str):
     if host in {"localhost", "127.0.0.1", "::1"} or host.startswith("169.254."):
         raise ValueError("La URL no está permitida.")
 
+def _git_env(git_url: str, auth_token: str | None, auth_host: str | None):
+    """Entorno para Git con autenticación por cabecera; el token nunca va en la URL ni en argv."""
+    parsed_host = urlparse(git_url).netloc.lower()
+    if not (auth_token and auth_host and parsed_host == auth_host.lower()):
+        return None
+    import os
+    env = os.environ.copy()
+    env["GIT_CONFIG_COUNT"] = "1"
+    env["GIT_CONFIG_KEY_0"] = f"http.https://{auth_host.lower()}/.extraheader"
+    encoded = base64.b64encode(f"oauth2:{auth_token}".encode("utf-8")).decode("ascii")
+    env["GIT_CONFIG_VALUE_0"] = f"Authorization: Basic {encoded}"
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    return env
+
+
+def remote_head(git_url: str, auth_token: str | None = None, auth_host: str | None = None) -> str | None:
+    """Commit actual de la rama por defecto sin clonar (git ls-remote). None si no se puede saber."""
+    try:
+        validate_git_url(git_url)
+        out = subprocess.run(["git", "ls-remote", git_url, "HEAD"], check=True, capture_output=True, text=True,
+                             timeout=60, env=_git_env(git_url, auth_token, auth_host)).stdout.split()
+    except (ValueError, OSError, subprocess.SubprocessError):
+        return None
+    return out[0] if out and len(out[0]) >= 40 else None
+
+
+def local_head(path: Path) -> str | None:
+    try:
+        return subprocess.run(["git", "-C", str(path), "rev-parse", "HEAD"], check=True, capture_output=True,
+                              text=True, timeout=30).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
 def clone_repository(project_id: str, git_url: str, auth_token: str | None = None,
                      auth_host: str | None = None) -> Path:
     validate_git_url(git_url)
@@ -33,17 +67,7 @@ def clone_repository(project_id: str, git_url: str, auth_token: str | None = Non
     if dest.exists():
         raise ValueError("Ya existe un clon para este proyecto.")
     cmd = ["git", "clone", "--depth", "1", "--no-recurse-submodules", git_url, str(dest)]
-    env = None
-    parsed_host = urlparse(git_url).netloc.lower()
-    if auth_token and auth_host and parsed_host == auth_host.lower():
-        import os
-        env = os.environ.copy()
-        # Git reads the header from its environment; the token is never put in the URL or argv.
-        env["GIT_CONFIG_COUNT"] = "1"
-        env["GIT_CONFIG_KEY_0"] = f"http.https://{auth_host.lower()}/.extraheader"
-        encoded = base64.b64encode(f"oauth2:{auth_token}".encode("utf-8")).decode("ascii")
-        env["GIT_CONFIG_VALUE_0"] = f"Authorization: Basic {encoded}"
-        env["GIT_TERMINAL_PROMPT"] = "0"
+    env = _git_env(git_url, auth_token, auth_host)
     try:
         subprocess.run(cmd, check=True, capture_output=True, text=True,
                        timeout=MAX_CLONE_SECONDS, env=env)
