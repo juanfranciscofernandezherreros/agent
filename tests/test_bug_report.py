@@ -46,7 +46,7 @@ def test_bug_report_includes_selection_and_export_controls():
         ]
     }
     report = build_bug_report_html("service-a", "platform", quality, "service-a", "group-123", "service-a-123456.html")
-    assert 'class="bug-select" type="checkbox" value="0"' in report
+    assert "class='bug-select' type='checkbox' value='0'" in report
     assert "select-all-bugs" in report
     assert "export-selected-bugs" in report
     assert 'data-group-id="group-123"' in report
