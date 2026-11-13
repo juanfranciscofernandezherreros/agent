@@ -214,17 +214,24 @@ try {
         return ,$selected
     }
 
-    if ([string]::IsNullOrWhiteSpace($GroupId)) {
+    if ([string]::IsNullOrWhiteSpace($GroupIdArgument)) {
         $Groups = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups")
         if ($Groups.Count -eq 0) { throw "El token no tiene grupos GitLab visibles." }
         Write-Host ""
         Write-Host "Grupos GitLab disponibles:" -ForegroundColor Cyan
+        $DefaultGroupIndex = -1
         for ($i = 0; $i -lt $Groups.Count; $i++) {
             Write-Host ("  {0}. {1}" -f ($i + 1), $Groups[$i].full_path)
+            if (-not [string]::IsNullOrWhiteSpace($GroupId) -and [string]$Groups[$i].id -eq [string]$GroupId) { $DefaultGroupIndex = $i }
         }
-        $GroupChoice = (Read-Host "Número del grupo que quieres analizar").Trim()
-        $GroupIndex = 0
-        if (-not [int]::TryParse($GroupChoice, [ref]$GroupIndex) -or $GroupIndex -lt 1 -or $GroupIndex -gt $Groups.Count) { throw "Número de grupo no válido." }
+        $GroupPrompt = "Número del grupo que quieres analizar"
+        if ($DefaultGroupIndex -ge 0) { $GroupPrompt += " (Enter para mantener $($Groups[$DefaultGroupIndex].full_path))" }
+        $GroupChoice = (Read-Host $GroupPrompt).Trim()
+        if ([string]::IsNullOrWhiteSpace($GroupChoice) -and $DefaultGroupIndex -ge 0) { $GroupIndex = $DefaultGroupIndex + 1 }
+        else {
+            $GroupIndex = 0
+            if (-not [int]::TryParse($GroupChoice, [ref]$GroupIndex) -or $GroupIndex -lt 1 -or $GroupIndex -gt $Groups.Count) { throw "Número de grupo no válido." }
+        }
         $GroupId = [string]$Groups[$GroupIndex - 1].id
     }
     $EncodedGroup = [uri]::EscapeDataString($GroupId)
