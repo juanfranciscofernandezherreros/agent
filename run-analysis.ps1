@@ -223,7 +223,7 @@ try {
         Write-Host "Grupos GitLab disponibles:" -ForegroundColor Cyan
         $DefaultGroupIndex = -1
         for ($i = 0; $i -lt $Groups.Count; $i++) {
-            Write-Host ("  {0}. {1}" -f ($i + 1), $Groups[$i].full_path)
+            Write-Host ("  {0}. {1}  [Group ID: {2}]" -f ($i + 1), $Groups[$i].full_path, $Groups[$i].id)
             if (-not [string]::IsNullOrWhiteSpace($GroupId) -and [string]$Groups[$i].id -eq [string]$GroupId) { $DefaultGroupIndex = $i }
         }
         $GroupPrompt = "Número del grupo que quieres analizar"
@@ -239,7 +239,14 @@ try {
     $EncodedGroup = [uri]::EscapeDataString($GroupId)
     $Projects = @(Invoke-ApiJson -Uri "$Api/api/gitlab/groups/$EncodedGroup/projects")
     if ($Projects.Count -eq 0) { throw "El grupo seleccionado no contiene repositorios clonables." }
-    $ChosenProjects = Select-NumberedItems $Projects "Repositorios / microservicios del grupo (cada repositorio es una unidad de análisis):" "name"
+    Write-Host ""
+    Write-Host ("Repositorios / microservicios del grupo {0} (ID: {1}):" -f $Groups[$GroupIndex - 1].full_path, $GroupId) -ForegroundColor Cyan
+    for ($i = 0; $i -lt $Projects.Count; $i++) {
+        $projectId = if ($Projects[$i].gitlab_project_id) { $Projects[$i].gitlab_project_id } elseif ($Projects[$i].id) { $Projects[$i].id } else { "N/D" }
+        $projectPath = if ($Projects[$i].path_with_namespace) { $Projects[$i].path_with_namespace } else { $Projects[$i].name }
+        Write-Host ("  {0}. {1}  [Project ID: {2}]" -f ($i + 1), $projectPath, $projectId)
+    }
+    $ChosenProjects = Select-NumberedItems $Projects "Selecciona los repositorios que quieres analizar:" "name"
     if (@($ChosenProjects).Count -eq 0) { throw "No se ha seleccionado ningún repositorio." }
     # Null means all projects; avoids the 100-ID payload limit for large groups.
     if (@($ChosenProjects).Count -eq $Projects.Count) { $SelectedProjectIds = $null }
