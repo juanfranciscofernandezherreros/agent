@@ -16,6 +16,8 @@ $ProgressPreference = "SilentlyContinue"
 try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch { }
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location -LiteralPath $Root
+# Marca temporal única para identificar la ejecución y su carpeta de informes.
+$Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 
 function Read-DotEnv([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) {
