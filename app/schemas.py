@@ -15,6 +15,8 @@ class AnalysisGroupCreate(BaseModel):
 
 class GitLabGroupAnalysisCreate(BaseModel):
     name: str | None = Field(default=None, min_length=2, max_length=120)
+    # None means all projects; an explicit list limits the run to selected GitLab project IDs.
+    project_ids: list[int] | None = Field(default=None, min_length=1, max_length=100)
 
 class EquivalenceRequest(BaseModel):
     original_url: HttpUrl
