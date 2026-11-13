@@ -190,7 +190,7 @@ def build_bug_reports_index(group_name, reports, repositories=None, group_id=Non
             label = (
                 "<label class='finding-choice'><input class='bug-select' type='checkbox' data-report='" +
                 _e(report_name) + "' value='" + str(index) + "'><span><b>" +
-                _e(finding.get("severity", "low").upper()) + " · " + _e(repository.get("name", "Microservicio")) +
+                _e(str(finding.get("severity", "low")).upper()) + " · " + _e(repository.get("name", "Microservicio")) +
                 "</b><br>" + _e(finding.get("title", "Posible bug")) + "<small>" +
                 _e(finding.get("file", "N/D")) + ":" + _e(finding.get("line", "N/D")) +
                 " · " + _e(TASKS.get(finding.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")) +
