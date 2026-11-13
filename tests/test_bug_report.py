@@ -45,10 +45,12 @@ def test_bug_report_includes_selection_and_export_controls():
              "description": "Deuda técnica"}
         ]
     }
-    report = build_bug_report_html("service-a", "platform", quality, "service-a")
+    report = build_bug_report_html("service-a", "platform", quality, "service-a", "group-123", "service-a-123456.html")
     assert 'class="bug-select" type="checkbox" value="0"' in report
     assert "select-all-bugs" in report
     assert "export-selected-bugs" in report
+    assert 'data-group-id="group-123"' in report
+    assert 'data-report="service-a-123456.html"' in report
     assert "/bug-reports/export" in report
 
 
@@ -92,8 +94,9 @@ def test_bug_index_allows_selection_across_microservices():
          "quality_analysis": {"bug_candidates": [{"code": "BUG004", "severity": "high",
              "title": "Assert en producción", "file": "src/B.java", "line": 20}]}},
     ]
-    page = build_bug_reports_index("platform", reports, repositories)
+    page = build_bug_reports_index("platform", reports, repositories, "group-456")
     assert "Exportar selección (JSON + HTML)" in page
+    assert 'data-group-id="group-456"' in page
     assert "data-report='service-a-123456.html'" in page
     assert "data-report='service-b-654321.html'" in page
     assert "TODO pendiente" in page
