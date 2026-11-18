@@ -58,7 +58,7 @@ def test_local_analysis_exports_all_bug_candidates_to_json(tmp_path, monkeypatch
 
     source = tmp_path / "service-with-findings"
     source.mkdir()
-    (source / "service.py").write_text("def run():\\n    return 1\\n", encoding="utf-8")
+    (source / "service.py").write_text("def run():\n    return 1\n", encoding="utf-8")
     output = tmp_path / "reports"
 
     class SupervisorWithFindings:
