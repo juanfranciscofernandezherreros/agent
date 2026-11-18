@@ -5,7 +5,7 @@ from collections import Counter
 from urllib.parse import urlparse
 from .config import WORKSPACES_DIR, MAX_CLONE_SECONDS
 
-SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".next", "vendor"}
+SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".next", "vendor", "reports", "workspaces", "logs"}
 EXTENSIONS = {
     ".py":"Python", ".js":"JavaScript", ".ts":"TypeScript", ".tsx":"TypeScript",
     ".jsx":"JavaScript", ".java":"Java", ".go":"Go", ".rs":"Rust", ".cs":"C#",
