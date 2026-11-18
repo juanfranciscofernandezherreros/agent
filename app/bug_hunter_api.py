@@ -246,10 +246,6 @@ def update_investigation_status(agent_id: str, investigation_id: str, payload: I
         if old_status in {"CONFIRMED", "PROBABLE", "UNCONFIRMED", "DISCARDED"}:
             raise HTTPException(409, "La investigación está cerrada.")
         if new_status == "CONFIRMED":
-            count = con.execute(
-                "SELECT COUNT(*) FROM bug_hunter_investigations WHERE agent_id=? AND status='CONFIRMED'",
-                (agent_id,),
-            ).fetchone()[0]
             # Confirmation is a state label, not proof: evidence remains mandatory.
             evidence = con.execute(
                 "SELECT evidence_json FROM bug_hunter_investigations WHERE id=?",
