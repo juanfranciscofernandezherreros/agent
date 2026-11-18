@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import uuid
+from pathlib import Path
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
@@ -33,14 +34,14 @@ def _clone_task(agent_id: str, url: str, branch: str | None) -> None:
         result = clone_repository(agent_id, url, branch)
         with connect() as con:
             con.execute("UPDATE bug_hunters SET status='MAPPING_REPOSITORY',updated_at=? WHERE id=?", (now(), agent_id))
-        repository_map = scan_repository(__import__('pathlib').Path(result['source_path']))
+        repository_map = scan_repository(Path(result['source_path']))
         result['repository_map'] = repository_map
         with connect() as con:
             con.execute("UPDATE bug_hunters SET status='READY_FOR_HUNT',repository_json=?,updated_at=? WHERE id=?",
                         (json.dumps(result, ensure_ascii=False), now(), agent_id))
     except Exception as exc:
         with connect() as con:
-            con.execute("UPDATE bug_hunters SET status='CLONE_FAILED',last_error=?,updated_at=? WHERE id=?",
+            con.execute("UPDATE bug_hunters SET status='INITIALIZATION_FAILED',last_error=?,updated_at=? WHERE id=?",
                         (str(exc)[:2000], now(), agent_id))
 
 
