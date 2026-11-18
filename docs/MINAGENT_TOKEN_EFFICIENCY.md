@@ -35,3 +35,31 @@ Next: <next eligible task>
 
 ## Context reset rule
 When switching to an unrelated task, prefer a fresh session and re-read only the mandatory compact instructions plus that task's plan, SDD mapping, and targeted code. If continuing the same task, compact with a summary that preserves decisions, paths, test outcomes, and next action.
+
+
+## Document generation efficiency
+
+These rules apply when creating or regenerating project documentation, backlog plans, task plans, specifications, and checkpoints—not only when reading them.
+
+- **Do not regenerate large documents in one pass.** Work in bounded batches (one milestone/epic or a small set of tasks) and preserve completed sections.
+- **Keep task plans compact by default.** Target roughly 150–300 words per task, only longer when the task has genuinely complex design, security, data-flow, or migration concerns.
+- **Use a shared reference instead of repeating boilerplate.** Safety rules, architecture principles, test policy, workflow, and generic acceptance conventions belong in the central documents. Task plans should link/reference them and contain only task-specific decisions.
+- **Task-plan minimum:** ID/title; purpose and scope; dependencies; likely components/files (explicitly provisional until code inspection); implementation steps; edge cases; focused tests; acceptance criteria. Avoid lengthy background, generic advice, speculative file lists, and duplicated requirement text.
+- **Generate from source, not from repeated full-context reads.** Extract the task IDs/titles and only the relevant backlog entry. Reuse already verified architecture context. Do not paste the full backlog or full plan document into the prompt/context.
+- **Use a compact index.** Keep task IDs, titles, dependency/status, and links/anchors in the index; keep detailed guidance in task sections. Do not duplicate full plan content in indexes.
+- **Batch safely:** create/update a small batch, validate IDs and coverage against the source backlog, then continue. Do not load or rewrite all batches just to validate one batch.
+- **Avoid verbose prose output.** Produce concise Markdown, tables only when they reduce text, and no repeated introductory/concluding paragraphs per task.
+- **Preserve existing detail selectively.** Do not mass-compress or delete existing plans without checking whether task-specific decisions, edge cases, or acceptance criteria would be lost. When reducing this  document, do it in batches and compare task coverage and key fields before committing.
+
+### Compact task-plan template
+
+```markdown
+### TASK-ID — Title
+- **Scope:** <specific outcome; in/out>
+- **Depends on:** <IDs or none>
+- **Approach:** <3–6 concrete steps, tailored to this task>
+- **Tests:** <focused cases/commands>
+- **Done when:** <observable acceptance criteria>
+```
+
+The template is a ceiling for routine tasks, not a constraint for complex tasks. Add detail only where it prevents implementation mistakes.
