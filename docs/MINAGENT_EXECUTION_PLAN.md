@@ -1,5 +1,8 @@
 # MiniAgent — Execution Plan and Progress Tracker
 
+
+**SDD conformance authority:** `docs/MINAGENT_SDD.md`. Before and after each task, validate current code and intended behavior against its requirements. A task is not done just because its local acceptance criteria pass; it must also be aligned with the SDD, or the discrepancy must be explicitly resolved.
+
 **Per-task implementation plans:** `docs/MINAGENT_BACKLOG_TASK_PLANS.md` contains a plan section for every product backlog item. Claude must read and follow the matching plan before implementing a task.
 
 This file turns the product backlog into an ordered implementation plan for Claude Code. Update statuses and validation evidence as work is completed.
