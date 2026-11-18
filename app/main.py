@@ -34,6 +34,12 @@ def startup():
           id TEXT PRIMARY KEY, name TEXT NOT NULL, github_url TEXT NOT NULL,
           branch TEXT, status TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
           repository_json TEXT, last_error TEXT)""")
+        con.execute("""CREATE TABLE IF NOT EXISTS bug_hunter_investigations (
+          id TEXT PRIMARY KEY, agent_id TEXT NOT NULL, title TEXT NOT NULL,
+          hypothesis TEXT NOT NULL, scope_json TEXT NOT NULL, status TEXT NOT NULL,
+          created_at TEXT NOT NULL, updated_at TEXT NOT NULL, evidence_json TEXT,
+          last_error TEXT, FOREIGN KEY(agent_id) REFERENCES bug_hunters(id))""")
+
     with connect() as con:
         con.execute("""CREATE TABLE IF NOT EXISTS analysis_groups (
           id TEXT PRIMARY KEY, name TEXT NOT NULL, repositories_json TEXT NOT NULL,
