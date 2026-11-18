@@ -55,7 +55,25 @@ class RepositoryReportingAgent(AnalyzerAgent):
         identity = (context.data.get("repository_input") or {}).get("git_url") or str(name)
         report_file = (service + "-" + hashlib.sha1(identity.encode("utf-8")).hexdigest()[:6] + ".html") if candidates else None
         bug_report = ("bug-reports/" + report_file) if report_file else None
-        static_files = [artifact_dir + "/" + f for f in STATIC_REPORT_FILES] + ([bug_report] if bug_report else [])
+        bug_json = "possible-bugs.json"
+        bug_json_payload = {
+            "schema_version": "1.0",
+            "repository": name,
+            "group": group_name,
+            "summary": {
+                **(quality.get("summary") or {}),
+                "production_candidates": len(quality.get("bug_candidates") or []),
+                "test_candidates": len(quality.get("test_bug_candidates") or []),
+                "total_candidates": len(quality.get("bug_candidates") or []) + len(quality.get("test_bug_candidates") or []),
+            },
+            "production_candidates": quality.get("bug_candidates") or [],
+            "test_candidates": quality.get("test_bug_candidates") or [],
+            "llm_bug_hunter": insights.get("llm_bug_hunter", {}),
+            "llm_bug_review": insights.get("llm_bug_review", {}),
+            "runtime_validation": "NOT_PERFORMED",
+            "limitations": ["Son candidatos estáticos, no defectos confirmados.", "No se ejecutó el código del repositorio."],
+        }
+        static_files = [artifact_dir + "/" + f for f in (*STATIC_REPORT_FILES, bug_json)] + ([bug_report] if bug_report else [])
 
         cached = context.data.get("cached_reports")
         if cached is not None:
@@ -69,6 +87,9 @@ class RepositoryReportingAgent(AnalyzerAgent):
                         context.data.get("group_id"), report_file
                     ), encoding="utf-8")
                     continue
+                if rel.endswith("/" + bug_json):
+                    target.write_text(json.dumps(bug_json_payload, indent=2, ensure_ascii=False), encoding="utf-8")
+                    continue
                 shutil.copyfile(cached / rel.replace("\\", "/").split("/")[-1], target)
         else:
             if report_file:
@@ -79,6 +100,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
                       "bug_report": bug_report, "agent_insights": insights,
                       "completion_status": "STATIC_ANALYSIS_COMPLETED", "runtime_validation": "NOT_PERFORMED"}
             (dest / "analysis.json").write_text(json.dumps(member, indent=2, ensure_ascii=False), encoding="utf-8")
+            (dest / bug_json).write_text(json.dumps(bug_json_payload, indent=2, ensure_ascii=False), encoding="utf-8")
             write_individual_reports(dest, name, inv, deep, functional, java, member)
             runs = [m for m in _runs(context, name, "repository", self.name) if m["agent"] != "activity_analysis"]
             sections = build_sections(insights, runs, "repository")
