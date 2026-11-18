@@ -58,7 +58,8 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
             entry=context.outputs["repository_entry"]; results.append(entry)
             progress["completed"]+=1; progress["reused"]+=1 if cached else 0
             progress["items"].append({"name":item["name"],"status":"reused" if cached else "done",
-                "artifact_dir":entry["artifact_dir"].replace("\\","/"),"bug_report":entry["bug_report"]})
+                "artifact_dir":entry["artifact_dir"].replace("\\","/"),"bug_report":entry["bug_report"],
+                "bug_json":entry.get("bug_json")})
         except Exception as exc:
             failures.append({"repository":item["name"],"error":str(exc)})
             progress["failed"]+=1; progress["items"].append({"name":item["name"],"status":"failed","error":str(exc)[:300]})
