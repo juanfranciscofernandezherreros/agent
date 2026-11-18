@@ -65,8 +65,12 @@ class RepositoryReportingAgent(AnalyzerAgent):
             unified_candidates.append({"source": "static_quality", "scope": "test", **candidate})
         for candidate in llm_findings:
             unified_candidates.append({"source": "llm_bug_hunter", "scope": "production", **candidate})
+        from datetime import datetime
+        export_timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         bug_json = "possible-bugs.json"
+        bug_json_timestamped = f"possible-bugs-{export_timestamp}.json"
         bug_json_payload = {
+            "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
             "schema_version": "1.0",
             "repository": name,
             "group": group_name,
@@ -84,7 +88,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
             "runtime_validation": "NOT_PERFORMED",
             "limitations": ["Son candidatos estáticos, no defectos confirmados.", "No se ejecutó el código del repositorio."],
         }
-        static_files = [artifact_dir + "/" + f for f in (*STATIC_REPORT_FILES, bug_json)] + ([bug_report] if bug_report else [])
+        static_files = [artifact_dir + "/" + f for f in (*STATIC_REPORT_FILES, bug_json, bug_json_timestamped)] + ([bug_report] if bug_report else [])
 
         cached = context.data.get("cached_reports")
         if cached is not None:
@@ -98,7 +102,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
                         context.data.get("group_id"), report_file
                     ), encoding="utf-8")
                     continue
-                if rel.endswith("/" + bug_json):
+                if rel.endswith("/" + bug_json) or rel.endswith("/" + bug_json_timestamped):
                     target.write_text(json.dumps(bug_json_payload, indent=2, ensure_ascii=False), encoding="utf-8")
                     continue
                 shutil.copyfile(cached / rel.replace("\\", "/").split("/")[-1], target)
@@ -111,7 +115,9 @@ class RepositoryReportingAgent(AnalyzerAgent):
                       "bug_report": bug_report, "agent_insights": insights,
                       "completion_status": "STATIC_ANALYSIS_COMPLETED", "runtime_validation": "NOT_PERFORMED"}
             (dest / "analysis.json").write_text(json.dumps(member, indent=2, ensure_ascii=False), encoding="utf-8")
-            (dest / bug_json).write_text(json.dumps(bug_json_payload, indent=2, ensure_ascii=False), encoding="utf-8")
+            serialized_bug_json = json.dumps(bug_json_payload, indent=2, ensure_ascii=False)
+            (dest / bug_json).write_text(serialized_bug_json, encoding="utf-8")
+            (dest / bug_json_timestamped).write_text(serialized_bug_json, encoding="utf-8")
             write_individual_reports(dest, name, inv, deep, functional, java, member)
             runs = [m for m in _runs(context, name, "repository", self.name) if m["agent"] != "activity_analysis"]
             sections = build_sections(insights, runs, "repository")
