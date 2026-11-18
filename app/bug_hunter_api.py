@@ -135,3 +135,52 @@ def find_hunter_symbol(agent_id: str, symbol: str):
         return {"matches": find_symbol(root, symbol)}
     except ValueError as exc:
         raise HTTPException(400, str(exc))
+
+class InvestigationCreate(BaseModel):
+    title: str = Field(min_length=3, max_length=200)
+    hypothesis: str = Field(min_length=10, max_length=5000)
+    scope: list[str] = Field(default_factory=list, max_length=100)
+
+
+@router.post("/{agent_id}/investigations", status_code=202)
+def create_investigation(agent_id: str, payload: InvestigationCreate):
+    _repository_root(agent_id)
+    investigation_id = str(uuid.uuid4())
+    timestamp = now()
+    with connect() as con:
+        con.execute(
+            """INSERT INTO bug_hunter_investigations
+            (id,agent_id,title,hypothesis,scope_json,status,created_at,updated_at)
+            VALUES(?,?,?,?,?,?,?,?)""",
+            (investigation_id, agent_id, payload.title.strip(), payload.hypothesis.strip(),
+             json.dumps(payload.scope, ensure_ascii=False), "QUEUED", timestamp, timestamp),
+        )
+    return {"investigation_id": investigation_id, "status": "QUEUED"}
+
+
+@router.get("/{agent_id}/investigations")
+def list_investigations(agent_id: str):
+    get_bug_hunter(agent_id)
+    with connect() as con:
+        rows = con.execute(
+            """SELECT id,title,status,created_at,updated_at,last_error
+            FROM bug_hunter_investigations WHERE agent_id=? ORDER BY created_at DESC""",
+            (agent_id,),
+        ).fetchall()
+    return [dict(row) for row in rows]
+
+
+@router.get("/{agent_id}/investigations/{investigation_id}")
+def get_investigation(agent_id: str, investigation_id: str):
+    get_bug_hunter(agent_id)
+    with connect() as con:
+        row = con.execute(
+            "SELECT * FROM bug_hunter_investigations WHERE id=? AND agent_id=?",
+            (investigation_id, agent_id),
+        ).fetchone()
+    if not row:
+        raise HTTPException(404, "Investigación no encontrada.")
+    result = dict(row)
+    result["scope"] = json.loads(result.pop("scope_json"))
+    result["evidence"] = json.loads(result.pop("evidence_json") or "[]")
+    return result
