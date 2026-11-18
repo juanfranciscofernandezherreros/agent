@@ -89,8 +89,15 @@ def run_analysis(project_id: str):
             "llm_bug_review":context.results.get("llm_bug_review",{}),
             "runtime_validation":"NOT_PERFORMED",
             "limitations":["Son candidatos estáticos, no defectos confirmados.","No se ejecutó el repositorio ni sus pruebas."]}
-        (folder/"possible-bugs.json").write_text(json.dumps(bug_export,indent=2,ensure_ascii=False),encoding="utf-8")
-        analysis["possible_bugs_export"]="possible-bugs.json"
+        from datetime import datetime
+        export_timestamp=datetime.now().strftime("%Y%m%d-%H%M%S")
+        bug_export["generated_at"]=datetime.now().astimezone().isoformat(timespec="seconds")
+        timestamped_name=f"possible-bugs-{export_timestamp}.json"
+        serialized_bugs=json.dumps(bug_export,indent=2,ensure_ascii=False)
+        (folder/timestamped_name).write_text(serialized_bugs,encoding="utf-8")
+        (folder/"possible-bugs.json").write_text(serialized_bugs,encoding="utf-8")
+        analysis["possible_bugs_export"]=timestamped_name
+        analysis["possible_bugs_export_latest"]="possible-bugs.json"
         (folder/"analysis.json").write_text(json.dumps(analysis,indent=2,ensure_ascii=False),encoding="utf-8")
         report=build_analysis_markdown(name,inventory,deep)
         report+="\n## Análisis funcional\n"+json.dumps(functional.get("summary",{}),ensure_ascii=False,indent=2)
