@@ -81,8 +81,9 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
         ],
     }
     from datetime import datetime
-    export_timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    bug_export["generated_at"] = datetime.now().astimezone().isoformat(timespec="seconds")
+    export_datetime = datetime.now().astimezone()
+    export_timestamp = export_datetime.strftime("%Y%m%d-%H%M%S")
+    bug_export["generated_at"] = export_datetime.isoformat(timespec="seconds")
     timestamped_name = f"possible-bugs-{export_timestamp}.json"
     serialized_bugs = json.dumps(bug_export, indent=2, ensure_ascii=False)
     (output / timestamped_name).write_text(serialized_bugs, encoding="utf-8")
