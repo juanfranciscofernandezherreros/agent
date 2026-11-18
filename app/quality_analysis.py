@@ -5,7 +5,7 @@ Findings are review candidates, not confirmed runtime defects.
 from pathlib import Path
 import re
 
-SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__", "dist", "build", "target", "vendor"}
+SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__", "dist", "build", "target", "vendor", "reports", "workspaces", "logs"}
 SOURCE_SUFFIXES = {".py", ".java", ".js", ".jsx", ".ts", ".tsx", ".go", ".cs", ".php", ".rb"}
 
 PATTERNS = [
