@@ -184,3 +184,81 @@ def get_investigation(agent_id: str, investigation_id: str):
     result["scope"] = json.loads(result.pop("scope_json"))
     result["evidence"] = json.loads(result.pop("evidence_json") or "[]")
     return result
+
+class EvidenceCreate(BaseModel):
+    kind: str = Field(min_length=2, max_length=40)
+    summary: str = Field(min_length=3, max_length=2000)
+    file: str | None = Field(default=None, max_length=500)
+    line: int | None = Field(default=None, ge=1)
+    detail: str | None = Field(default=None, max_length=10000)
+
+
+class InvestigationStatusUpdate(BaseModel):
+    status: str
+    last_error: str | None = Field(default=None, max_length=2000)
+
+
+_ALLOWED_INVESTIGATION_STATUSES = {
+    "QUEUED", "PLANNING", "EXPLORING", "VALIDATING",
+    "CONFIRMED", "PROBABLE", "UNCONFIRMED", "DISCARDED", "BLOCKED",
+}
+
+
+@router.post("/{agent_id}/investigations/{investigation_id}/evidence", status_code=201)
+def append_investigation_evidence(agent_id: str, investigation_id: str, payload: EvidenceCreate):
+    get_bug_hunter(agent_id)
+    record = payload.model_dump()
+    record["recorded_at"] = now()
+    with connect() as con:
+        row = con.execute(
+            "SELECT evidence_json,status FROM bug_hunter_investigations WHERE id=? AND agent_id=?",
+            (investigation_id, agent_id),
+        ).fetchone()
+        if not row:
+            raise HTTPException(404, "Investigación no encontrada.")
+        if row["status"] in {"CONFIRMED", "PROBABLE", "UNCONFIRMED", "DISCARDED"}:
+            raise HTTPException(409, "La investigación ya está cerrada.")
+        evidence = json.loads(row["evidence_json"] or "[]")
+        if len(evidence) >= 1000:
+            raise HTTPException(409, "La investigación alcanzó el límite de evidencias.")
+        evidence.append(record)
+        con.execute(
+            "UPDATE bug_hunter_investigations SET evidence_json=?,updated_at=? WHERE id=?",
+            (json.dumps(evidence, ensure_ascii=False), now(), investigation_id),
+        )
+    return {"investigation_id": investigation_id, "evidence_count": len(evidence), "recorded": True}
+
+
+@router.post("/{agent_id}/investigations/{investigation_id}/status")
+def update_investigation_status(agent_id: str, investigation_id: str, payload: InvestigationStatusUpdate):
+    get_bug_hunter(agent_id)
+    new_status = payload.status.strip().upper()
+    if new_status not in _ALLOWED_INVESTIGATION_STATUSES:
+        raise HTTPException(400, "Estado de investigación no válido.")
+    with connect() as con:
+        row = con.execute(
+            "SELECT status FROM bug_hunter_investigations WHERE id=? AND agent_id=?",
+            (investigation_id, agent_id),
+        ).fetchone()
+        if not row:
+            raise HTTPException(404, "Investigación no encontrada.")
+        old_status = row["status"]
+        if old_status in {"CONFIRMED", "PROBABLE", "UNCONFIRMED", "DISCARDED"}:
+            raise HTTPException(409, "La investigación está cerrada.")
+        if new_status == "CONFIRMED":
+            count = con.execute(
+                "SELECT COUNT(*) FROM bug_hunter_investigations WHERE agent_id=? AND status='CONFIRMED'",
+                (agent_id,),
+            ).fetchone()[0]
+            # Confirmation is a state label, not proof: evidence remains mandatory.
+            evidence = con.execute(
+                "SELECT evidence_json FROM bug_hunter_investigations WHERE id=?",
+                (investigation_id,),
+            ).fetchone()[0]
+            if not evidence or len(json.loads(evidence)) < 2:
+                raise HTTPException(409, "Para confirmar se requieren al menos dos evidencias registradas.")
+        con.execute(
+            "UPDATE bug_hunter_investigations SET status=?,last_error=?,updated_at=? WHERE id=?",
+            (new_status, payload.last_error, now(), investigation_id),
+        )
+    return {"investigation_id": investigation_id, "previous_status": old_status, "status": new_status}
