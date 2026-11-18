@@ -310,6 +310,24 @@ def get_analysis_group_documentation_index(group_id: str):
     return path.read_text(encoding="utf-8")
 
 
+@app.get("/api/analysis-groups/{group_id}/repositories/{repository_slug}/possible-bugs.json")
+def get_analysis_group_repository_possible_bugs(group_id: str, repository_slug: str):
+    import re
+    from fastapi.responses import JSONResponse
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", group_id) or not re.fullmatch(r"[A-Za-z0-9_-]+", repository_slug):
+        raise HTTPException(404, "Microservicio no encontrado")
+    path = WORKSPACES_DIR / group_id / "repositories" / repository_slug / "possible-bugs.json"
+    if not path.is_file():
+        raise HTTPException(404, "JSON de posibles bugs no encontrado")
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise HTTPException(500, "No se pudo leer el JSON de posibles bugs") from exc
+    return JSONResponse(content=payload, headers={
+        "Content-Disposition": f'attachment; filename="{repository_slug}-possible-bugs.json"'
+    })
+
+
 @app.get("/api/analysis-groups/{group_id}/repositories/{repository_slug}/report.html",response_class=HTMLResponse)
 def get_analysis_group_repository_html(group_id: str, repository_slug: str):
     import re
