@@ -56,7 +56,26 @@ A task cannot be DONE if acceptance criteria are unmet, the diff is not reviewed
 - Use stable schemas and version report formats when changing outputs.
 - Do not add dependencies without explaining the need and checking project conventions.
 
+## Autonomous execution mode — DEFAULT
+**Operate autonomously through the entire backlog. Do not ask the user to approve routine technical decisions, task selection, implementation, tests, refactoring within scope, or moving to the next task.**
+
+- Always select the highest-priority eligible task whose dependencies are satisfied; use the plan's priority order and tie-break by listed order.
+- Execute tasks end-to-end: plan, implement, tests, review, update tracker with evidence, then immediately start the next task.
+- Checkpoints are progress summaries, not stopping points. After emitting a checkpoint summary, continue working without waiting for a reply.
+- Make reasonable, reversible engineering decisions independently. Record important choices and rationale in project docs/commit messages where appropriate.
+- If a task is blocked, document the precise blocker and evidence, mark it BLOCKED, and continue with the next independent eligible task.
+- Do not stop because a milestone ended, a task was completed, or a test failed; diagnose, fix, retry, and continue.
+- Stop and request human input only when genuinely necessary: credentials or permissions unavailable, an irreversible/destructive action, a decision that materially changes product scope, or a blocker that cannot be safely resolved or bypassed. Never invent user consent.
+- Keep work in small reviewable commits if the environment supports committing. Do not force-push, rewrite history, or discard work.
+- Maintain a durable running log/checkpoint in the execution plan so a later session can resume without repeating completed work.
+- If context or runtime limits interrupt the session, leave the tracker accurate, identify the exact next task, and provide a resume instruction.
+
 ## Execution modes
+- If the user requests one task: execute only that task and its necessary prerequisites.
+- If the user says continue/proceed: take the next eligible task and keep going autonomously.
+- If the user requests a broad backlog run (or establishes autonomous mode): keep executing the backlog without pausing for approval, including across milestones, until the session/runtime limit or a genuine blocker requires stopping.
+- Never blindly implement every epic in one change; work task-by-task with validation and review.
+
 - If the user requests one task: execute only that task and its necessary prerequisites.
 - If the user says continue/proceed: take the next eligible task, implement, validate, and update tracker.
 - If the user requests a broad backlog run: work in bounded checkpoints, keep tests green where possible, and stop at checkpoints with a factual summary. Never blindly implement every epic in one pass.
