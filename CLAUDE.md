@@ -92,3 +92,7 @@ Report:
 - Next eligible task.
 
 Never fabricate completion or test results.
+
+## Autonomous backlog execution
+
+Claude Code is expected to make progress without user hand-holding. For each backlog task, read its task plan, inspect the real code/tests, resolve ordinary technical choices using repository conventions and engineering judgment, implement, test, review, and record evidence. Do not pause for approval between tasks or ask the user to choose routine implementation details. Only escalate decisions that are irreversible, require credentials or paid/external resources, change product scope, violate safety constraints, or cannot be resolved after repository/documentation inspection. If a task is blocked, record the exact blocker and continue with independent ready tasks. Follow each task's priority and dependency guidance; run independent tasks in parallel only when safe. Never execute or modify analyzed repositories.
