@@ -24,7 +24,7 @@ class BugHunterAgent(LLMAgent):
     """Find additional logic/runtime defects beyond existing pattern-based candidates."""
 
     name = "llm_bug_hunter"
-    requires = ("quality_analysis", "deep_analysis", "functional_analysis", "java_analysis", "integration_analysis")
+    requires = ("quality_analysis", "deep_analysis", "functional_analysis", "java_analysis")
     evidence_kind = "bug_hunter_finding"
     max_files = 12
     max_file_chars = 2200
