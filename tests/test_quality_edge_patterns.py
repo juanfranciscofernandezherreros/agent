@@ -15,7 +15,7 @@ def test_quality_detects_test_edge_case_patterns(tmp_path):
         "value = eval(user_input)\n"
         "if enabled == True:\n"
         "    run()\n"
-        "query = \\"SELECT * FROM users WHERE id = \\" + user_id\n",
+        "query = 'SELECT * FROM users WHERE id = ' + user_id\n",
         encoding="utf-8",
     )
     result = analyze_quality(
