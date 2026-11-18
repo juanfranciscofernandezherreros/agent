@@ -66,11 +66,12 @@ class RepositoryReportingAgent(AnalyzerAgent):
         for candidate in llm_findings:
             unified_candidates.append({"source": "llm_bug_hunter", "scope": "production", **candidate})
         from datetime import datetime
-        export_timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        export_datetime = datetime.now().astimezone()
+        export_timestamp = export_datetime.strftime("%Y%m%d-%H%M%S")
         bug_json = "possible-bugs.json"
         bug_json_timestamped = f"possible-bugs-{export_timestamp}.json"
         bug_json_payload = {
-            "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+            "generated_at": export_datetime.isoformat(timespec="seconds"),
             "schema_version": "1.0",
             "repository": name,
             "group": group_name,
