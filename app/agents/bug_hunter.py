@@ -112,7 +112,10 @@ class BugHunterAgent(LLMAgent):
             rel = str(item["file"])
             try:
                 line = int(item.get("line"))
-                path = (root / rel).resolve()
+                raw_path = root / rel
+                if raw_path.is_symlink():
+                    continue
+                path = raw_path.resolve()
                 if root.resolve() not in path.parents or path.is_symlink() or not path.is_file() or path.stat().st_size > 1_000_000:
                     continue
                 lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -179,8 +182,12 @@ class BugHunterAgent(LLMAgent):
             actual = str(item.get("actual_behavior", "")).strip()[:800]
             impact = str(item.get("impact", "")).strip()[:800]
             fix = str(item.get("fix_suggestion", "")).strip()[:1200]
+            # Enforce BUG-01's evidence-backed scenario contract; reject vague LLM output.
+            if not (description and scenario and expected and actual and impact and fix):
+                continue
             primary = evidence[0]
-            candidate = {                "bug_type": str(item.get("bug_type", "logic_or_runtime"))[:100],
+            candidate = {
+                "bug_type": str(item.get("bug_type", "logic_or_runtime"))[:100],
                 "code": f"BH{len(added) + 1:03d}",
                 "severity": severity_map[severity],
                 "title": title,
