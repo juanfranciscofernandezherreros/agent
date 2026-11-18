@@ -15,7 +15,7 @@ PATTERNS = [
     ("BUG004", "high", "Uso de assert en código de aplicación", re.compile(r"^\s*assert\s+"), "Las aserciones pueden desactivarse en ejecución optimizada; no deberían sustituir validaciones de entrada."),
     ("BUG005", "medium", "Comparación de igualdad potencialmente incorrecta", re.compile(r"\b(?:if|while)\s+\w+\s+is\s+['\"]|\b(?:if|while)\s+['\"][^'\"]+['\"]\s+is\s+\w+", re.I), "En Python, 'is' compara identidad, no igualdad de valores."),
     ("BUG006", "high", "Credencial literal en código", re.compile(r"(?i)\b(password|passwd|secret|api[_-]?key|access[_-]?token)\s*[=:]\s*['\"][^'\"]{6,}['\"]"), "Posible secreto codificado directamente. Verificar que no sea un placeholder o dato de prueba."),
-    ("BUG007", "high", "Captura genérica de excepción", re.compile(r"(?m)^\\s*except\\s*:\\s*(?:#.*)?$"), "La captura sin tipo puede ocultar errores inesperados y continuar en un estado inválido."),
+    ("BUG007", "high", "Captura genérica de excepción", re.compile(r"(?m)^\s*except\s*:\s*(?:#.*)?$"), "La captura sin tipo puede ocultar errores inesperados y continuar en un estado inválido."),
     ("BUG008", "medium", "Argumento mutable por defecto", re.compile(r"(?m)^\s*def\s+\w+\s*\([^)]*=\s*(?:\[\]|\{\}|set\(\))"), "Un valor mutable por defecto se comparte entre llamadas y puede conservar estado accidentalmente."),
     ("BUG009", "high", "Uso de eval/exec", re.compile(r"\b(?:eval|exec)\s*\("), "Evalúa código dinámico; puede producir ejecución no prevista o vulnerabilidad si recibe datos externos."),
     ("BUG010", "medium", "Comparación explícita con booleano", re.compile(r"\b(?:if|while)\s+[^:]+\s+==\s+(?:True|False)\b"), "La comparación explícita puede ser redundante o indicar una condición incorrecta; validar la intención."),
