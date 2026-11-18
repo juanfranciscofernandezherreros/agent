@@ -494,3 +494,4 @@ catch {
     Write-Host ("ERROR: " + $_.Exception.Message) -ForegroundColor Red
     Write-Host "Comprueba .env y, si falla el arranque de la API, revisa logs/api.stderr.log."
     exit 1
+}
