@@ -104,7 +104,7 @@ function ConvertTo-GitLabItems($Response, [string[]]$Fields) {
 try {
     Write-Host ""
     Write-Host "=== Analizador de arquitectura y calidad de microservicios ===" -ForegroundColor Cyan
-    Read-DotEnv (Join-Path $Root ".env")
+    if (Test-Path -LiteralPath (Join-Path $Root ".env")) { Read-DotEnv (Join-Path $Root ".env") } elseif ([string]::IsNullOrWhiteSpace($LocalPath) -or $ListModels) { Read-DotEnv (Join-Path $Root ".env") }
 
     # Selección de proveedor y modelo LLM desde la línea de órdenes.
     if (-not [string]::IsNullOrWhiteSpace($LlmProvider)) {
