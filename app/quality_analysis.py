@@ -25,6 +25,42 @@ PATTERNS = [
 WEIGHTS = {"high": 12, "medium": 5, "low": 2}
 
 
+SQL_KEYWORDS = re.compile(r"(?i)\b(?:select|insert\s+into|update\s+\w+\s+set|delete\s+from)\b")
+SQL_DYNAMIC = [
+    re.compile(r"(?i)\b(?:select|insert\s+into|update|delete\s+from)\b.{0,250}\+\s*(?:\w+|[\"'][^\"']*[\"'])"),
+    re.compile(r"(?i)\bf[\"'].*(?:select|insert|update|delete).*\{[^}]+\}"),
+    re.compile(r"(?i)\b(?:select|insert|update|delete)\b.{0,250}(?:\.format\s*\(|%\s*(?:\w+|\())"),
+    re.compile(r"(?i)\b(?:select|insert|update|delete)\b.{0,250}\$\{[^}]+\}"),
+]
+
+def _analyze_sql_injection(source: str, rel: str) -> list[dict]:
+    """Detect suspicious dynamic SQL construction; candidates require manual validation."""
+    hits = []
+    for line_no, line in enumerate(source.splitlines(), 1):
+        if not SQL_KEYWORDS.search(line):
+            continue
+        if any(pattern.search(line) for pattern in SQL_DYNAMIC):
+            hits.append({
+                "file": rel, "line": line_no, "excerpt": line.strip()[:300],
+                "reason": "SQL statement appears to include dynamic interpolation, formatting or concatenation.",
+            })
+    if not hits:
+        return []
+    return [{
+        "code": "SQLI001",
+        "severity": "high",
+        "title": "Posible SQL Injection por SQL dinámico",
+        "description": "Se detectó construcción dinámica de una sentencia SQL. Comprobar si los valores externos se incorporan sin parametrización y si existe un flujo alcanzable hasta la consulta.",
+        "confidence": "heuristic_candidate",
+        "cwe": {"id": "CWE-89", "name": "Improper Neutralization of Special Elements used in an SQL Command"},
+        "owasp": {"framework": "OWASP Top 10 2025", "category": "A05", "name": "Injection"},
+        "occurrences": hits,
+        "occurrence_count": len(hits),
+        "file": hits[0]["file"], "line": hits[0]["line"], "excerpt": hits[0]["excerpt"],
+        "recommended_action": "Revisar el flujo de datos y sustituir la concatenación/interpolación por consultas parametrizadas; validar con evidencia antes de confirmar.",
+    }]
+
+
 def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dict:
     grouped = {}
     files_scanned = 0
@@ -62,6 +98,26 @@ def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dic
                     break
 
     findings = list(grouped.values())
+    # SQL Injection gets a dedicated security finding with CWE/OWASP metadata.
+    sql_injection_findings = []
+    for path in root.rglob("*"):
+        if path.is_symlink() or not path.is_file() or path.suffix.lower() not in SOURCE_SUFFIXES:
+            continue
+        parts = path.relative_to(root).parts
+        if any(part in SKIP_DIRS for part in parts):
+            continue
+        try:
+            source = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        rel = path.relative_to(root).as_posix()
+        is_test = any(part.lower() in {"test", "tests", "testing", "spec", "specs"} for part in parts) or bool(re.search(r"(^|[/\\])test[^/\\]*|[^/\\]*test[^/\\]*$", rel, re.I))
+        candidates = _analyze_sql_injection(source, rel)
+        if is_test:
+            test_hits.extend(candidates)
+        else:
+            sql_injection_findings.extend(candidates)
+    findings.extend(sql_injection_findings)
     for item in findings:
         item["occurrence_count"] = len(item["occurrences"])
         first = item["occurrences"][0]
