@@ -44,6 +44,33 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
         "completion_status": "STATIC_ANALYSIS_COMPLETED",
         "runtime_validation": "NOT_PERFORMED",
     }
+    # Exportación completa de candidatos detectados por análisis estático y agentes LLM.
+    bug_export = {
+        "schema_version": "1.0",
+        "project_name": name,
+        "source_path": str(source),
+        "completion_status": analysis["completion_status"],
+        "runtime_validation": analysis["runtime_validation"],
+        "summary": {
+            **quality.get("summary", {}),
+            "production_candidates": len(quality.get("bug_candidates", [])),
+            "test_candidates": len(quality.get("test_bug_candidates", [])),
+            "total_candidates": len(quality.get("bug_candidates", [])) + len(quality.get("test_bug_candidates", [])),
+        },
+        "production_candidates": quality.get("bug_candidates", []),
+        "test_candidates": quality.get("test_bug_candidates", []),
+        "llm_bug_hunter": context.results.get("llm_bug_hunter", {}),
+        "llm_bug_review": context.results.get("llm_bug_review", {}),
+        "limitations": [
+            "Son candidatos detectados estáticamente, no defectos confirmados.",
+            "No se ejecutó el repositorio ni sus pruebas.",
+            "Los resultados del LLM son inferencias y pueden contener falsos positivos.",
+        ],
+    }
+    (output / "possible-bugs.json").write_text(
+        json.dumps(bug_export, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    analysis["possible_bugs_export"] = "possible-bugs.json"
     (output / "analysis.json").write_text(json.dumps(analysis, indent=2, ensure_ascii=False), encoding="utf-8")
     report = build_analysis_markdown(name, inventory, deep)
     report += "\n\n## Análisis funcional\n" + json.dumps(functional.get("summary", {}), ensure_ascii=False, indent=2)
@@ -68,6 +95,7 @@ def main() -> int:
     print(f"Análisis terminado: {result['completion_status']}")
     print(f"Informes: {Path(args.output).resolve()}")
     print(f"HTML: {Path(args.output, 'analysis.html').resolve()}")
+    print(f"JSON de posibles bugs: {Path(args.output, 'possible-bugs.json').resolve()}")
     return 0
 
 
