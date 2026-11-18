@@ -84,6 +84,53 @@ def get_bug_hunter(agent_id: str):
     return result
 
 
+
+@router.get("/{agent_id}/possible-bugs")
+def get_possible_bugs(agent_id: str):
+    """Return the JSON export associated with this hunter's repository.
+
+    The workspace is treated as read-only; the export is generated from the
+    persisted investigation/evidence records and current repository map.
+    """
+    hunter = get_bug_hunter(agent_id)
+    repository = hunter.get("repository") or {}
+    mapping = repository.get("repository_map") or {}
+    with connect() as con:
+        rows = con.execute(
+            """SELECT id,title,hypothesis,status,scope_json,evidence_json,created_at,updated_at,last_error
+            FROM bug_hunter_investigations WHERE agent_id=? ORDER BY created_at DESC""",
+            (agent_id,),
+        ).fetchall()
+    investigations = []
+    for row in rows:
+        item = dict(row)
+        item["scope"] = json.loads(item.pop("scope_json") or "[]")
+        item["evidence"] = json.loads(item.pop("evidence_json") or "[]")
+        item.pop("scope_json", None)
+        item.pop("evidence_json", None)
+        investigations.append(item)
+    return {
+        "schema_version": "1.0",
+        "bug_hunter_id": agent_id,
+        "repository": {
+            "github_url": hunter.get("github_url"),
+            "branch": hunter.get("branch"),
+            "commit": repository.get("commit"),
+        },
+        "summary": {
+            "investigations": len(investigations),
+            "with_evidence": sum(bool(x["evidence"]) for x in investigations),
+            "confirmed": sum(x["status"] == "CONFIRMED" for x in investigations),
+            "probable": sum(x["status"] == "PROBABLE" for x in investigations),
+        },
+        "candidates": investigations,
+        "repository_map": mapping,
+        "limitations": [
+            "Las investigaciones son candidatos, no defectos confirmados automaticamente.",
+            "La confirmacion requiere revision/refutacion independiente; el numero de evidencias por si solo no demuestra un bug.",
+        ],
+    }
+
 @router.get("/{agent_id}/repository-map")
 def get_repository_map(agent_id: str):
     hunter = get_bug_hunter(agent_id)
