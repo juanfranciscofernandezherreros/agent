@@ -55,6 +55,16 @@ class RepositoryReportingAgent(AnalyzerAgent):
         identity = (context.data.get("repository_input") or {}).get("git_url") or str(name)
         report_file = (service + "-" + hashlib.sha1(identity.encode("utf-8")).hexdigest()[:6] + ".html") if candidates else None
         bug_report = ("bug-reports/" + report_file) if report_file else None
+        production_candidates = quality.get("bug_candidates") or []
+        test_candidates = quality.get("test_bug_candidates") or []
+        llm_findings = (insights.get("llm_bug_hunter") or {}).get("findings") or []
+        unified_candidates = []
+        for candidate in production_candidates:
+            unified_candidates.append({"source": candidate.get("source", "static_quality"), "scope": "production", **candidate})
+        for candidate in test_candidates:
+            unified_candidates.append({"source": "static_quality", "scope": "test", **candidate})
+        for candidate in llm_findings:
+            unified_candidates.append({"source": "llm_bug_hunter", "scope": "production", **candidate})
         bug_json = "possible-bugs.json"
         bug_json_payload = {
             "schema_version": "1.0",
@@ -62,12 +72,13 @@ class RepositoryReportingAgent(AnalyzerAgent):
             "group": group_name,
             "summary": {
                 **(quality.get("summary") or {}),
-                "production_candidates": len(quality.get("bug_candidates") or []),
-                "test_candidates": len(quality.get("test_bug_candidates") or []),
-                "total_candidates": len(quality.get("bug_candidates") or []) + len(quality.get("test_bug_candidates") or []),
+                "production_candidates": len(production_candidates) + len(llm_findings),
+                "test_candidates": len(test_candidates),
+                "total_candidates": len(unified_candidates),
             },
-            "production_candidates": quality.get("bug_candidates") or [],
-            "test_candidates": quality.get("test_bug_candidates") or [],
+            "candidates": unified_candidates,
+            "production_candidates": production_candidates,
+            "test_candidates": test_candidates,
             "llm_bug_hunter": insights.get("llm_bug_hunter", {}),
             "llm_bug_review": insights.get("llm_bug_review", {}),
             "runtime_validation": "NOT_PERFORMED",
