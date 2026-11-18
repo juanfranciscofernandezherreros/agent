@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 from .database import connect
 from .bug_hunter_provisioning import clone_repository, validate_github_url
+from .bug_hunter_repository_intelligence import scan_repository
 
 router = APIRouter(prefix="/api/bug-hunters", tags=["Bug Hunter"])
 
@@ -31,7 +32,11 @@ def _clone_task(agent_id: str, url: str, branch: str | None) -> None:
     try:
         result = clone_repository(agent_id, url, branch)
         with connect() as con:
-            con.execute("UPDATE bug_hunters SET status='READY_FOR_ANALYSIS',repository_json=?,updated_at=? WHERE id=?",
+            con.execute("UPDATE bug_hunters SET status='MAPPING_REPOSITORY',updated_at=? WHERE id=?", (now(), agent_id))
+        repository_map = scan_repository(__import__('pathlib').Path(result['source_path']))
+        result['repository_map'] = repository_map
+        with connect() as con:
+            con.execute("UPDATE bug_hunters SET status='READY_FOR_HUNT',repository_json=?,updated_at=? WHERE id=?",
                         (json.dumps(result, ensure_ascii=False), now(), agent_id))
     except Exception as exc:
         with connect() as con:
@@ -75,3 +80,13 @@ def get_bug_hunter(agent_id: str):
     if result.get("repository_json"):
         result["repository"] = json.loads(result.pop("repository_json"))
     return result
+
+
+@router.get("/{agent_id}/repository-map")
+def get_repository_map(agent_id: str):
+    hunter = get_bug_hunter(agent_id)
+    repository = hunter.get("repository") or {}
+    mapping = repository.get("repository_map")
+    if not mapping:
+        raise HTTPException(409, "El mapa del repositorio todavía no está disponible.")
+    return mapping
