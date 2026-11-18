@@ -10,6 +10,33 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 - Never execute or modify the repositories being analyzed by MiniAgent. MiniAgent's own tests are allowed.
 - Mark tasks complete only after review and actual validation evidence.
 
+
+## Autonomous execution and task prioritization (mandatory)
+
+Claude Code must execute the backlog autonomously. The priority labels below are execution guidance, not a reason to stop and request approval. Do not ask the user to choose implementation details, file names, libraries, detector patterns, test design, or sequencing when repository inspection and engineering judgment can resolve them. Ask only if a decision is irreversible, requires credentials/paid services, changes the product scope, conflicts with a hard safety constraint, or has materially different options that cannot be resolved from the repository and documents.
+
+For every task, first inspect the actual repository and relevant tests, then adapt this plan to the code that exists. Record a concise decision in the execution log when the implementation differs from the plan. Prefer small, reviewable changes and reuse existing abstractions. Never fabricate files, APIs, test results, or detector coverage. Do not execute analyzed repository code or modify analyzed repositories.
+
+### Priority meaning
+- **P0**: unblock correctness, safety, core contracts, MVP security capability, or reliable validation; do first.
+- **P1**: core quality/reporting/measurement capability; do after its P0 prerequisites, before broad feature expansion.
+- **P2**: valuable capability expansion; execute when prerequisites are available, in dependency-aware order.
+- **P3**: user experience and polish; do after core analysis and report contracts stabilize.
+
+Priority is assigned per task using its epic and architectural role. Dependencies are epic-level minimums; Claude must verify and refine task-level dependencies by inspecting code. Independent tasks may run in parallel. Never serialize the whole backlog unnecessarily.
+
+### Required task workflow
+1. Read the vision, execution tracker, this task plan, and the exact backlog task.
+2. Inspect actual modules, call paths, contracts, and tests; identify current behavior and gaps.
+3. Write a short task-specific implementation decision (files/components, algorithm or data shape, scope boundaries, edge cases, tests, and dependency status) in the task execution log before coding. Do not stop for user approval.
+4. Implement the smallest coherent change; update/add tests and documentation when needed.
+5. Run focused tests, then broader checks appropriate to the change. If a test cannot run, state the concrete reason and do not mark the task complete.
+6. Review diff for regressions, scope creep, target-repository safety, false-positive behavior, and missing evidence.
+7. Mark complete only with validation evidence. If blocked by a missing prerequisite, continue with other ready tasks and record the blocker; do not repeatedly ask the user.
+
+### Per-task metadata
+Each plan section now includes an execution priority and prerequisite guidance. The generic prerequisites are not a substitute for code reconnaissance: Claude must resolve exact files, symbols, APIs, and test locations from the current repository before implementation.
+
 ## Plan index
 - [STAB-01](#stab-01) — Establish baseline test suite and record current status.
 - [STAB-02](#stab-02) — Reproduce and fix existing regressions.
@@ -380,6 +407,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## STAB-01 — Establish baseline test suite and record current status.
 
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Establish baseline test suite and record current status.
 
 **Implementation plan**
@@ -399,6 +430,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## STAB-02 — Reproduce and fix existing regressions.
+
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Reproduce and fix existing regressions.
 
@@ -420,6 +455,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## STAB-03 — Validate imports, package structure, and dependency setup.
 
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Validate imports, package structure, and dependency setup.
 
 **Implementation plan**
@@ -439,6 +478,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## STAB-04 — Validate analysis end-to-end on representative repositories.
+
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Validate analysis end-to-end on representative repositories.
 
@@ -460,6 +503,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## STAB-05 — Validate JSON output and error handling.
 
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Validate JSON output and error handling.
 
 **Implementation plan**
@@ -479,6 +526,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## STAB-06 — Test single-repository and multi-repository paths.
+
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Test single-repository and multi-repository paths.
 
@@ -500,6 +551,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## STAB-07 — Validate security findings appear in reports.
 
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Validate security findings appear in reports.
 
 **Implementation plan**
@@ -519,6 +574,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## STAB-08 — Test agent failures and partial-analysis behavior.
+
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Test agent failures and partial-analysis behavior.
 
@@ -540,6 +599,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## STAB-09 — Establish performance baseline.
 
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Establish performance baseline.
 
 **Implementation plan**
@@ -559,6 +622,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## STAB-10 — Document known limitations and baseline coverage.
+
+**Execution priority:** P0
+**Prerequisites:** None; this is baseline work and should start immediately.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Document known limitations and baseline coverage.
 
@@ -580,6 +647,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CORE-01 — Define stable finding identifier.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define stable finding identifier.
 
 **Implementation plan**
@@ -599,6 +670,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CORE-02 — Define finding type/category and title.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define finding type/category and title.
 
@@ -620,6 +695,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CORE-03 — Define severity.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define severity.
 
 **Implementation plan**
@@ -639,6 +718,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CORE-04 — Define confidence.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define confidence.
 
@@ -660,6 +743,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CORE-05 — Define status/classification (candidate, confirmed by evidence, needs review, etc.).
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define status/classification (candidate, confirmed by evidence, needs review, etc.).
 
 **Implementation plan**
@@ -679,6 +766,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CORE-06 — Define evidence model.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define evidence model.
 
@@ -700,6 +791,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CORE-07 — Define one or multiple locations.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define one or multiple locations.
 
 **Implementation plan**
@@ -719,6 +814,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CORE-08 — Define source and sink fields.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define source and sink fields.
 
@@ -740,6 +839,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CORE-09 — Define CWE and OWASP mappings.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define CWE and OWASP mappings.
 
 **Implementation plan**
@@ -759,6 +862,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CORE-10 — Define risk fields and rationale.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define risk fields and rationale.
 
@@ -780,6 +887,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CORE-11 — Define remediation and references.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define remediation and references.
 
 **Implementation plan**
@@ -799,6 +910,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CORE-12 — Implement serialization.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Implement serialization.
 
@@ -820,6 +935,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CORE-13 — Integrate with analysis/reporting.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Integrate with analysis/reporting.
 
 **Implementation plan**
@@ -839,6 +958,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CORE-14 — Preserve compatibility with existing findings where practical.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Preserve compatibility with existing findings where practical.
 
@@ -860,6 +983,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-01 — Define Source catalog and contract.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define Source catalog and contract.
 
 **Implementation plan**
@@ -879,6 +1006,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## FLOW-02 — Catalog HTTP parameters, query, headers, cookies, body, CLI, environment, files, and messaging inputs.
+
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Catalog HTTP parameters, query, headers, cookies, body, CLI, environment, files, and messaging inputs.
 
@@ -900,6 +1031,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-03 — Define Sink catalog and contract.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define Sink catalog and contract.
 
 **Implementation plan**
@@ -919,6 +1054,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## FLOW-04 — Catalog SQL, command execution, HTML/JS, filesystem, HTTP, deserialization, dynamic code, and authorization sinks.
+
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Catalog SQL, command execution, HTML/JS, filesystem, HTTP, deserialization, dynamic code, and authorization sinks.
 
@@ -940,6 +1079,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-05 — Track basic variables and assignments.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track basic variables and assignments.
 
 **Implementation plan**
@@ -959,6 +1102,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## FLOW-06 — Track propagation through concatenation and interpolation.
+
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track propagation through concatenation and interpolation.
 
@@ -980,6 +1127,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-07 — Track function arguments and returns.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track function arguments and returns.
 
 **Implementation plan**
@@ -999,6 +1150,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## FLOW-08 — Track simple transformations.
+
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track simple transformations.
 
@@ -1020,6 +1175,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-09 — Represent validation and sanitization.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Represent validation and sanitization.
 
 **Implementation plan**
@@ -1039,6 +1198,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## FLOW-10 — Recognize selected safe/mitigating patterns.
+
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Recognize selected safe/mitigating patterns.
 
@@ -1060,6 +1223,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-11 — Build intra-file flow graph.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Build intra-file flow graph.
 
 **Implementation plan**
@@ -1079,6 +1246,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## FLOW-12 — Add selected cross-function propagation.
+
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add selected cross-function propagation.
 
@@ -1100,6 +1271,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-13 — Expand to multi-file propagation incrementally.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Expand to multi-file propagation incrementally.
 
 **Implementation plan**
@@ -1119,6 +1294,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## FLOW-14 — Represent path reachability and partial paths.
+
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Represent path reachability and partial paths.
 
@@ -1140,6 +1319,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-15 — Generate evidence traces and explanations.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Generate evidence traces and explanations.
 
 **Implementation plan**
@@ -1159,6 +1342,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## FLOW-16 — Mark analysis completeness and unknown links.
+
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Mark analysis completeness and unknown links.
 
@@ -1180,6 +1367,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## FLOW-17 — Add unit and integration tests for propagation and controls.
 
+**Execution priority:** P0
+**Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add unit and integration tests for propagation and controls.
 
 **Implementation plan**
@@ -1199,6 +1390,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-01 — Review and validate current SQLi heuristic.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Review and validate current SQLi heuristic.
 
@@ -1220,6 +1415,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-02 — Cover string concatenation.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Cover string concatenation.
 
 **Implementation plan**
@@ -1239,6 +1438,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-03 — Cover f-strings/interpolation.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Cover f-strings/interpolation.
 
@@ -1260,6 +1463,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-04 — Cover format(), percent formatting, and template patterns.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Cover format(), percent formatting, and template patterns.
 
 **Implementation plan**
@@ -1279,6 +1486,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-05 — Cover multiline/dynamic query construction.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Cover multiline/dynamic query construction.
 
@@ -1300,6 +1511,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-06 — Track query variables.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track query variables.
 
 **Implementation plan**
@@ -1319,6 +1534,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-07 — Identify external sources.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Identify external sources.
 
@@ -1340,6 +1559,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-08 — Identify SQL execution sinks.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Identify SQL execution sinks.
 
 **Implementation plan**
@@ -1359,6 +1582,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-09 — Recognize common parameterized-query patterns.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Recognize common parameterized-query patterns.
 
@@ -1380,6 +1607,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-10 — Recognize positional and named parameters where supported.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Recognize positional and named parameters where supported.
 
 **Implementation plan**
@@ -1399,6 +1630,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-11 — Recognize selected ORM/query-builder patterns.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Recognize selected ORM/query-builder patterns.
 
@@ -1420,6 +1655,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-12 — Identify dynamic SQL identifiers separately from values.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Identify dynamic SQL identifiers separately from values.
 
 **Implementation plan**
@@ -1439,6 +1678,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-13 — Recognize allowlist/control patterns conservatively.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Recognize allowlist/control patterns conservatively.
 
@@ -1460,6 +1703,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-14 — Connect source, query construction, and sink.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Connect source, query construction, and sink.
 
 **Implementation plan**
@@ -1479,6 +1726,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-15 — Generate contextual evidence.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Generate contextual evidence.
 
@@ -1500,6 +1751,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-16 — Evaluate confidence and severity separately.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Evaluate confidence and severity separately.
 
 **Implementation plan**
@@ -1519,6 +1774,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-17 — Explain the potential issue.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Explain the potential issue.
 
@@ -1540,6 +1799,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-18 — Generate remediation guidance.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Generate remediation guidance.
 
 **Implementation plan**
@@ -1559,6 +1822,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-19 — Add vulnerable positive tests.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add vulnerable positive tests.
 
@@ -1580,6 +1847,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-20 — Add safe negative tests.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add safe negative tests.
 
 **Implementation plan**
@@ -1599,6 +1870,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-21 — Add multiline and variable propagation tests.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add multiline and variable propagation tests.
 
@@ -1620,6 +1895,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-22 — Validate against isolated training/lab examples.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Validate against isolated training/lab examples.
 
 **Implementation plan**
@@ -1639,6 +1918,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-23 — Document limitations and supported patterns.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Document limitations and supported patterns.
 
@@ -1660,6 +1943,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-24 — Measure false positives on safe corpus.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Measure false positives on safe corpus.
 
 **Implementation plan**
@@ -1679,6 +1966,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-25 — Integrate with unified SecurityFinding.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Integrate with unified SecurityFinding.
 
@@ -1700,6 +1991,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SQLI-26 — Integrate OWASP/CWE metadata.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Integrate OWASP/CWE metadata.
 
 **Implementation plan**
@@ -1719,6 +2014,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SQLI-27 — Ensure reports preserve evidence and locations.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Ensure reports preserve evidence and locations.
 
@@ -1740,6 +2039,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OWASP-01 — Centralize versioned OWASP Top 10 catalog.
 
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Centralize versioned OWASP Top 10 catalog.
 
 **Implementation plan**
@@ -1759,6 +2062,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OWASP-02 — Add CWE catalog/mappings.
+
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add CWE catalog/mappings.
 
@@ -1780,6 +2087,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OWASP-03 — Add ASVS references.
 
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add ASVS references.
 
 **Implementation plan**
@@ -1799,6 +2110,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OWASP-04 — Add API Security Top 10 references.
+
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add API Security Top 10 references.
 
@@ -1820,6 +2135,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OWASP-05 — Add WSTG references as applicable.
 
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add WSTG references as applicable.
 
 **Implementation plan**
@@ -1839,6 +2158,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OWASP-06 — Define vulnerability-to-reference mapping.
+
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define vulnerability-to-reference mapping.
 
@@ -1860,6 +2183,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OWASP-07 — Define mitigation/reference metadata.
 
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define mitigation/reference metadata.
 
 **Implementation plan**
@@ -1879,6 +2206,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OWASP-08 — Add language/framework security catalogs.
+
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add language/framework security catalogs.
 
@@ -1900,6 +2231,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OWASP-09 — Version catalog data.
 
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Version catalog data.
 
 **Implementation plan**
@@ -1919,6 +2254,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OWASP-10 — Test mappings and URLs.
+
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Test mappings and URLs.
 
@@ -1940,6 +2279,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OWASP-11 — Document update process.
 
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Document update process.
 
 **Implementation plan**
@@ -1959,6 +2302,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OWASP-12 — Avoid duplicate or conflicting mappings.
+
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Avoid duplicate or conflicting mappings.
 
@@ -1980,6 +2327,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OWASP-13 — Include references in findings/report.
 
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Include references in findings/report.
 
 **Implementation plan**
@@ -1999,6 +2350,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OWASP-14 — Track coverage gaps.
+
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track coverage gaps.
 
@@ -2020,6 +2375,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OWASP-15 — Keep knowledge data separate from detector implementation.
 
+**Execution priority:** P0
+**Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Keep knowledge data separate from detector implementation.
 
 **Implementation plan**
@@ -2039,6 +2398,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## XSS-01 — Catalog input sources.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Catalog input sources.
 
@@ -2060,6 +2423,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## XSS-02 — Catalog HTML, template, JS, and DOM sinks.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Catalog HTML, template, JS, and DOM sinks.
 
 **Implementation plan**
@@ -2079,6 +2446,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## XSS-03 — Detect dynamic HTML construction.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Detect dynamic HTML construction.
 
@@ -2100,6 +2471,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## XSS-04 — Detect risky DOM assignments and APIs.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Detect risky DOM assignments and APIs.
 
 **Implementation plan**
@@ -2119,6 +2494,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## XSS-05 — Identify context-specific escaping patterns.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Identify context-specific escaping patterns.
 
@@ -2140,6 +2519,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## XSS-06 — Recognize selected sanitization controls.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Recognize selected sanitization controls.
 
 **Implementation plan**
@@ -2159,6 +2542,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## XSS-07 — Connect source to sink where possible.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Connect source to sink where possible.
 
@@ -2180,6 +2567,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## XSS-08 — Distinguish reflected/stored/DOM hypotheses only when evidence supports it.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Distinguish reflected/stored/DOM hypotheses only when evidence supports it.
 
 **Implementation plan**
@@ -2199,6 +2590,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## XSS-09 — Map CWE/OWASP.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Map CWE/OWASP.
 
@@ -2220,6 +2615,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## XSS-10 — Generate evidence and remediation.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Generate evidence and remediation.
 
 **Implementation plan**
@@ -2239,6 +2638,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## XSS-11 — Add vulnerable tests.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add vulnerable tests.
 
@@ -2260,6 +2663,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## XSS-12 — Add safe tests.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add safe tests.
 
 **Implementation plan**
@@ -2279,6 +2686,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## XSS-13 — Document unsupported contexts and limitations.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Document unsupported contexts and limitations.
 
@@ -2300,6 +2711,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## XSS-14 — Integrate with reporting and correlation.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Integrate with reporting and correlation.
 
 **Implementation plan**
@@ -2319,6 +2734,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## XSS-15 — Benchmark false positives.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Benchmark false positives.
 
@@ -2340,6 +2759,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-01 — Catalog external sources.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Catalog external sources.
 
 **Implementation plan**
@@ -2359,6 +2782,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CMD-02 — Catalog command execution sinks.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Catalog command execution sinks.
 
@@ -2380,6 +2807,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-03 — Detect dynamic command construction.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Detect dynamic command construction.
 
 **Implementation plan**
@@ -2399,6 +2830,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CMD-04 — Detect concatenation/interpolation.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Detect concatenation/interpolation.
 
@@ -2420,6 +2855,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-05 — Recognize shell execution vs direct argument APIs.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Recognize shell execution vs direct argument APIs.
 
 **Implementation plan**
@@ -2439,6 +2878,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CMD-06 — Track data to command sinks.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track data to command sinks.
 
@@ -2460,6 +2903,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-07 — Recognize structured-argument patterns where appropriate.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Recognize structured-argument patterns where appropriate.
 
 **Implementation plan**
@@ -2479,6 +2926,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CMD-08 — Identify controls and validation conservatively.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Identify controls and validation conservatively.
 
@@ -2500,6 +2951,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-09 — Generate evidence and explanation.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Generate evidence and explanation.
 
 **Implementation plan**
@@ -2519,6 +2974,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CMD-10 — Map CWE/OWASP.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Map CWE/OWASP.
 
@@ -2540,6 +2999,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-11 — Recommend safer APIs and argument handling.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Recommend safer APIs and argument handling.
 
 **Implementation plan**
@@ -2559,6 +3022,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CMD-12 — Add positive and negative tests.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add positive and negative tests.
 
@@ -2580,6 +3047,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-13 — Integrate reporting.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Integrate reporting.
 
 **Implementation plan**
@@ -2599,6 +3070,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CMD-14 — Benchmark false positives.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Benchmark false positives.
 
@@ -2620,6 +3095,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-15 — Document supported APIs and limitations.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Document supported APIs and limitations.
 
 **Implementation plan**
@@ -2639,6 +3118,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CMD-16 — Add framework/wrapper patterns incrementally.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add framework/wrapper patterns incrementally.
 
@@ -2660,6 +3143,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CMD-17 — Validate on isolated examples.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Validate on isolated examples.
 
 **Implementation plan**
@@ -2679,6 +3166,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-01 — Catalog path sources.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Catalog path sources.
 
@@ -2700,6 +3191,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PATH-02 — Catalog file read/write/delete sinks.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Catalog file read/write/delete sinks.
 
 **Implementation plan**
@@ -2719,6 +3214,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-03 — Detect dynamic path construction.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Detect dynamic path construction.
 
@@ -2740,6 +3239,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PATH-04 — Detect traversal patterns.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Detect traversal patterns.
 
 **Implementation plan**
@@ -2759,6 +3262,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-05 — Track source-to-filesystem flow.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track source-to-filesystem flow.
 
@@ -2780,6 +3287,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PATH-06 — Recognize normalization patterns.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Recognize normalization patterns.
 
 **Implementation plan**
@@ -2799,6 +3310,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-07 — Recognize confinement/base-directory checks.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Recognize confinement/base-directory checks.
 
@@ -2820,6 +3335,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PATH-08 — Evaluate controls conservatively.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Evaluate controls conservatively.
 
 **Implementation plan**
@@ -2839,6 +3358,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-09 — Generate evidence.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Generate evidence.
 
@@ -2860,6 +3383,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PATH-10 — Map CWE/OWASP.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Map CWE/OWASP.
 
 **Implementation plan**
@@ -2879,6 +3406,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-11 — Generate remediation.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Generate remediation.
 
@@ -2900,6 +3431,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PATH-12 — Add positive tests.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add positive tests.
 
 **Implementation plan**
@@ -2919,6 +3454,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-13 — Add negative/safe tests.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add negative/safe tests.
 
@@ -2940,6 +3479,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PATH-14 — Integrate reports.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Integrate reports.
 
 **Implementation plan**
@@ -2959,6 +3502,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-15 — Benchmark false positives.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Benchmark false positives.
 
@@ -2980,6 +3527,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PATH-16 — Document limitations.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Document limitations.
 
 **Implementation plan**
@@ -2999,6 +3550,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PATH-17 — Validate on isolated examples.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Validate on isolated examples.
 
@@ -3020,6 +3575,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-01 — Catalog URL/request sources.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Catalog URL/request sources.
 
 **Implementation plan**
@@ -3039,6 +3598,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SSRF-02 — Catalog HTTP/network sinks.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Catalog HTTP/network sinks.
 
@@ -3060,6 +3623,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-03 — Detect dynamic URL construction.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Detect dynamic URL construction.
 
 **Implementation plan**
@@ -3079,6 +3646,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SSRF-04 — Track source-to-request flow.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track source-to-request flow.
 
@@ -3100,6 +3671,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-05 — Recognize destination allowlists.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Recognize destination allowlists.
 
 **Implementation plan**
@@ -3119,6 +3694,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SSRF-06 — Recognize selected URL/IP validation.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Recognize selected URL/IP validation.
 
@@ -3140,6 +3719,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-07 — Consider redirect handling where code evidence is available.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Consider redirect handling where code evidence is available.
 
 **Implementation plan**
@@ -3159,6 +3742,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SSRF-08 — Identify internal-network context only when supported by evidence.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Identify internal-network context only when supported by evidence.
 
@@ -3180,6 +3767,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-09 — Generate evidence and explanation.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Generate evidence and explanation.
 
 **Implementation plan**
@@ -3199,6 +3790,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SSRF-10 — Map CWE/OWASP.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Map CWE/OWASP.
 
@@ -3220,6 +3815,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-11 — Generate remediation.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Generate remediation.
 
 **Implementation plan**
@@ -3239,6 +3838,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SSRF-12 — Add positive tests.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add positive tests.
 
@@ -3260,6 +3863,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-13 — Add negative tests.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add negative tests.
 
 **Implementation plan**
@@ -3279,6 +3886,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SSRF-14 — Integrate reporting.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Integrate reporting.
 
@@ -3300,6 +3911,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-15 — Benchmark false positives.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Benchmark false positives.
 
 **Implementation plan**
@@ -3319,6 +3934,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## SSRF-16 — Document unsupported cases.
+
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Document unsupported cases.
 
@@ -3340,6 +3959,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## SSRF-17 — Validate on isolated examples.
 
+**Execution priority:** P2
+**Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Validate on isolated examples.
 
 **Implementation plan**
@@ -3359,6 +3982,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## COR-01 — Define normalized evidence contract.
+
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define normalized evidence contract.
 
@@ -3380,6 +4007,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## COR-02 — Normalize file/line/API references.
 
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Normalize file/line/API references.
 
 **Implementation plan**
@@ -3399,6 +4030,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## COR-03 — Deduplicate repeated detector output.
+
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Deduplicate repeated detector output.
 
@@ -3420,6 +4055,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## COR-04 — Group related evidence.
 
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Group related evidence.
 
 **Implementation plan**
@@ -3439,6 +4078,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## COR-05 — Correlate source, propagation, and sink.
+
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Correlate source, propagation, and sink.
 
@@ -3460,6 +4103,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## COR-06 — Correlate evidence in same flow/function/file where justified.
 
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Correlate evidence in same flow/function/file where justified.
 
 **Implementation plan**
@@ -3479,6 +4126,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## COR-07 — Correlate cross-file evidence when flow engine supports it.
+
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Correlate cross-file evidence when flow engine supports it.
 
@@ -3500,6 +4151,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## COR-08 — Preserve detector-origin findings.
 
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Preserve detector-origin findings.
 
 **Implementation plan**
@@ -3519,6 +4174,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## COR-09 — Handle contradictory evidence.
+
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Handle contradictory evidence.
 
@@ -3540,6 +4199,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## COR-10 — Consolidate contextual findings.
 
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Consolidate contextual findings.
 
 **Implementation plan**
@@ -3559,6 +4222,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## COR-11 — Explain grouping decisions.
+
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Explain grouping decisions.
 
@@ -3580,6 +4247,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## COR-12 — Avoid loss of individual evidence.
 
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Avoid loss of individual evidence.
 
 **Implementation plan**
@@ -3599,6 +4270,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## COR-13 — Add correlation tests.
+
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add correlation tests.
 
@@ -3620,6 +4295,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## COR-14 — Integrate with reporting and risk.
 
+**Execution priority:** P1
+**Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Integrate with reporting and risk.
 
 **Implementation plan**
@@ -3639,6 +4318,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CONF-01 — Define confidence levels and semantics.
+
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define confidence levels and semantics.
 
@@ -3660,6 +4343,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CONF-02 — Define evidence factors.
 
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define evidence factors.
 
 **Implementation plan**
@@ -3679,6 +4366,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CONF-03 — Account for source certainty.
+
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Account for source certainty.
 
@@ -3700,6 +4391,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CONF-04 — Account for sink certainty.
 
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Account for sink certainty.
 
 **Implementation plan**
@@ -3719,6 +4414,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CONF-05 — Account for flow completeness.
+
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Account for flow completeness.
 
@@ -3740,6 +4439,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CONF-06 — Account for controls/mitigations.
 
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Account for controls/mitigations.
 
 **Implementation plan**
@@ -3759,6 +4462,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CONF-07 — Account for pattern ambiguity.
+
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Account for pattern ambiguity.
 
@@ -3780,6 +4487,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CONF-08 — Explain confidence rationale.
 
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Explain confidence rationale.
 
 **Implementation plan**
@@ -3799,6 +4510,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CONF-09 — Keep confidence independent of severity.
+
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Keep confidence independent of severity.
 
@@ -3820,6 +4535,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CONF-10 — Mark incomplete analysis.
 
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Mark incomplete analysis.
 
 **Implementation plan**
@@ -3839,6 +4558,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CONF-11 — Identify likely false-positive candidates.
+
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Identify likely false-positive candidates.
 
@@ -3860,6 +4583,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CONF-12 — Build safe/vulnerable corpus.
 
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Build safe/vulnerable corpus.
 
 **Implementation plan**
@@ -3879,6 +4606,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CONF-13 — Calibrate using benchmark results.
+
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Calibrate using benchmark results.
 
@@ -3900,6 +4631,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CONF-14 — Track confidence quality across releases.
 
+**Execution priority:** P1
+**Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track confidence quality across releases.
 
 **Implementation plan**
@@ -3919,6 +4654,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## RISK-01 — Define contextual risk model.
+
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define contextual risk model.
 
@@ -3940,6 +4679,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## RISK-02 — Define explainable risk bands.
 
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define explainable risk bands.
 
 **Implementation plan**
@@ -3959,6 +4702,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## RISK-03 — Incorporate severity.
+
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Incorporate severity.
 
@@ -3980,6 +4727,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## RISK-04 — Incorporate confidence.
 
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Incorporate confidence.
 
 **Implementation plan**
@@ -3999,6 +4750,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## RISK-05 — Incorporate exposure/reachability where known.
+
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Incorporate exposure/reachability where known.
 
@@ -4020,6 +4775,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## RISK-06 — Incorporate sensitive context and impact where evidence exists.
 
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Incorporate sensitive context and impact where evidence exists.
 
 **Implementation plan**
@@ -4039,6 +4798,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## RISK-07 — Incorporate controls.
+
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Incorporate controls.
 
@@ -4060,6 +4823,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## RISK-08 — Avoid double-counting correlated findings.
 
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Avoid double-counting correlated findings.
 
 **Implementation plan**
@@ -4079,6 +4846,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## RISK-09 — Produce ranking.
+
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Produce ranking.
 
@@ -4100,6 +4871,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## RISK-10 — Explain risk rationale.
 
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Explain risk rationale.
 
 **Implementation plan**
@@ -4119,6 +4894,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## RISK-11 — Represent unknown context.
+
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Represent unknown context.
 
@@ -4140,6 +4919,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## RISK-12 — Add model tests.
 
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add model tests.
 
 **Implementation plan**
@@ -4159,6 +4942,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## RISK-13 — Validate against benchmark cases.
+
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Validate against benchmark cases.
 
@@ -4180,6 +4967,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## RISK-14 — Version the risk model.
 
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Version the risk model.
 
 **Implementation plan**
@@ -4199,6 +4990,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## RISK-15 — Document assumptions and limitations.
+
+**Execution priority:** P1
+**Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Document assumptions and limitations.
 
@@ -4220,6 +5015,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-01 — Executive summary.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Executive summary.
 
 **Implementation plan**
@@ -4239,6 +5038,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-02 — Overall quality/security overview.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Overall quality/security overview.
 
@@ -4260,6 +5063,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-03 — Findings by severity.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Findings by severity.
 
 **Implementation plan**
@@ -4279,6 +5086,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-04 — Findings by type.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Findings by type.
 
@@ -4300,6 +5111,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-05 — Prioritized findings.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Prioritized findings.
 
 **Implementation plan**
@@ -4319,6 +5134,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-06 — Confidence and risk rationale.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Confidence and risk rationale.
 
@@ -4340,6 +5159,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-07 — Source-to-sink trace.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Source-to-sink trace.
 
 **Implementation plan**
@@ -4359,6 +5182,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-08 — Evidence and code locations.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Evidence and code locations.
 
@@ -4380,6 +5207,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-09 — CWE/OWASP/ASVS metadata.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** CWE/OWASP/ASVS metadata.
 
 **Implementation plan**
@@ -4399,6 +5230,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-10 — Remediation and references.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Remediation and references.
 
@@ -4420,6 +5255,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-11 — False-positive review guidance.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** False-positive review guidance.
 
 **Implementation plan**
@@ -4439,6 +5278,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-12 — Coverage and detector status.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Coverage and detector status.
 
@@ -4460,6 +5303,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-13 — Unsupported files/languages.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Unsupported files/languages.
 
 **Implementation plan**
@@ -4479,6 +5326,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-14 — Excluded files and reasons.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Excluded files and reasons.
 
@@ -4500,6 +5351,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-15 — Agent/detector execution summary.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Agent/detector execution summary.
 
 **Implementation plan**
@@ -4519,6 +5374,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-16 — Analysis errors and partial results.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Analysis errors and partial results.
 
@@ -4540,6 +5399,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-17 — Repository metadata.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Repository metadata.
 
 **Implementation plan**
@@ -4559,6 +5422,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-18 — Report timestamp.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Report timestamp.
 
@@ -4580,6 +5447,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-19 — Report and schema version.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Report and schema version.
 
 **Implementation plan**
@@ -4599,6 +5470,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-20 — JSON schema.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** JSON schema.
 
@@ -4620,6 +5495,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-21 — Backward compatibility strategy.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Backward compatibility strategy.
 
 **Implementation plan**
@@ -4639,6 +5518,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-22 — Stable report naming.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Stable report naming.
 
@@ -4660,6 +5543,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-23 — Timestamped report naming.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Timestamped report naming.
 
 **Implementation plan**
@@ -4679,6 +5566,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## REP-24 — Validate report contract.
+
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Validate report contract.
 
@@ -4700,6 +5591,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## REP-25 — Add report fixtures and tests.
 
+**Execution priority:** P1
+**Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add report fixtures and tests.
 
 **Implementation plan**
@@ -4719,6 +5614,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## DET-01 — Define detector interface.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define detector interface.
 
@@ -4740,6 +5639,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## DET-02 — Define input context.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define input context.
 
 **Implementation plan**
@@ -4759,6 +5662,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## DET-03 — Define output contract.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define output contract.
 
@@ -4780,6 +5687,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## DET-04 — Implement registry.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Implement registry.
 
 **Implementation plan**
@@ -4799,6 +5710,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## DET-05 — Implement detector configuration.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Implement detector configuration.
 
@@ -4820,6 +5735,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## DET-06 — Define dependency/capability metadata.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define dependency/capability metadata.
 
 **Implementation plan**
@@ -4839,6 +5758,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## DET-07 — Define execution lifecycle.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define execution lifecycle.
 
@@ -4860,6 +5783,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## DET-08 — Add timeouts and resource limits.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add timeouts and resource limits.
 
 **Implementation plan**
@@ -4879,6 +5806,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## DET-09 — Handle detector exceptions independently.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Handle detector exceptions independently.
 
@@ -4900,6 +5831,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## DET-10 — Add metrics.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add metrics.
 
 **Implementation plan**
@@ -4919,6 +5854,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## DET-11 — Add optional safe parallelism.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add optional safe parallelism.
 
@@ -4940,6 +5879,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## DET-12 — Add caching only where correctness is preserved.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add caching only where correctness is preserved.
 
 **Implementation plan**
@@ -4959,6 +5902,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## DET-13 — Version rules/detectors.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Version rules/detectors.
 
@@ -4980,6 +5927,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## DET-14 — Add contract tests.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add contract tests.
 
 **Implementation plan**
@@ -4999,6 +5950,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## DET-15 — Prevent detector implementation from bloating central analysis modules.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Prevent detector implementation from bloating central analysis modules.
 
@@ -5020,6 +5975,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## LANG-01 — Define language coverage matrix.
 
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define language coverage matrix.
 
 **Implementation plan**
@@ -5039,6 +5998,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## LANG-02 — Define capability matrix by language.
+
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define capability matrix by language.
 
@@ -5060,6 +6023,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## LANG-03 — Prioritize Python.
 
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Prioritize Python.
 
 **Implementation plan**
@@ -5079,6 +6046,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## LANG-04 — Add Java support incrementally.
+
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add Java support incrementally.
 
@@ -5100,6 +6071,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## LANG-05 — Add JavaScript/TypeScript support incrementally.
 
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add JavaScript/TypeScript support incrementally.
 
 **Implementation plan**
@@ -5119,6 +6094,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## LANG-06 — Add Go and other languages based on demand.
+
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add Go and other languages based on demand.
 
@@ -5140,6 +6119,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## LANG-07 — Detect frameworks.
 
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Detect frameworks.
 
 **Implementation plan**
@@ -5159,6 +6142,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## LANG-08 — Detect ORM/query APIs.
+
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Detect ORM/query APIs.
 
@@ -5180,6 +6167,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## LANG-09 — Add framework-specific sources and sinks.
 
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add framework-specific sources and sinks.
 
 **Implementation plan**
@@ -5199,6 +6190,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## LANG-10 — Add language-specific safe patterns.
+
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add language-specific safe patterns.
 
@@ -5220,6 +6215,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## LANG-11 — Keep detector capabilities explicit.
 
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Keep detector capabilities explicit.
 
 **Implementation plan**
@@ -5239,6 +6238,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## LANG-12 — Add per-language test corpus.
+
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add per-language test corpus.
 
@@ -5260,6 +6263,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## LANG-13 — Document coverage.
 
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Document coverage.
 
 **Implementation plan**
@@ -5279,6 +6286,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## LANG-14 — Expand only when benchmarked.
+
+**Execution priority:** P2
+**Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Expand only when benchmarked.
 
@@ -5300,6 +6311,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-01 — Create vulnerable sample corpus.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Create vulnerable sample corpus.
 
 **Implementation plan**
@@ -5319,6 +6334,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-02 — Create safe sample corpus.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Create safe sample corpus.
 
@@ -5340,6 +6359,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-03 — SQLi positive cases.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** SQLi positive cases.
 
 **Implementation plan**
@@ -5359,6 +6382,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-04 — SQLi safe parameterization cases.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** SQLi safe parameterization cases.
 
@@ -5380,6 +6407,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-05 — Source/Sink cases.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Source/Sink cases.
 
 **Implementation plan**
@@ -5399,6 +6430,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-06 — Sanitization/validation cases.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Sanitization/validation cases.
 
@@ -5420,6 +6455,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-07 — Variable propagation cases.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Variable propagation cases.
 
 **Implementation plan**
@@ -5439,6 +6478,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-08 — Multi-function cases.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Multi-function cases.
 
@@ -5460,6 +6503,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-09 — Multi-file cases as supported.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Multi-file cases as supported.
 
 **Implementation plan**
@@ -5479,6 +6526,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-10 — False-positive cases.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** False-positive cases.
 
@@ -5500,6 +6551,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-11 — False-negative review.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** False-negative review.
 
 **Implementation plan**
@@ -5519,6 +6574,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-12 — Calculate precision/recall/F1 when dataset labels support it.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Calculate precision/recall/F1 when dataset labels support it.
 
@@ -5540,6 +6599,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-13 — Measure coverage by detector and language.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Measure coverage by detector and language.
 
 **Implementation plan**
@@ -5559,6 +6622,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-14 — Version benchmark.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Version benchmark.
 
@@ -5580,6 +6647,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-15 — Add regression thresholds.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add regression thresholds.
 
 **Implementation plan**
@@ -5599,6 +6670,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-16 — Run in CI.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Run in CI.
 
@@ -5620,6 +6695,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## TESTSEC-17 — Document benchmark methodology.
 
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Document benchmark methodology.
 
 **Implementation plan**
@@ -5639,6 +6718,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## TESTSEC-18 — Use isolated training targets such as OWASP Juice Shop, DVWA, WebGoat, NodeGoat, or crAPI where appropriate; do not execute untrusted targets outside controlled environments.
+
+**Execution priority:** P0
+**Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Use isolated training targets such as OWASP Juice Shop, DVWA, WebGoat, NodeGoat, or crAPI where appropriate; do not execute untrusted targets outside controlled environments.
 
@@ -5660,6 +6743,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## EXT-01 — Define integration adapter contract.
 
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define integration adapter contract.
 
 **Implementation plan**
@@ -5679,6 +6766,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## EXT-02 — Evaluate Semgrep.
+
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Evaluate Semgrep.
 
@@ -5700,6 +6791,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## EXT-03 — Evaluate CodeQL.
 
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Evaluate CodeQL.
 
 **Implementation plan**
@@ -5719,6 +6814,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## EXT-04 — Evaluate Bandit.
+
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Evaluate Bandit.
 
@@ -5740,6 +6839,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## EXT-05 — Evaluate Trivy.
 
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Evaluate Trivy.
 
 **Implementation plan**
@@ -5759,6 +6862,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## EXT-06 — Evaluate Gitleaks.
+
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Evaluate Gitleaks.
 
@@ -5780,6 +6887,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## EXT-07 — Consider ZAP only for a separate controlled dynamic-testing workflow.
 
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Consider ZAP only for a separate controlled dynamic-testing workflow.
 
 **Implementation plan**
@@ -5799,6 +6910,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## EXT-08 — Normalize external output.
+
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Normalize external output.
 
@@ -5820,6 +6935,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## EXT-09 — Deduplicate and correlate.
 
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Deduplicate and correlate.
 
 **Implementation plan**
@@ -5839,6 +6958,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## EXT-10 — Preserve source tool and version.
+
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Preserve source tool and version.
 
@@ -5860,6 +6983,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## EXT-11 — Preserve configuration and coverage.
 
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Preserve configuration and coverage.
 
 **Implementation plan**
@@ -5879,6 +7006,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## EXT-12 — Handle missing tools.
+
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Handle missing tools.
 
@@ -5900,6 +7031,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## EXT-13 — Handle tool errors and partial results.
 
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Handle tool errors and partial results.
 
 **Implementation plan**
@@ -5919,6 +7054,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## EXT-14 — Document licensing, installation, and operational requirements.
+
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Document licensing, installation, and operational requirements.
 
@@ -5940,6 +7079,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## EXT-15 — Keep MiniAgent's contextual analysis/reporting value independent of tool availability.
 
+**Execution priority:** P2
+**Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Keep MiniAgent's contextual analysis/reporting value independent of tool availability.
 
 **Implementation plan**
@@ -5959,6 +7102,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-01 — Threat model MiniAgent.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Threat model MiniAgent.
 
@@ -5980,6 +7127,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-02 — Guarantee analyzed code is not executed.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Guarantee analyzed code is not executed.
 
 **Implementation plan**
@@ -5999,6 +7150,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-03 — Guarantee analyzed repository is not modified.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Guarantee analyzed repository is not modified.
 
@@ -6020,6 +7175,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-04 — Treat file content as untrusted input.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Treat file content as untrusted input.
 
 **Implementation plan**
@@ -6039,6 +7198,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-05 — Defend against prompt/content injection if LLM components are used.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Defend against prompt/content injection if LLM components are used.
 
@@ -6060,6 +7223,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-06 — Enforce file-size limits.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Enforce file-size limits.
 
 **Implementation plan**
@@ -6079,6 +7246,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-07 — Enforce time and resource limits.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Enforce time and resource limits.
 
@@ -6100,6 +7271,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-08 — Handle symlinks safely.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Handle symlinks safely.
 
 **Implementation plan**
@@ -6119,6 +7294,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-09 — Prevent archive/path traversal if archive ingestion is added.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Prevent archive/path traversal if archive ingestion is added.
 
@@ -6140,6 +7319,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-10 — Protect secrets in logs.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Protect secrets in logs.
 
 **Implementation plan**
@@ -6159,6 +7342,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-11 — Isolate evidence and analysis contexts.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Isolate evidence and analysis contexts.
 
@@ -6180,6 +7367,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-12 — Clean temporary files.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Clean temporary files.
 
 **Implementation plan**
@@ -6199,6 +7390,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-13 — Handle concurrency safely.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Handle concurrency safely.
 
@@ -6220,6 +7415,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-14 — Add malicious-repository test cases.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add malicious-repository test cases.
 
 **Implementation plan**
@@ -6239,6 +7438,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-15 — Review dependency and tool risks.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Review dependency and tool risks.
 
@@ -6260,6 +7463,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-16 — Document safe operating model.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Document safe operating model.
 
 **Implementation plan**
@@ -6279,6 +7486,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-17 — Test failure containment.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Test failure containment.
 
@@ -6300,6 +7511,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-18 — Ensure reports do not unnecessarily expose secrets.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Ensure reports do not unnecessarily expose secrets.
 
 **Implementation plan**
@@ -6319,6 +7534,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## AGSEC-19 — Add resource exhaustion tests.
+
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add resource exhaustion tests.
 
@@ -6340,6 +7559,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## AGSEC-20 — Establish security regression suite.
 
+**Execution priority:** P1
+**Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Establish security regression suite.
 
 **Implementation plan**
@@ -6359,6 +7582,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PLAN-01 — Build repository profile.
+
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Build repository profile.
 
@@ -6380,6 +7607,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PLAN-02 — Detect language/framework/architecture.
 
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Detect language/framework/architecture.
 
 **Implementation plan**
@@ -6399,6 +7630,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PLAN-03 — Identify sensitive components.
+
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Identify sensitive components.
 
@@ -6420,6 +7655,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PLAN-04 — Select detectors based on capability and profile.
 
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Select detectors based on capability and profile.
 
 **Implementation plan**
@@ -6439,6 +7678,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PLAN-05 — Resolve detector dependencies.
+
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Resolve detector dependencies.
 
@@ -6460,6 +7703,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PLAN-06 — Avoid unnecessary work.
 
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Avoid unnecessary work.
 
 **Implementation plan**
@@ -6479,6 +7726,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PLAN-07 — Re-plan when analysis discovers relevant context.
+
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Re-plan when analysis discovers relevant context.
 
@@ -6500,6 +7751,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PLAN-08 — Track plan execution.
 
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track plan execution.
 
 **Implementation plan**
@@ -6519,6 +7774,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PLAN-09 — Explain selected checks.
+
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Explain selected checks.
 
@@ -6540,6 +7799,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PLAN-10 — Explain skipped checks.
 
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Explain skipped checks.
 
 **Implementation plan**
@@ -6559,6 +7822,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PLAN-11 — Explain unsupported checks.
+
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Explain unsupported checks.
 
@@ -6580,6 +7847,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PLAN-12 — Record plan changes.
 
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Record plan changes.
 
 **Implementation plan**
@@ -6599,6 +7870,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PLAN-13 — Add plan tests.
+
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add plan tests.
 
@@ -6620,6 +7895,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PLAN-14 — Validate efficiency and coverage tradeoffs.
 
+**Execution priority:** P2
+**Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Validate efficiency and coverage tradeoffs.
 
 **Implementation plan**
@@ -6639,6 +7918,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OBS-01 — Track duration per agent/detector.
+
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track duration per agent/detector.
 
@@ -6660,6 +7943,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OBS-02 — Track files scanned.
 
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track files scanned.
 
 **Implementation plan**
@@ -6679,6 +7966,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OBS-03 — Track files skipped and reasons.
+
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track files skipped and reasons.
 
@@ -6700,6 +7991,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OBS-04 — Track parse failures.
 
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track parse failures.
 
 **Implementation plan**
@@ -6719,6 +8014,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OBS-05 — Track detector failures.
+
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track detector failures.
 
@@ -6740,6 +8039,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OBS-06 — Track resource usage where available.
 
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track resource usage where available.
 
 **Implementation plan**
@@ -6759,6 +8062,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OBS-07 — Track findings by category.
+
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track findings by category.
 
@@ -6780,6 +8087,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OBS-08 — Track coverage by language/detector.
 
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track coverage by language/detector.
 
 **Implementation plan**
@@ -6799,6 +8110,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OBS-09 — Track partial-analysis state.
+
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Track partial-analysis state.
 
@@ -6820,6 +8135,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OBS-10 — Track analysis history.
 
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Track analysis history.
 
 **Implementation plan**
@@ -6839,6 +8158,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OBS-11 — Support comparisons.
+
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Support comparisons.
 
@@ -6860,6 +8183,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## OBS-12 — Expose actionable diagnostics.
 
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Expose actionable diagnostics.
 
 **Implementation plan**
@@ -6879,6 +8206,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## OBS-13 — Avoid leaking secrets in metrics/logs.
+
+**Execution priority:** P2
+**Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Avoid leaking secrets in metrics/logs.
 
@@ -6900,6 +8231,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CI-01 — Automated unit tests.
 
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Automated unit tests.
 
 **Implementation plan**
@@ -6919,6 +8254,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CI-02 — Automated integration tests.
+
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Automated integration tests.
 
@@ -6940,6 +8279,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CI-03 — Lint and formatting.
 
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Lint and formatting.
 
 **Implementation plan**
@@ -6959,6 +8302,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CI-04 — Import/package checks.
+
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Import/package checks.
 
@@ -6980,6 +8327,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CI-05 — Detector contract tests.
 
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Detector contract tests.
 
 **Implementation plan**
@@ -6999,6 +8350,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CI-06 — Security benchmark.
+
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Security benchmark.
 
@@ -7020,6 +8375,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CI-07 — Regression checks.
 
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Regression checks.
 
 **Implementation plan**
@@ -7039,6 +8398,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CI-08 — Report-schema validation.
+
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Report-schema validation.
 
@@ -7060,6 +8423,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CI-09 — Artifact publication.
 
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Artifact publication.
 
 **Implementation plan**
@@ -7079,6 +8446,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CI-10 — Matrix for supported Python/runtime versions.
+
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Matrix for supported Python/runtime versions.
 
@@ -7100,6 +8471,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## CI-11 — Document CI workflow.
 
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Document CI workflow.
 
 **Implementation plan**
@@ -7119,6 +8494,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## CI-12 — Define non-flaky quality gates.
+
+**Execution priority:** P1
+**Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Define non-flaky quality gates.
 
@@ -7140,6 +8519,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PERF-01 — Profile per-file analysis.
 
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Profile per-file analysis.
 
 **Implementation plan**
@@ -7159,6 +8542,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PERF-02 — Identify duplicate reads/work.
+
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Identify duplicate reads/work.
 
@@ -7180,6 +8567,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PERF-03 — Reuse repository context.
 
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Reuse repository context.
 
 **Implementation plan**
@@ -7199,6 +8590,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PERF-04 — Optimize parsing and analysis.
+
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Optimize parsing and analysis.
 
@@ -7220,6 +8615,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PERF-05 — Add caching with invalidation.
 
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Add caching with invalidation.
 
 **Implementation plan**
@@ -7239,6 +8638,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PERF-06 — Evaluate detector parallelism.
+
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Evaluate detector parallelism.
 
@@ -7260,6 +8663,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PERF-07 — Handle large repositories.
 
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Handle large repositories.
 
 **Implementation plan**
@@ -7279,6 +8686,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PERF-08 — Add configurable limits.
+
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Add configurable limits.
 
@@ -7300,6 +8711,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PERF-09 — Define graceful degradation.
 
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Define graceful degradation.
 
 **Implementation plan**
@@ -7319,6 +8734,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PERF-10 — Detect performance regressions.
+
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Detect performance regressions.
 
@@ -7340,6 +8759,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## PERF-11 — Create large-repository benchmark.
 
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Create large-repository benchmark.
 
 **Implementation plan**
@@ -7359,6 +8782,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## PERF-12 — Document tradeoffs.
+
+**Execution priority:** P2
+**Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Document tradeoffs.
 
@@ -7380,6 +8807,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## UX-01 — Executive summary.
 
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Executive summary.
 
 **Implementation plan**
@@ -7399,6 +8830,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## UX-02 — Sort by priority/risk.
+
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Sort by priority/risk.
 
@@ -7420,6 +8855,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## UX-03 — Filter by severity.
 
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Filter by severity.
 
 **Implementation plan**
@@ -7439,6 +8878,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## UX-04 — Filter by CWE/OWASP.
+
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Filter by CWE/OWASP.
 
@@ -7460,6 +8903,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## UX-05 — Filter by file/language/confidence.
 
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Filter by file/language/confidence.
 
 **Implementation plan**
@@ -7479,6 +8926,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## UX-06 — Inspect evidence and traces.
+
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Inspect evidence and traces.
 
@@ -7500,6 +8951,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## UX-07 — Inspect correlation rationale.
 
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Inspect correlation rationale.
 
 **Implementation plan**
@@ -7519,6 +8974,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## UX-08 — Compare analysis runs.
+
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Compare analysis runs.
 
@@ -7540,6 +8999,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## UX-09 — Identify new findings.
 
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Identify new findings.
 
 **Implementation plan**
@@ -7559,6 +9022,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## UX-10 — Identify resolved findings.
+
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Identify resolved findings.
 
@@ -7580,6 +9047,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## UX-11 — Show risk trends.
 
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Show risk trends.
 
 **Implementation plan**
@@ -7599,6 +9070,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## UX-12 — Export filtered findings.
+
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Export filtered findings.
 
@@ -7620,6 +9095,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 ## UX-13 — Improve report navigation.
 
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
+
 **Objective:** Improve report navigation.
 
 **Implementation plan**
@@ -7639,6 +9118,10 @@ This document contains an execution plan for **every task** listed in `docs/MINA
 
 
 ## UX-14 — Keep explanations actionable.
+
+**Execution priority:** P3
+**Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
+**Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
 
 **Objective:** Keep explanations actionable.
 
