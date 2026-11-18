@@ -86,7 +86,9 @@ def test_local_analysis_exports_all_bug_candidates_to_json(tmp_path, monkeypatch
     cli.analyze_local(source, output, "service-with-findings")
 
     exported = json.loads((output / "possible-bugs.json").read_text(encoding="utf-8"))
-    assert exported["summary"]["total_candidates"] == 2
+    assert exported["summary"]["total_candidates"] == 3
+    assert len(exported["candidates"]) == 3
+    assert {item["source"] for item in exported["candidates"]} == {"static_quality", "llm_bug_hunter"}
     assert exported["production_candidates"][0]["code"] == "BUG001"
     assert exported["test_candidates"][0]["code"] == "BUG003"
     assert exported["llm_bug_hunter"]["findings"][0]["title"] == "LLM candidate"
