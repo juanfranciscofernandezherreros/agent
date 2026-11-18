@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 import os
+import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -79,7 +80,7 @@ def clone_repository(agent_id: str, github_url: str, branch: str | None = None) 
         raise FileExistsError("Ya existe un workspace con un clon. No se sobrescribirá.")
     workspace.mkdir(parents=True, exist_ok=True)
 
-    cmd = ["git", "-c", "core.hooksPath=/dev/null", "clone", "--depth", "1",
+    cmd = ["git", "-c", "core.hooksPath=", "clone", "--depth", "1",
            "--no-recurse-submodules", "--", identity.url, str(source)]
     if branch:
         cmd[cmd.index("clone") + 1:cmd.index("clone") + 1] = ["--branch", branch]
@@ -97,10 +98,13 @@ def clone_repository(agent_id: str, github_url: str, branch: str | None = None) 
             check=True, capture_output=True, text=True, timeout=15,
         ).stdout.strip()
     except FileNotFoundError as exc:
+        shutil.rmtree(source, ignore_errors=True)
         raise RuntimeError("Git no está instalado o no está disponible en PATH.") from exc
     except subprocess.TimeoutExpired as exc:
+        shutil.rmtree(source, ignore_errors=True)
         raise RuntimeError("El clonado superó el tiempo máximo permitido.") from exc
     except subprocess.CalledProcessError as exc:
+        shutil.rmtree(source, ignore_errors=True)
         detail = (exc.stderr or "Error de Git").strip()[-1200:]
         raise RuntimeError(f"No se pudo clonar el repositorio: {detail}") from exc
 
