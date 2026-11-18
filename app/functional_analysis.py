@@ -121,6 +121,15 @@ def build_analysis_html(name: str, analysis: dict) -> str:
     sections.append("<h1>Análisis del microservicio: " + esc(name) + "</h1>")
     sections.append("<p>Informe generado mediante análisis estático. No implica validación del comportamiento en ejecución.</p>")
     sections.append("<h2>Resumen</h2><pre>" + esc(json.dumps(deep.get("scan_stats", {}), ensure_ascii=False, indent=2)) + "</pre>")
+    sections.append("<h2>Posibles bugs detectados</h2>")
+    findings = quality.get("bug_candidates", [])
+    if not findings:
+        sections.append("<p>No se han detectado candidatos de bug. El análisis estático puede tener falsos negativos.</p>")
+    for finding in findings[:500]:
+        location = str(finding.get("file", "N/D")) + ":" + str(finding.get("line", "N/D"))
+        evidence = finding.get("excerpt", "")
+        title = str(finding.get("severity", "low")).upper() + " · " + str(finding.get("title", "Posible bug"))
+        sections.append("<article><h3>" + esc(title) + "</h3><p><b>Ubicación:</b> " + esc(location) + "</p><p>" + esc(finding.get("description", "")) + "</p><pre>" + esc(evidence) + "</pre></article>")
     sections.append("<h2>Análisis funcional</h2>")
     summary = functional.get("summary", {})
     sections.append("<pre>" + esc(json.dumps(summary, ensure_ascii=False, indent=2)) + "</pre>")
