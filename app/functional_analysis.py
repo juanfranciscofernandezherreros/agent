@@ -143,12 +143,14 @@ def build_analysis_html(name: str, analysis: dict) -> str:
             severity_label = {"high": "Alta", "medium": "Media", "low": "Baja"}.get(severity, severity.title())
             location = str(finding.get("file", "N/D")) + ":" + str(finding.get("line", "N/D"))
             searchable = " ".join(str(finding.get(k, "")) for k in ("severity", "title", "file", "description", "excerpt")).lower()
+            locations = finding.get("occurrences", [])
+            locations_html = "<details class='occurrences'><summary>Ver " + str(len(locations)) + " ubicaciones agrupadas</summary><ul>" + "".join("<li><code>" + esc(x.get("file", "")) + ":" + esc(x.get("line", "")) + "</code><pre>" + esc(x.get("excerpt", "")) + "</pre></li>" for x in locations) + "</ul></details>" if locations else ""
             cards.append(
                 "<article class='finding' data-severity='" + esc(severity) + "' data-search='" + esc(searchable) + "'>"
                 "<div class='finding-top'><span class='severity " + esc(severity) + "'>" + esc(severity_label) + "</span><span class='finding-number'>#" + str(i) + "</span></div>"
                 "<h3>" + esc(finding.get("title", "Posible bug")) + "</h3>"
                 "<p class='location'><span>Ubicación</span><code>" + esc(location) + "</code></p>"
-                "<p>" + esc(finding.get("description", "")) + "</p>"
+                "<p>" + esc(finding.get("description", "")) + "</p><p class='occurrence-badge'>" + str(finding.get("occurrence_count", 1)) + " coincidencias del mismo patrón</p>" + locations_html
                 "<details><summary>Ver evidencia de código</summary><pre>" + esc(finding.get("excerpt", "")) + "</pre></details></article>"
             )
         return "".join(cards)
