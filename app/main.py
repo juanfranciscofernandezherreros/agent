@@ -20,13 +20,20 @@ from .analysis_orchestrator import run_group_analysis
 from .gitlab import gitlab_settings, list_accessible_groups, list_group_projects
 from .schemas import BugReportExportRequest
 from .bug_report import TASKS, _sorted_findings, build_bug_export_html
+from .bug_hunter_api import router as bug_hunter_router
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION,
+app.include_router(bug_hunter_router)
  description="Orquestador de análisis estático profundo de uno o varios microservicios. No ejecuta el código analizado.")
 
 @app.on_event("startup")
 def startup():
     init_db()
+    with connect() as con:
+        con.execute("""CREATE TABLE IF NOT EXISTS bug_hunters (
+          id TEXT PRIMARY KEY, name TEXT NOT NULL, github_url TEXT NOT NULL,
+          branch TEXT, status TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
+          repository_json TEXT, last_error TEXT)""")
     with connect() as con:
         con.execute("""CREATE TABLE IF NOT EXISTS analysis_groups (
           id TEXT PRIMARY KEY, name TEXT NOT NULL, repositories_json TEXT NOT NULL,
