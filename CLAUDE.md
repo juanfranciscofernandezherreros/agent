@@ -3,6 +3,7 @@
 You are the implementation agent for MiniAgent. Start by reading this file and the linked project documents before modifying code.
 
 ## Mandatory documents
+0. `docs/MINAGENT_BACKLOG_TASK_PLANS.md` — individual implementation plans for every backlog task. **Read the matching task plan before starting any task.**
 1. `docs/MINAGENT_PRODUCT_VISION_AND_BACKLOG.md` — product vision, architecture, epics, requirements, roadmap, and execution protocol.
 2. `docs/MINAGENT_EXECUTION_PLAN.md` — phased execution plan and progress tracker.
 
@@ -27,7 +28,7 @@ Evolve MiniAgent into a modular static code quality and contextual security anal
 For each task:
 1. Inspect `git status`, repository tree, relevant source, tests, and docs. Preserve pre-existing changes.
 2. Select the earliest eligible task according to P0/P1/P2/P3 and dependencies in the execution plan. Never leap over foundational tasks without documenting why.
-3. Write a brief task plan: task ID, objective, dependencies, likely files, scope, acceptance criteria, and test commands.
+3. Read the matching section in `docs/MINAGENT_BACKLOG_TASK_PLANS.md`. Write a brief task plan: task ID, objective, dependencies, likely files, scope, acceptance criteria, and test commands. Follow the task plan's steps and acceptance criteria; revise it only when repository evidence requires it, documenting the reason.
 4. Implement a small, cohesive change. Avoid unrelated refactoring.
 5. Add/update tests, including safe/negative tests for security detectors.
 6. Run focused tests, then broader tests/lint/type checks available and relevant. If unavailable, report the reason.
