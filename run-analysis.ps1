@@ -123,7 +123,7 @@ try {
     $BaseUrl = [Environment]::GetEnvironmentVariable("GITLAB_BASE_URL", "Process")
     # Para listar modelos no hacen falta ni el token de GitLab ni el grupo.
     if (-not $ListModels -and [string]::IsNullOrWhiteSpace($LocalPath)) {
-        if ([string]::IsNullOrWhiteSpace($Token) -or $Token -match '^<.*>
+        if ([string]::IsNullOrWhiteSpace($Token) -or $Token -match '^<.*>$') { throw "GITLAB_TOKEN no está configurado en .env." }
         if (-not [string]::IsNullOrWhiteSpace($GroupIdArgument)) { $GroupId = $GroupIdArgument.Trim() }
         if ([string]::IsNullOrWhiteSpace($GroupId) -or $GroupId -match '^<.*>$') {
             $GroupId = ""
