@@ -398,6 +398,12 @@ try {
                 # Compatibilidad con una API anterior: el informe JSON puede no estar publicado todavía.
             }
         }
+        $BugJsonTarget = Join-Path $ServiceDir "possible-bugs.json"
+        if (-not (Test-Path -LiteralPath $BugJsonTarget)) {
+            try {
+                Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/possible-bugs.json" -OutFile $BugJsonTarget -UseBasicParsing
+            } catch { }
+        }
         $AgentsTarget = Join-Path $ServiceDir "agents.html"
         if (-not (Test-Path -LiteralPath $AgentsTarget)) {
             try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/repositories/$RepositorySlug/agents.html" -OutFile $AgentsTarget -UseBasicParsing } catch { }
