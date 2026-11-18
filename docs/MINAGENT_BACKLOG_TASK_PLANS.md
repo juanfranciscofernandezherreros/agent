@@ -407,6 +407,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## STAB-01 — Establish baseline test suite and record current status.
 
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -430,6 +433,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## STAB-02 — Reproduce and fix existing regressions.
+
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
@@ -455,6 +461,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## STAB-03 — Validate imports, package structure, and dependency setup.
 
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -478,6 +487,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## STAB-04 — Validate analysis end-to-end on representative repositories.
+
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
@@ -503,6 +515,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## STAB-05 — Validate JSON output and error handling.
 
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -526,6 +541,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## STAB-06 — Test single-repository and multi-repository paths.
+
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
@@ -551,6 +569,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## STAB-07 — Validate security findings appear in reports.
 
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -574,6 +595,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## STAB-08 — Test agent failures and partial-analysis behavior.
+
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
@@ -599,6 +623,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## STAB-09 — Establish performance baseline.
 
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -622,6 +649,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## STAB-10 — Document known limitations and baseline coverage.
+
+**SDD conformance:** SDD Sections 3, 7, 8; SDD-FR-01, SDD-FR-06, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** None; this is baseline work and should start immediately.
@@ -647,6 +677,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CORE-01 — Define stable finding identifier.
 
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -670,6 +703,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CORE-02 — Define finding type/category and title.
+
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
@@ -695,6 +731,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CORE-03 — Define severity.
 
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -718,6 +757,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CORE-04 — Define confidence.
+
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
@@ -743,6 +785,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CORE-05 — Define status/classification (candidate, confirmed by evidence, needs review, etc.).
 
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -766,6 +811,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CORE-06 — Define evidence model.
+
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
@@ -791,6 +839,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CORE-07 — Define one or multiple locations.
 
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -814,6 +865,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CORE-08 — Define source and sink fields.
+
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
@@ -839,6 +893,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CORE-09 — Define CWE and OWASP mappings.
 
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -862,6 +919,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CORE-10 — Define risk fields and rationale.
+
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
@@ -887,6 +947,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CORE-11 — Define remediation and references.
 
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -910,6 +973,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CORE-12 — Implement serialization.
+
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
@@ -935,6 +1001,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CORE-13 — Integrate with analysis/reporting.
 
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -958,6 +1027,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CORE-14 — Preserve compatibility with existing findings where practical.
+
+**SDD conformance:** SDD Sections 5.1–5.3; SDD-FR-08, SDD-FR-10, SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and STAB-03; keep compatibility with current finding/report shapes while defining the contract.
@@ -983,6 +1055,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-01 — Define Source catalog and contract.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1006,6 +1081,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## FLOW-02 — Catalog HTTP parameters, query, headers, cookies, body, CLI, environment, files, and messaging inputs.
+
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
@@ -1031,6 +1109,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-03 — Define Sink catalog and contract.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1054,6 +1135,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## FLOW-04 — Catalog SQL, command execution, HTML/JS, filesystem, HTTP, deserialization, dynamic code, and authorization sinks.
+
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
@@ -1079,6 +1163,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-05 — Track basic variables and assignments.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1102,6 +1189,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## FLOW-06 — Track propagation through concatenation and interpolation.
+
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
@@ -1127,6 +1217,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-07 — Track function arguments and returns.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1150,6 +1243,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## FLOW-08 — Track simple transformations.
+
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
@@ -1175,6 +1271,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-09 — Represent validation and sanitization.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1198,6 +1297,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## FLOW-10 — Recognize selected safe/mitigating patterns.
+
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
@@ -1223,6 +1325,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-11 — Build intra-file flow graph.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1246,6 +1351,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## FLOW-12 — Add selected cross-function propagation.
+
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
@@ -1271,6 +1379,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-13 — Expand to multi-file propagation incrementally.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1294,6 +1405,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## FLOW-14 — Represent path reachability and partial paths.
+
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
@@ -1319,6 +1433,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-15 — Generate evidence traces and explanations.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1342,6 +1459,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## FLOW-16 — Mark analysis completeness and unknown links.
+
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
@@ -1367,6 +1487,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## FLOW-17 — Add unit and integration tests for propagation and controls.
 
+**SDD conformance:** SDD Section 5.4; SDD-FR-09.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE-01..CORE-08; build on the unified finding/evidence contracts and baseline stability.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1390,6 +1513,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-01 — Review and validate current SQLi heuristic.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1415,6 +1541,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-02 — Cover string concatenation.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1438,6 +1567,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-03 — Cover f-strings/interpolation.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1463,6 +1595,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-04 — Cover format(), percent formatting, and template patterns.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1486,6 +1621,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-05 — Cover multiline/dynamic query construction.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1511,6 +1649,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-06 — Track query variables.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1534,6 +1675,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-07 — Identify external sources.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1559,6 +1703,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-08 — Identify SQL execution sinks.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1582,6 +1729,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-09 — Recognize common parameterized-query patterns.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1607,6 +1757,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-10 — Recognize positional and named parameters where supported.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1630,6 +1783,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-11 — Recognize selected ORM/query-builder patterns.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1655,6 +1811,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-12 — Identify dynamic SQL identifiers separately from values.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1678,6 +1837,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-13 — Recognize allowlist/control patterns conservatively.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1703,6 +1865,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-14 — Connect source, query construction, and sink.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1726,6 +1891,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-15 — Generate contextual evidence.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1751,6 +1919,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-16 — Evaluate confidence and severity separately.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1774,6 +1945,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-17 — Explain the potential issue.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1799,6 +1973,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-18 — Generate remediation guidance.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1822,6 +1999,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-19 — Add vulnerable positive tests.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1847,6 +2027,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-20 — Add safe negative tests.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1870,6 +2053,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-21 — Add multiline and variable propagation tests.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1895,6 +2081,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-22 — Validate against isolated training/lab examples.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1918,6 +2107,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-23 — Document limitations and supported patterns.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1943,6 +2135,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-24 — Measure false positives on safe corpus.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -1966,6 +2161,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-25 — Integrate with unified SecurityFinding.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -1991,6 +2189,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SQLI-26 — Integrate OWASP/CWE metadata.
 
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2014,6 +2215,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SQLI-27 — Ensure reports preserve evidence and locations.
+
+**SDD conformance:** SDD Sections 3.3, 5.4, 6; SDD-FR-07, SDD-FR-09, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01, CORE contracts, and FLOW capabilities required by this specific SQL pattern. If a dependency is incomplete, implement a bounded detector and document the gap rather than block.
@@ -2039,6 +2243,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OWASP-01 — Centralize versioned OWASP Top 10 catalog.
 
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2062,6 +2269,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OWASP-02 — Add CWE catalog/mappings.
+
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
@@ -2087,6 +2297,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OWASP-03 — Add ASVS references.
 
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2110,6 +2323,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OWASP-04 — Add API Security Top 10 references.
+
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
@@ -2135,6 +2351,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OWASP-05 — Add WSTG references as applicable.
 
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2158,6 +2377,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OWASP-06 — Define vulnerability-to-reference mapping.
+
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
@@ -2183,6 +2405,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OWASP-07 — Define mitigation/reference metadata.
 
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2206,6 +2431,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OWASP-08 — Add language/framework security catalogs.
+
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
@@ -2231,6 +2459,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OWASP-09 — Version catalog data.
 
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2254,6 +2485,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OWASP-10 — Test mappings and URLs.
+
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
@@ -2279,6 +2513,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OWASP-11 — Document update process.
 
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2302,6 +2539,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OWASP-12 — Avoid duplicate or conflicting mappings.
+
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
@@ -2327,6 +2567,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OWASP-13 — Include references in findings/report.
 
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2350,6 +2593,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OWASP-14 — Track coverage gaps.
+
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
@@ -2375,6 +2621,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OWASP-15 — Keep knowledge data separate from detector implementation.
 
+**SDD conformance:** SDD Sections 5.1, 6; SDD-FR-07, SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** CORE metadata contracts; detector mappings may be added incrementally and must not block detector implementation.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2398,6 +2647,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## XSS-01 — Catalog input sources.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
@@ -2423,6 +2675,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## XSS-02 — Catalog HTML, template, JS, and DOM sinks.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2446,6 +2701,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## XSS-03 — Detect dynamic HTML construction.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
@@ -2471,6 +2729,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## XSS-04 — Detect risky DOM assignments and APIs.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2494,6 +2755,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## XSS-05 — Identify context-specific escaping patterns.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
@@ -2519,6 +2783,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## XSS-06 — Recognize selected sanitization controls.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2542,6 +2809,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## XSS-07 — Connect source to sink where possible.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
@@ -2567,6 +2837,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## XSS-08 — Distinguish reflected/stored/DOM hypotheses only when evidence supports it.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2590,6 +2863,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## XSS-09 — Map CWE/OWASP.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
@@ -2615,6 +2891,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## XSS-10 — Generate evidence and remediation.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2638,6 +2917,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## XSS-11 — Add vulnerable tests.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
@@ -2663,6 +2945,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## XSS-12 — Add safe tests.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2686,6 +2971,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## XSS-13 — Document unsupported contexts and limitations.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
@@ -2711,6 +2999,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## XSS-14 — Integrate with reporting and correlation.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2734,6 +3025,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## XSS-15 — Benchmark false positives.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required. Implement supported contexts without claiming complete coverage.
@@ -2759,6 +3053,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-01 — Catalog external sources.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2782,6 +3079,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CMD-02 — Catalog command execution sinks.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -2807,6 +3107,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-03 — Detect dynamic command construction.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2830,6 +3133,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CMD-04 — Detect concatenation/interpolation.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -2855,6 +3161,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-05 — Recognize shell execution vs direct argument APIs.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2878,6 +3187,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CMD-06 — Track data to command sinks.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -2903,6 +3215,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-07 — Recognize structured-argument patterns where appropriate.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2926,6 +3241,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CMD-08 — Identify controls and validation conservatively.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -2951,6 +3269,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-09 — Generate evidence and explanation.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -2974,6 +3295,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CMD-10 — Map CWE/OWASP.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -2999,6 +3323,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-11 — Recommend safer APIs and argument handling.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3022,6 +3349,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CMD-12 — Add positive and negative tests.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3047,6 +3377,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-13 — Integrate reporting.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3070,6 +3403,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CMD-14 — Benchmark false positives.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3095,6 +3431,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-15 — Document supported APIs and limitations.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3118,6 +3457,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CMD-16 — Add framework/wrapper patterns incrementally.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3143,6 +3485,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CMD-17 — Validate on isolated examples.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3166,6 +3511,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-01 — Catalog path sources.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3191,6 +3539,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PATH-02 — Catalog file read/write/delete sinks.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3214,6 +3565,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-03 — Detect dynamic path construction.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3239,6 +3593,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PATH-04 — Detect traversal patterns.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3262,6 +3619,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-05 — Track source-to-filesystem flow.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3287,6 +3647,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PATH-06 — Recognize normalization patterns.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3310,6 +3673,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-07 — Recognize confinement/base-directory checks.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3335,6 +3701,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PATH-08 — Evaluate controls conservatively.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3358,6 +3727,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-09 — Generate evidence.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3383,6 +3755,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PATH-10 — Map CWE/OWASP.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3406,6 +3781,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-11 — Generate remediation.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3431,6 +3809,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PATH-12 — Add positive tests.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3454,6 +3835,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-13 — Add negative/safe tests.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3479,6 +3863,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PATH-14 — Integrate reports.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3502,6 +3889,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-15 — Benchmark false positives.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3527,6 +3917,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PATH-16 — Document limitations.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3550,6 +3943,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PATH-17 — Validate on isolated examples.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3575,6 +3971,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-01 — Catalog URL/request sources.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3598,6 +3997,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SSRF-02 — Catalog HTTP/network sinks.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3623,6 +4025,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-03 — Detect dynamic URL construction.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3646,6 +4051,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SSRF-04 — Track source-to-request flow.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3671,6 +4079,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-05 — Recognize destination allowlists.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3694,6 +4105,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SSRF-06 — Recognize selected URL/IP validation.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3719,6 +4133,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-07 — Consider redirect handling where code evidence is available.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3742,6 +4159,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SSRF-08 — Identify internal-network context only when supported by evidence.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3767,6 +4187,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-09 — Generate evidence and explanation.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3790,6 +4213,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SSRF-10 — Map CWE/OWASP.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3815,6 +4241,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-11 — Generate remediation.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3838,6 +4267,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SSRF-12 — Add positive tests.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3863,6 +4295,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-13 — Add negative tests.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3886,6 +4321,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SSRF-14 — Integrate reporting.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3911,6 +4349,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-15 — Benchmark false positives.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3934,6 +4375,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## SSRF-16 — Document unsupported cases.
+
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
@@ -3959,6 +4403,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## SSRF-17 — Validate on isolated examples.
 
+**SDD conformance:** SDD Sections 4, 5.4, 6; SDD-FR-13, SDD-FR-14, SDD-FR-15.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** CORE and DET; FLOW source/sink/flow capabilities when required.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -3982,6 +4429,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## COR-01 — Define normalized evidence contract.
+
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
@@ -4007,6 +4457,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## COR-02 — Normalize file/line/API references.
 
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4030,6 +4483,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## COR-03 — Deduplicate repeated detector output.
+
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
@@ -4055,6 +4511,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## COR-04 — Group related evidence.
 
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4078,6 +4537,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## COR-05 — Correlate source, propagation, and sink.
+
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
@@ -4103,6 +4565,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## COR-06 — Correlate evidence in same flow/function/file where justified.
 
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4126,6 +4591,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## COR-07 — Correlate cross-file evidence when flow engine supports it.
+
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
@@ -4151,6 +4619,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## COR-08 — Preserve detector-origin findings.
 
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4174,6 +4645,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## COR-09 — Handle contradictory evidence.
+
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
@@ -4199,6 +4673,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## COR-10 — Consolidate contextual findings.
 
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4222,6 +4699,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## COR-11 — Explain grouping decisions.
+
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
@@ -4247,6 +4727,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## COR-12 — Avoid loss of individual evidence.
 
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4270,6 +4753,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## COR-13 — Add correlation tests.
+
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
@@ -4295,6 +4781,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## COR-14 — Integrate with reporting and risk.
 
+**SDD conformance:** SDD Sections 5.2, 8; SDD-FR-10.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE evidence/location contracts and FLOW trace representation where available.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4318,6 +4807,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CONF-01 — Define confidence levels and semantics.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
@@ -4343,6 +4835,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CONF-02 — Define evidence factors.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4366,6 +4861,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CONF-03 — Account for source certainty.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
@@ -4391,6 +4889,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CONF-04 — Account for sink certainty.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4414,6 +4915,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CONF-05 — Account for flow completeness.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
@@ -4439,6 +4943,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CONF-06 — Account for controls/mitigations.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4462,6 +4969,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CONF-07 — Account for pattern ambiguity.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
@@ -4487,6 +4997,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CONF-08 — Explain confidence rationale.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4510,6 +5023,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CONF-09 — Keep confidence independent of severity.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
@@ -4535,6 +5051,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CONF-10 — Mark incomplete analysis.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4558,6 +5077,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CONF-11 — Identify likely false-positive candidates.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
@@ -4583,6 +5105,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CONF-12 — Build safe/vulnerable corpus.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4606,6 +5131,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CONF-13 — Calibrate using benchmark results.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
@@ -4631,6 +5159,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CONF-14 — Track confidence quality across releases.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE confidence contract, STAB baseline, and evidence from detectors/flow; do not invent confidence factors without evidence.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4654,6 +5185,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## RISK-01 — Define contextual risk model.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
@@ -4679,6 +5213,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## RISK-02 — Define explainable risk bands.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4702,6 +5239,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## RISK-03 — Incorporate severity.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
@@ -4727,6 +5267,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## RISK-04 — Incorporate confidence.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4750,6 +5293,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## RISK-05 — Incorporate exposure/reachability where known.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
@@ -4775,6 +5321,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## RISK-06 — Incorporate sensitive context and impact where evidence exists.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4798,6 +5347,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## RISK-07 — Incorporate controls.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
@@ -4823,6 +5375,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## RISK-08 — Avoid double-counting correlated findings.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4846,6 +5401,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## RISK-09 — Produce ranking.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
@@ -4871,6 +5429,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## RISK-10 — Explain risk rationale.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4894,6 +5455,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## RISK-11 — Represent unknown context.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
@@ -4919,6 +5483,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## RISK-12 — Add model tests.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4942,6 +5509,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## RISK-13 — Validate against benchmark cases.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
@@ -4967,6 +5537,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## RISK-14 — Version the risk model.
 
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -4990,6 +5563,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## RISK-15 — Document assumptions and limitations.
+
+**SDD conformance:** SDD Sections 5.5, 8; SDD-FR-11.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE severity/confidence/risk fields and CONF; operate on available evidence and preserve unknowns.
@@ -5015,6 +5591,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-01 — Executive summary.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5038,6 +5617,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-02 — Overall quality/security overview.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5063,6 +5645,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-03 — Findings by severity.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5086,6 +5671,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-04 — Findings by type.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5111,6 +5699,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-05 — Prioritized findings.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5134,6 +5725,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-06 — Confidence and risk rationale.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5159,6 +5753,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-07 — Source-to-sink trace.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5182,6 +5779,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-08 — Evidence and code locations.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5207,6 +5807,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-09 — CWE/OWASP/ASVS metadata.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5230,6 +5833,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-10 — Remediation and references.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5255,6 +5861,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-11 — False-positive review guidance.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5278,6 +5887,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-12 — Coverage and detector status.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5303,6 +5915,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-13 — Unsupported files/languages.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5326,6 +5941,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-14 — Excluded files and reasons.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5351,6 +5969,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-15 — Agent/detector execution summary.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5374,6 +5995,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-16 — Analysis errors and partial results.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5399,6 +6023,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-17 — Repository metadata.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5422,6 +6049,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-18 — Report timestamp.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5447,6 +6077,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-19 — Report and schema version.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5470,6 +6103,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-20 — JSON schema.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5495,6 +6131,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-21 — Backward compatibility strategy.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5518,6 +6157,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-22 — Stable report naming.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5543,6 +6185,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-23 — Timestamped report naming.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5566,6 +6211,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## REP-24 — Validate report contract.
+
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
@@ -5591,6 +6239,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## REP-25 — Add report fixtures and tests.
 
+**SDD conformance:** SDD Sections 5, 6, 8; SDD-FR-12.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** CORE serialization/integration and STAB report baseline; maintain backwards compatibility.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5614,6 +6265,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## DET-01 — Define detector interface.
+
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
@@ -5639,6 +6293,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## DET-02 — Define input context.
 
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5662,6 +6319,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## DET-03 — Define output contract.
+
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
@@ -5687,6 +6347,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## DET-04 — Implement registry.
 
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5710,6 +6373,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## DET-05 — Implement detector configuration.
+
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
@@ -5735,6 +6401,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## DET-06 — Define dependency/capability metadata.
 
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5758,6 +6427,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## DET-07 — Define execution lifecycle.
+
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
@@ -5783,6 +6455,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## DET-08 — Add timeouts and resource limits.
 
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5806,6 +6481,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## DET-09 — Handle detector exceptions independently.
+
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
@@ -5831,6 +6509,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## DET-10 — Add metrics.
 
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5854,6 +6535,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## DET-11 — Add optional safe parallelism.
+
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
@@ -5879,6 +6563,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## DET-12 — Add caching only where correctness is preserved.
 
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5902,6 +6589,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## DET-13 — Version rules/detectors.
+
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
@@ -5927,6 +6617,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## DET-14 — Add contract tests.
 
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5950,6 +6643,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## DET-15 — Prevent detector implementation from bloating central analysis modules.
+
+**SDD conformance:** SDD Sections 4, 5.3; SDD-FR-13.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline and CORE finding contract; avoid migrating all detectors at once.
@@ -5975,6 +6671,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## LANG-01 — Define language coverage matrix.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -5998,6 +6697,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## LANG-02 — Define capability matrix by language.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
@@ -6023,6 +6725,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## LANG-03 — Prioritize Python.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6046,6 +6751,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## LANG-04 — Add Java support incrementally.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
@@ -6071,6 +6779,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## LANG-05 — Add JavaScript/TypeScript support incrementally.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6094,6 +6805,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## LANG-06 — Add Go and other languages based on demand.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
@@ -6119,6 +6833,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## LANG-07 — Detect frameworks.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6142,6 +6859,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## LANG-08 — Detect ORM/query APIs.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
@@ -6167,6 +6887,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## LANG-09 — Add framework-specific sources and sinks.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6190,6 +6913,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## LANG-10 — Add language-specific safe patterns.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
@@ -6215,6 +6941,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## LANG-11 — Keep detector capabilities explicit.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6238,6 +6967,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## LANG-12 — Add per-language test corpus.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
@@ -6263,6 +6995,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## LANG-13 — Document coverage.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6286,6 +7021,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## LANG-14 — Expand only when benchmarked.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-14.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET, CORE, and the relevant detector/flow contracts; introduce language capabilities incrementally.
@@ -6311,6 +7049,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-01 — Create vulnerable sample corpus.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6334,6 +7075,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-02 — Create safe sample corpus.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6359,6 +7103,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-03 — SQLi positive cases.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6382,6 +7129,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-04 — SQLi safe parameterization cases.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6407,6 +7157,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-05 — Source/Sink cases.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6430,6 +7183,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-06 — Sanitization/validation cases.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6455,6 +7211,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-07 — Variable propagation cases.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6478,6 +7237,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-08 — Multi-function cases.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6503,6 +7265,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-09 — Multi-file cases as supported.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6526,6 +7291,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-10 — False-positive cases.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6551,6 +7319,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-11 — False-negative review.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6574,6 +7345,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-12 — Calculate precision/recall/F1 when dataset labels support it.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6599,6 +7373,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-13 — Measure coverage by detector and language.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6622,6 +7399,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-14 — Version benchmark.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6647,6 +7427,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-15 — Add regression thresholds.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6670,6 +7453,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-16 — Run in CI.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6695,6 +7481,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## TESTSEC-17 — Document benchmark methodology.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6718,6 +7507,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## TESTSEC-18 — Use isolated training targets such as OWASP Juice Shop, DVWA, WebGoat, NodeGoat, or crAPI where appropriate; do not execute untrusted targets outside controlled environments.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P0
 **Prerequisites:** STAB-01 and stable detector/finding contracts; tests must run only against controlled fixtures, never execute analyzed samples.
@@ -6743,6 +7535,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## EXT-01 — Define integration adapter contract.
 
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6766,6 +7561,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## EXT-02 — Evaluate Semgrep.
+
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
@@ -6791,6 +7589,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## EXT-03 — Evaluate CodeQL.
 
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6814,6 +7615,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## EXT-04 — Evaluate Bandit.
+
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
@@ -6839,6 +7643,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## EXT-05 — Evaluate Trivy.
 
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6862,6 +7669,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## EXT-06 — Evaluate Gitleaks.
+
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
@@ -6887,6 +7697,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## EXT-07 — Consider ZAP only for a separate controlled dynamic-testing workflow.
 
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6910,6 +7723,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## EXT-08 — Normalize external output.
+
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
@@ -6935,6 +7751,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## EXT-09 — Deduplicate and correlate.
 
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -6958,6 +7777,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## EXT-10 — Preserve source tool and version.
+
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
@@ -6983,6 +7805,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## EXT-11 — Preserve configuration and coverage.
 
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7006,6 +7831,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## EXT-12 — Handle missing tools.
+
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
@@ -7031,6 +7859,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## EXT-13 — Handle tool errors and partial results.
 
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7054,6 +7885,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## EXT-14 — Document licensing, installation, and operational requirements.
+
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
@@ -7079,6 +7913,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## EXT-15 — Keep MiniAgent's contextual analysis/reporting value independent of tool availability.
 
+**SDD conformance:** SDD Sections 4, 7; SDD-FR-17.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** DET and CORE; preserve external-tool provenance and make integrations optional.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7102,6 +7939,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-01 — Threat model MiniAgent.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7127,6 +7967,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-02 — Guarantee analyzed code is not executed.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7150,6 +7993,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-03 — Guarantee analyzed repository is not modified.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7175,6 +8021,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-04 — Treat file content as untrusted input.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7198,6 +8047,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-05 — Defend against prompt/content injection if LLM components are used.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7223,6 +8075,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-06 — Enforce file-size limits.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7246,6 +8101,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-07 — Enforce time and resource limits.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7271,6 +8129,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-08 — Handle symlinks safely.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7294,6 +8155,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-09 — Prevent archive/path traversal if archive ingestion is added.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7319,6 +8183,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-10 — Protect secrets in logs.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7342,6 +8209,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-11 — Isolate evidence and analysis contexts.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7367,6 +8237,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-12 — Clean temporary files.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7390,6 +8263,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-13 — Handle concurrency safely.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7415,6 +8291,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-14 — Add malicious-repository test cases.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7438,6 +8317,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-15 — Review dependency and tool risks.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7463,6 +8345,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-16 — Document safe operating model.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7486,6 +8371,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-17 — Test failure containment.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7511,6 +8399,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-18 — Ensure reports do not unnecessarily expose secrets.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7534,6 +8425,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## AGSEC-19 — Add resource exhaustion tests.
+
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
@@ -7559,6 +8453,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## AGSEC-20 — Establish security regression suite.
 
+**SDD conformance:** SDD Sections 2, 7, 8; SDD-FR-01, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB baseline; threat-model and safety constraints apply immediately and remain non-negotiable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7582,6 +8479,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PLAN-01 — Build repository profile.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
@@ -7607,6 +8507,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PLAN-02 — Detect language/framework/architecture.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7630,6 +8533,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PLAN-03 — Identify sensitive components.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
@@ -7655,6 +8561,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PLAN-04 — Select detectors based on capability and profile.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7678,6 +8587,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PLAN-05 — Resolve detector dependencies.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
@@ -7703,6 +8615,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PLAN-06 — Avoid unnecessary work.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7726,6 +8641,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PLAN-07 — Re-plan when analysis discovers relevant context.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
@@ -7751,6 +8669,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PLAN-08 — Track plan execution.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7774,6 +8695,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PLAN-09 — Explain selected checks.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
@@ -7799,6 +8723,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PLAN-10 — Explain skipped checks.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7822,6 +8749,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PLAN-11 — Explain unsupported checks.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
@@ -7847,6 +8777,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PLAN-12 — Record plan changes.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7870,6 +8803,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PLAN-13 — Add plan tests.
+
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
@@ -7895,6 +8831,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PLAN-14 — Validate efficiency and coverage tradeoffs.
 
+**SDD conformance:** SDD Sections 4, 6; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** Repository inventory/context, DET registry/capabilities, and CORE contracts.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7918,6 +8857,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OBS-01 — Track duration per agent/detector.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
@@ -7943,6 +8885,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OBS-02 — Track files scanned.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -7966,6 +8911,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OBS-03 — Track files skipped and reasons.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
@@ -7991,6 +8939,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OBS-04 — Track parse failures.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8014,6 +8965,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OBS-05 — Track detector failures.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
@@ -8039,6 +8993,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OBS-06 — Track resource usage where available.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8062,6 +9019,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OBS-07 — Track findings by category.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
@@ -8087,6 +9047,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OBS-08 — Track coverage by language/detector.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8110,6 +9073,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OBS-09 — Track partial-analysis state.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
@@ -8135,6 +9101,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OBS-10 — Track analysis history.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8158,6 +9127,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OBS-11 — Support comparisons.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
@@ -8183,6 +9155,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## OBS-12 — Expose actionable diagnostics.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8206,6 +9181,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## OBS-13 — Avoid leaking secrets in metrics/logs.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB baseline and orchestration/detector contracts; collect metrics without changing detector semantics.
@@ -8231,6 +9209,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CI-01 — Automated unit tests.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8254,6 +9235,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CI-02 — Automated integration tests.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
@@ -8279,6 +9263,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CI-03 — Lint and formatting.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8302,6 +9289,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CI-04 — Import/package checks.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
@@ -8327,6 +9317,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CI-05 — Detector contract tests.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8350,6 +9343,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CI-06 — Security benchmark.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
@@ -8375,6 +9371,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CI-07 — Regression checks.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8398,6 +9397,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CI-08 — Report-schema validation.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
@@ -8423,6 +9425,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CI-09 — Artifact publication.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8446,6 +9451,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CI-10 — Matrix for supported Python/runtime versions.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
@@ -8471,6 +9479,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## CI-11 — Document CI workflow.
 
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8494,6 +9505,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## CI-12 — Define non-flaky quality gates.
+
+**SDD conformance:** SDD Sections 7, 8; SDD-FR-15, SDD-FR-16.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P1
 **Prerequisites:** STAB-01 and actual project commands/dependency setup; gate only checks that are reproducible and reliable.
@@ -8519,6 +9533,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PERF-01 — Profile per-file analysis.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8542,6 +9559,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PERF-02 — Identify duplicate reads/work.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
@@ -8567,6 +9587,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PERF-03 — Reuse repository context.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8590,6 +9613,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PERF-04 — Optimize parsing and analysis.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
@@ -8615,6 +9641,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PERF-05 — Add caching with invalidation.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8638,6 +9667,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PERF-06 — Evaluate detector parallelism.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
@@ -8663,6 +9695,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PERF-07 — Handle large repositories.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8686,6 +9721,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PERF-08 — Add configurable limits.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
@@ -8711,6 +9749,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PERF-09 — Define graceful degradation.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8734,6 +9775,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PERF-10 — Detect performance regressions.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
@@ -8759,6 +9803,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## PERF-11 — Create large-repository benchmark.
 
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8782,6 +9829,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## PERF-12 — Document tradeoffs.
+
+**SDD conformance:** SDD Section 7; SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P2
 **Prerequisites:** STAB-09 baseline and profiling evidence; optimize only measured bottlenecks.
@@ -8807,6 +9857,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## UX-01 — Executive summary.
 
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8830,6 +9883,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## UX-02 — Sort by priority/risk.
+
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
@@ -8855,6 +9911,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## UX-03 — Filter by severity.
 
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8878,6 +9937,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## UX-04 — Filter by CWE/OWASP.
+
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
@@ -8903,6 +9965,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## UX-05 — Filter by file/language/confidence.
 
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8926,6 +9991,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## UX-06 — Inspect evidence and traces.
+
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
@@ -8951,6 +10019,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## UX-07 — Inspect correlation rationale.
 
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -8974,6 +10045,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## UX-08 — Compare analysis runs.
+
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
@@ -8999,6 +10073,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## UX-09 — Identify new findings.
 
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -9022,6 +10099,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## UX-10 — Identify resolved findings.
+
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
@@ -9047,6 +10127,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## UX-11 — Show risk trends.
 
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -9070,6 +10153,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## UX-12 — Export filtered findings.
+
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
@@ -9095,6 +10181,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 ## UX-13 — Improve report navigation.
 
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
+
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
 **Autonomy rule:** Resolve implementation choices through repository inspection, existing conventions, tests, and the product vision. Do not ask the user unless the decision meets the escalation criteria in the autonomous execution rules.
@@ -9118,6 +10207,9 @@ Each plan section now includes an execution priority and prerequisite guidance. 
 
 
 ## UX-14 — Keep explanations actionable.
+
+**SDD conformance:** SDD Sections 6, 7; SDD-FR-12, SDD-FR-18.
+**Required alignment check:** Inspect current code/tests and map current behavior → task delta → target requirement. After implementation, validate conformance with test evidence and update SDD status/traceability if behavior changes.
 
 **Execution priority:** P3
 **Prerequisites:** REP contracts and finding/risk metadata; implement on top of stable report data.
