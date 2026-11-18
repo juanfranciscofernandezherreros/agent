@@ -1,5 +1,7 @@
 # MiniAgent — Execution Plan and Progress Tracker
 
+**Per-task implementation plans:** `docs/MINAGENT_BACKLOG_TASK_PLANS.md` contains a plan section for every product backlog item. Claude must read and follow the matching plan before implementing a task.
+
 This file turns the product backlog into an ordered implementation plan for Claude Code. Update statuses and validation evidence as work is completed.
 
 **Status legend:** TODO · IN_PROGRESS · BLOCKED · DONE · DEFERRED  
