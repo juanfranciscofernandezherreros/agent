@@ -332,7 +332,7 @@ def export_selected_bug_reports(group_id: str, payload: BugReportExportRequest):
         service_slug = str(repository.get("artifact_dir", "")).split("/")[-1]
         for index in selection.finding_indexes:
             finding = findings[index]
-            action = TASKS.get(finding.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")
+            action = TASKS.get(finding.get("code"), finding.get("fix_suggestion") or "Revisar el hallazgo y añadir una prueba de regresión.")
             tasks.append({
                 "id": f"{service_slug}-{index + 1}",
                 "repository": repository.get("name", "microservicio"),
