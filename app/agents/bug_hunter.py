@@ -36,11 +36,19 @@ class BugHunterAgent(LLMAgent):
         if root is None:
             return []
         prioritized: list[str] = []
+        target_lines: dict[str, set[int]] = {}
         for section in ("operations", "business_rules", "validations", "error_handling", "state_changes"):
             for item in _as_list(context.results.get("functional_analysis", {}).get(section)):
                 file = item.get("file")
                 if file:
-                    prioritized.append(str(file))
+                    rel = str(file)
+                    prioritized.append(rel)
+                    line = item.get("start_line") or item.get("line")
+                    if isinstance(line, int) and line > 0:
+                        target_lines.setdefault(rel, set()).add(line)
+                    end = item.get("end_line")
+                    if isinstance(line, int) and isinstance(end, int) and end >= line:
+                        target_lines[rel].add(end)
         for section in ("classes", "methods", "spring_endpoints", "kafka_listeners", "kafka_producers"):
             for item in _as_list(context.results.get("java_analysis", {}).get(section)):
                 file = item.get("file")
@@ -48,7 +56,11 @@ class BugHunterAgent(LLMAgent):
                     prioritized.append(str(file))
         for item in _as_list(context.results.get("quality_analysis", {}).get("bug_candidates")):
             if item.get("file"):
-                prioritized.append(str(item["file"]))
+                rel = str(item["file"])
+                prioritized.append(rel)
+                line = item.get("line")
+                if isinstance(line, int) and line > 0:
+                    target_lines.setdefault(rel, set()).add(line)
 
         ranked: list[tuple[int, str]] = []
         seen = set()
@@ -91,7 +103,15 @@ class BugHunterAgent(LLMAgent):
                 lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
             except (OSError, ValueError):
                 continue
-            text = "\n".join(f"{n}: {line[:240]}" for n, line in enumerate(lines, 1))
+            centers = sorted(target_lines.get(rel, set()))
+            if centers:
+                selected = []
+                for center in centers[:8]:
+                    start, end = max(1, center - 18), min(len(lines), center + 30)
+                    selected.extend(f"{n}: {lines[n - 1][:240]}" for n in range(start, end + 1))
+                text = "\n".join(selected)
+            else:
+                text = "\n".join(f"{n}: {line[:240]}" for n, line in enumerate(lines[:45], 1))
             remaining = self.max_total_chars - total
             excerpt = _redact(text[:min(self.max_file_chars, remaining)])
             if not excerpt:
