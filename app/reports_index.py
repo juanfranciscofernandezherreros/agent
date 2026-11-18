@@ -17,7 +17,8 @@ from urllib.parse import quote
 GLOBAL_DOCS = (("index.html", "Índice del análisis"), ("analysis.html", "Informe global"),
                ("activity.html", "Histórico de Git"), ("agents.html", "Informe multiagente"),
                ("bug-reports/index.html", "Posibles bugs"))
-SERVICE_DOCS = (("analysis.html", "Ficha técnica"), ("activity.html", "Histórico de Git"), ("agents.html", "Informe multiagente"))
+SERVICE_DOCS = (("analysis.html", "Ficha técnica"), ("possible-bugs.json", "Posibles bugs (JSON)"),
+                ("activity.html", "Histórico de Git"), ("agents.html", "Informe multiagente"))
 
 
 def _e(value) -> str:
