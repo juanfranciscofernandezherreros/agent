@@ -207,3 +207,7 @@ python -m venv .venv
 Las pruebas no necesitan red, ni GitLab, ni claves de ningún proveedor: usan repositorios de ejemplo y respuestas simuladas. Eso significa que la integración con un GitLab real y con cada proveedor LLM depende de tu entorno; la forma de comprobarla es ejecutar un análisis y, para el LLM, `python -m app.llm --test`.
 
 Si algo falla al lanzar, el mensaje aparece en la ventana y el detalle de la API queda en `logs/api.stderr.log`.
+
+## Desarrollo autónomo con Claude Code
+
+Para arrancar o reanudar la implementación del backlog con Claude Code, consulta [`docs/CLAUDE_CODE_STARTUP.md`](docs/CLAUDE_CODE_STARTUP.md). Incluye cómo clonar/actualizar el repositorio, iniciar Claude Code, el prompt inicial de ejecución autónoma y cómo reanudar desde el checkpoint.
