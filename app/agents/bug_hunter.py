@@ -180,7 +180,7 @@ class BugHunterAgent(LLMAgent):
             impact = str(item.get("impact", "")).strip()[:800]
             fix = str(item.get("fix_suggestion", "")).strip()[:1200]
             primary = evidence[0]
-            candidate = {\n                "bug_type": str(item.get("bug_type", "logic_or_runtime"))[:100],
+            candidate = {                "bug_type": str(item.get("bug_type", "logic_or_runtime"))[:100],
                 "code": f"BH{len(added) + 1:03d}",
                 "severity": severity_map[severity],
                 "title": title,
