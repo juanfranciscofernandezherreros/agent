@@ -53,7 +53,11 @@ class BugHunterAgent(LLMAgent):
             for item in _as_list(context.results.get("java_analysis", {}).get(section)):
                 file = item.get("file")
                 if file:
-                    prioritized.append(str(file))
+                    rel = str(file)
+                    prioritized.append(rel)
+                    line = item.get("line") or item.get("start_line")
+                    if isinstance(line, int) and line > 0:
+                        target_lines.setdefault(rel, set()).add(line)
         for item in _as_list(context.results.get("quality_analysis", {}).get("bug_candidates")):
             if item.get("file"):
                 rel = str(item["file"])
