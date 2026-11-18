@@ -103,3 +103,6 @@ Read `docs/MINAGENT_SDD.md` before executing backlog work. Treat it as the syste
 
 ## Token-efficient work
 Follow `docs/MINAGENT_TOKEN_EFFICIENCY.md` for context/token optimization. Use targeted file and symbol inspection, concise command output, small diffs, proportional validation, compact checkpoints, and context resets between unrelated tasks. Never trade away correctness, security, SDD alignment, tests, or evidence to save tokens.
+
+## Starting and resuming Claude Code
+For the exact clone/start prompt/resume procedure, follow `docs/CLAUDE_CODE_STARTUP.md`. Checkpoints are not approval gates; continue autonomously unless a genuine blocker or human-required decision occurs.
