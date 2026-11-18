@@ -117,6 +117,7 @@ def build_analysis_html(name: str, analysis: dict) -> str:
         return html.escape(str(value if value is not None else ""), quote=True)
     deep = analysis.get("deep_analysis", {})
     functional = analysis.get("functional_analysis", {})
+    quality = analysis.get("quality_analysis", {})
     sections = []
     sections.append("<h1>Análisis del microservicio: " + esc(name) + "</h1>")
     sections.append("<p>Informe generado mediante análisis estático. No implica validación del comportamiento en ejecución.</p>")
