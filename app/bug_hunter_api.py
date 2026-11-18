@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 from .database import connect
 from .bug_hunter_provisioning import clone_repository, validate_github_url
 from .bug_hunter_repository_intelligence import scan_repository
+from .bug_hunter_exploration import read_repository_file, search_repository, find_symbol
 
 router = APIRouter(prefix="/api/bug-hunters", tags=["Bug Hunter"])
 
@@ -91,3 +92,46 @@ def get_repository_map(agent_id: str):
     if not mapping:
         raise HTTPException(409, "El mapa del repositorio todavía no está disponible.")
     return mapping
+
+
+
+def _repository_root(agent_id: str) -> Path:
+    hunter = get_bug_hunter(agent_id)
+    repository = hunter.get("repository") or {}
+    source_path = repository.get("source_path")
+    if not source_path:
+        raise HTTPException(409, "El repositorio todavía no está clonado.")
+    source = Path(source_path).resolve()
+    expected = Path(repository.get("workspace", "")).resolve() / "repository"
+    if source != expected or not source.is_dir():
+        raise HTTPException(409, "El workspace del repositorio no es válido.")
+    return source
+
+
+@router.get("/{agent_id}/file")
+def read_hunter_file(agent_id: str, path: str):
+    root = _repository_root(agent_id)
+    try:
+        return read_repository_file(root, path)
+    except FileNotFoundError:
+        raise HTTPException(404, "Archivo no encontrado.")
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+
+
+@router.get("/{agent_id}/search")
+def search_hunter_repository(agent_id: str, q: str, case_sensitive: bool = False):
+    root = _repository_root(agent_id)
+    try:
+        return {"matches": search_repository(root, q, case_sensitive=case_sensitive)}
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+
+
+@router.get("/{agent_id}/symbols/{symbol}")
+def find_hunter_symbol(agent_id: str, symbol: str):
+    root = _repository_root(agent_id)
+    try:
+        return {"matches": find_symbol(root, symbol)}
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
