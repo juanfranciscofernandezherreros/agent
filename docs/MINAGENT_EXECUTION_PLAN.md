@@ -122,3 +122,20 @@ Checkpoints are **not stopping points** and never require user confirmation:
 4. Append a concise progress note and next task to the running log.
 5. Immediately continue with the next highest-priority eligible task.
 Pause only for genuine human-required blockers, safety/permission issues, irreversible actions, or session/runtime limits. If interrupted, leave a precise resume point.
+
+## Autonomous prioritization policy
+
+Claude Code should use the task-level priority and prerequisite annotations in `MINAGENT_BACKLOG_TASK_PLANS.md` and this dependency-aware order as the default execution sequence. This is a default, not a rigid serial queue: independent ready tasks can be grouped or parallelized, and blocked tasks must not stop unrelated work.
+
+1. **P0 stabilization and safety:** STAB-01..10; address actual baseline blockers before feature work.
+2. **P0 shared contracts:** CORE-01..14, preserving compatibility and migrating incrementally.
+3. **P0 data-flow primitives:** FLOW-01..17, with tested, explicit partial coverage.
+4. **P0 SQLi MVP:** SQLI-01..27, using the contracts and flow primitives; bounded detection may proceed where a flow prerequisite is not yet available.
+5. **P0 benchmark and safety gates:** TESTSEC and AGSEC tasks that enable safe regression measurement must be brought forward when their prerequisites are ready; safety rules apply from the beginning.
+6. **P1 correlation, confidence, risk, detector framework, knowledge base, and report contracts:** COR, CONF, RISK, DET, OWASP, REP. Resolve contract dependencies before consumers; avoid broad rewrites.
+7. **P1 CI gates:** CI tasks that validate stable tests, contracts, and benchmark behavior should be enabled as soon as checks are reliable; don't add flaky gates.
+8. **P2 detector expansion:** XSS, CMD, PATH, SSRF; reuse shared Source/Sink, evidence, flow, detector, and report abstractions. Prioritize each detector's prerequisite-supported slice.
+9. **P2 breadth and scale:** LANG, EXT, PLAN, OBS, PERF in dependency order; do not optimize without profiling evidence or claim unsupported language coverage.
+10. **P3 UX:** UX tasks after stable finding/report data and basic usability needs are met.
+
+For each task, Claude must refine the epic-level prerequisites into exact code-level dependencies after inspecting the current repository. The task plan must record the affected modules and symbols, implementation choices, edge cases, tests, validation commands/results, and any unresolved limitations. Routine choices are not user checkpoints.
