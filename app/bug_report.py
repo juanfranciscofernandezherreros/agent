@@ -88,7 +88,15 @@ def _bug_export_script():
           ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
         const taskRows = tasks.map((x) => "<tr>" + [x.id,x.repository,x.title,x.file + ":" + x.line,x.severity,x.recommended_action].map((v) => "<td>"+esc(v)+"</td>").join("") + "</tr>").join("");
         const bugRows = bugs.map((x) => "<tr>" + [x.repository,x.code,x.title,x.description,x.excerpt].map((v) => "<td>"+esc(v)+"</td>").join("") + "</tr>").join("");
-        htmlContent = "<!doctype html><html lang='es'><meta charset='utf-8'><title>Exportación de tareas y bugs</title><style>body{font:15px system-ui;margin:30px;color:#172033}table{width:100%;border-collapse:collapse;margin-bottom:24px}td,th{padding:8px;border:1px solid #ddd;text-align:left;vertical-align:top}th{background:#edf1f6}</style><h1>Tareas y posibles bugs</h1><p>Conjunto: "+esc(groupName)+" · Microservicios: "+esc(exportData.repository)+"</p><h2>Tareas pendientes</h2><table><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr>"+taskRows+"</table><h2>Posibles bugs</h2><table><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr>"+bugRows+"</table></html>";
+        htmlContent = "<!doctype html><html lang='es'><meta charset='utf-8'><title>Exportación de tareas y bugs</title><style>
+/* AGENT unified report theme */
+:root{color-scheme:dark;--bg:#080d18;--panel:#101827;--panel2:#141f31;--border:#26344a;--text:#e8eef8;--muted:#95a5bd;--accent:#65d6c4;--blue:#7ca8ff}
+html,body{background:var(--bg)!important;color:var(--text)!important}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif!important}
+header{background:linear-gradient(120deg,#0b1222,#142a45,#123a42)!important;color:var(--text)!important;border-bottom:1px solid var(--border)}
+main{max-width:1240px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;border-radius:14px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)}
+section.latest{border-color:#2c7778!important}.metric,.kpi,.score-card{background:var(--panel2)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}
+a{color:var(--blue)!important}a:hover{color:var(--accent)!important}button{border-radius:9px!important}pre,code{background:#070c14!important;color:#d8e6ff!important;border:1px solid #26344a}table th{background:#172337!important;color:#aebed3!important}td,th{border-color:var(--border)!important}input,select,textarea{background:#0b1322!important;color:var(--text)!important;border-color:var(--border)!important}
+body{font:15px system-ui;margin:30px;color:#172033}table{width:100%;border-collapse:collapse;margin-bottom:24px}td,th{padding:8px;border:1px solid #ddd;text-align:left;vertical-align:top}th{background:#edf1f6}</style><h1>Tareas y posibles bugs</h1><p>Conjunto: "+esc(groupName)+" · Microservicios: "+esc(exportData.repository)+"</p><h2>Tareas pendientes</h2><table><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr>"+taskRows+"</table><h2>Posibles bugs</h2><table><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr>"+bugRows+"</table></html>";
         const safeId = String(groupId).slice(0, 8);
         jsonFilename = "tareas-y-bugs-" + safeId + ".json";
         htmlFilename = "informe-tareas-y-bugs-" + safeId + ".html";
@@ -143,6 +151,14 @@ def build_bug_report_html(repository, group_name, quality, service_slug=None, gr
 """
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Posibles bugs - """ + _e(repository) + """</title><style>
+/* AGENT unified report theme */
+:root{color-scheme:dark;--bg:#080d18;--panel:#101827;--panel2:#141f31;--border:#26344a;--text:#e8eef8;--muted:#95a5bd;--accent:#65d6c4;--blue:#7ca8ff}
+html,body{background:var(--bg)!important;color:var(--text)!important}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif!important}
+header{background:linear-gradient(120deg,#0b1222,#142a45,#123a42)!important;color:var(--text)!important;border-bottom:1px solid var(--border)}
+main{max-width:1240px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;border-radius:14px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)}
+section.latest{border-color:#2c7778!important}.metric,.kpi,.score-card{background:var(--panel2)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}
+a{color:var(--blue)!important}a:hover{color:var(--accent)!important}button{border-radius:9px!important}pre,code{background:#070c14!important;color:#d8e6ff!important;border:1px solid #26344a}table th{background:#172337!important;color:#aebed3!important}td,th{border-color:var(--border)!important}input,select,textarea{background:#0b1322!important;color:var(--text)!important;border-color:var(--border)!important}
+
 *{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#172033;font:15px/1.55 system-ui}
 header{background:linear-gradient(120deg,#10254c,#2457c5);color:white;padding:32px max(20px,calc((100% - 1000px)/2))}
 main{max-width:1000px;margin:25px auto;padding:0 18px}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px}
@@ -187,6 +203,14 @@ def build_bug_export_html(export_data):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Exportación de tareas y bugs</title>
 <style>
+/* AGENT unified report theme */
+:root{color-scheme:dark;--bg:#080d18;--panel:#101827;--panel2:#141f31;--border:#26344a;--text:#e8eef8;--muted:#95a5bd;--accent:#65d6c4;--blue:#7ca8ff}
+html,body{background:var(--bg)!important;color:var(--text)!important}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif!important}
+header{background:linear-gradient(120deg,#0b1222,#142a45,#123a42)!important;color:var(--text)!important;border-bottom:1px solid var(--border)}
+main{max-width:1240px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;border-radius:14px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)}
+section.latest{border-color:#2c7778!important}.metric,.kpi,.score-card{background:var(--panel2)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}
+a{color:var(--blue)!important}a:hover{color:var(--accent)!important}button{border-radius:9px!important}pre,code{background:#070c14!important;color:#d8e6ff!important;border:1px solid #26344a}table th{background:#172337!important;color:#aebed3!important}td,th{border-color:var(--border)!important}input,select,textarea{background:#0b1322!important;color:var(--text)!important;border-color:var(--border)!important}
+
 body{font:15px/1.5 system-ui;margin:0;background:#f4f6fa;color:#172033}
 main{max-width:1100px;margin:32px auto;padding:0 18px}
 section{background:white;border:1px solid #dce3ed;border-radius:12px;padding:20px;margin:16px 0}
@@ -250,6 +274,14 @@ def build_bug_reports_index(group_name, reports, repositories=None, group_id=Non
 <div class="finding-list">""" + "".join(selectable) + """</div></section>"""
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informes individuales de posibles bugs</title>
 <style>
+/* AGENT unified report theme */
+:root{color-scheme:dark;--bg:#080d18;--panel:#101827;--panel2:#141f31;--border:#26344a;--text:#e8eef8;--muted:#95a5bd;--accent:#65d6c4;--blue:#7ca8ff}
+html,body{background:var(--bg)!important;color:var(--text)!important}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif!important}
+header{background:linear-gradient(120deg,#0b1222,#142a45,#123a42)!important;color:var(--text)!important;border-bottom:1px solid var(--border)}
+main{max-width:1240px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;border-radius:14px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)}
+section.latest{border-color:#2c7778!important}.metric,.kpi,.score-card{background:var(--panel2)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}
+a{color:var(--blue)!important}a:hover{color:var(--accent)!important}button{border-radius:9px!important}pre,code{background:#070c14!important;color:#d8e6ff!important;border:1px solid #26344a}table th{background:#172337!important;color:#aebed3!important}td,th{border-color:var(--border)!important}input,select,textarea{background:#0b1322!important;color:var(--text)!important;border-color:var(--border)!important}
+
 body{font:16px/1.5 system-ui;margin:0;background:#f4f6fa;color:#172033}
 main{max-width:950px;margin:40px auto;padding:0 18px}
 section{background:white;border:1px solid #dce3ed;border-radius:14px;padding:24px;margin:16px 0}
