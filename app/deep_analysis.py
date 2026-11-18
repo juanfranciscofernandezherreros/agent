@@ -3,7 +3,7 @@ import ast
 import json
 import re
 
-SKIP = {".git", ".venv", "venv", "node_modules", "__pycache__", "dist", "build", "vendor"}
+SKIP = {".git", ".venv", "venv", "node_modules", "__pycache__", "dist", "build", "vendor", "reports", "workspaces", "logs"}
 TEXT = {".py", ".js", ".jsx", ".ts", ".tsx", ".java", ".go", ".rs", ".cs", ".php", ".rb", ".kt", ".swift", ".sql", ".yaml", ".yml", ".json", ".toml", ".xml", ".md", ".txt", ".ini", ".cfg", ".sh", ".ps1", ".tf", ".graphql", ".proto"}
 ROUTES = [
     ("FastAPI", re.compile(r"@(app|router)\.(get|post|put|patch|delete)\s*\(\s*['\"]([^'\"]+)")),

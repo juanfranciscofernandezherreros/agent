@@ -1,0 +1,75 @@
+"""CLI for analysing a local source tree without cloning or modifying it."""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+from pathlib import Path
+
+from .agents import AnalysisContext
+from .communication import SharedStore
+from .supervisor import default_supervisor
+from .deep_analysis import build_analysis_markdown
+from .functional_analysis import build_analysis_html
+
+
+def analyze_local(source: Path, output: Path, name: str) -> dict:
+    source = source.expanduser().resolve()
+    if not source.is_dir():
+        raise ValueError(f"LocalPath no es un directorio: {source}")
+    output.mkdir(parents=True, exist_ok=True)
+    run_id = re.sub(r"[^A-Za-z0-9_-]", "-", name)[:80] or "local-analysis"
+    context = AnalysisContext(root=source, repository=name, store=SharedStore(output / "agent-runs", run_id=run_id))
+    default_supervisor().run(context, only=[
+        "inventory", "deep_analysis", "functional_analysis", "java_analysis",
+        "quality_analysis", "llm_bug_hunter", "llm_bug_review",
+        "llm_functional_interpretation", "llm_architecture_explanation",
+    ])
+    inventory = context.results["inventory"]
+    deep = context.results["deep_analysis"]
+    functional = context.results["functional_analysis"]
+    java = context.results["java_analysis"]
+    quality = context.results.get("quality_analysis", {})
+    analysis = {
+        "analysis_version": "6.5",
+        "functional_analysis": functional,
+        "project_name": name,
+        "source_path": str(source),
+        "repository_inventory": inventory,
+        "deep_analysis": deep,
+        "java_analysis": java,
+        "quality_analysis": quality,
+        "agent_insights": {k: v for k, v in context.results.items() if k not in (
+            "inventory", "deep_analysis", "functional_analysis", "java_analysis", "quality_analysis")},
+        "completion_status": "STATIC_ANALYSIS_COMPLETED",
+        "runtime_validation": "NOT_PERFORMED",
+    }
+    (output / "analysis.json").write_text(json.dumps(analysis, indent=2, ensure_ascii=False), encoding="utf-8")
+    report = build_analysis_markdown(name, inventory, deep)
+    report += "\n\n## Análisis funcional\n" + json.dumps(functional.get("summary", {}), ensure_ascii=False, indent=2)
+    report += "\n\n## Análisis Java / Spring\n" + json.dumps(java.get("summary", {}), ensure_ascii=False, indent=2)
+    report += "\n\n## Posibles bugs\n"
+    for finding in quality.get("bug_candidates", []):
+        report += f"- **{finding.get('severity', 'low').upper()} · {finding.get('title', 'Posible bug')}** — {finding.get('file', 'N/D')}:{finding.get('line', 'N/D')}\n  {finding.get('description', '')}\n"
+    (output / "analysis.md").write_text(report, encoding="utf-8")
+    (output / "analysis.html").write_text(build_analysis_html(name, analysis), encoding="utf-8")
+    return analysis
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Static analysis of a local repository.")
+    parser.add_argument("--local-path", required=True, help="Path to source repository; it is read-only.")
+    parser.add_argument("--output", required=True, help="Directory where reports are written.")
+    parser.add_argument("--name", default="", help="Repository label (optional)")
+    args = parser.parse_args()
+    source = Path(args.local_path)
+    label = args.name.strip() or source.resolve().name
+    result = analyze_local(source, Path(args.output), label)
+    print(f"Análisis terminado: {result['completion_status']}")
+    print(f"Informes: {Path(args.output).resolve()}")
+    print(f"HTML: {Path(args.output, 'analysis.html').resolve()}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -78,7 +78,9 @@ def save(item: dict, commit: str | None, results: dict, output_dir=None, report_
         tmp.replace(folder / "results.json")
         meta = {**_signature(commit), "repository": item["name"], "report_files": names,
                 "analyzed_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
-        (folder / "meta.json").write_text(json.dumps(meta, ensure_ascii=False), encoding="utf-8")
+        meta_tmp = folder / "meta.json.tmp"
+        meta_tmp.write_text(json.dumps(meta, ensure_ascii=False), encoding="utf-8")
+        meta_tmp.replace(folder / "meta.json")
     except OSError:
         try:
             (folder / "meta.json").unlink()  # caché incompleta: se descarta

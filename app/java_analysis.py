@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 
-SKIP = {".git", ".venv", "venv", "node_modules", "target", "build", "dist", "vendor"}
+SKIP = {".git", ".venv", "venv", "node_modules", "target", "build", "dist", "vendor", "reports", "workspaces", "logs"}
 ANNOTATIONS = re.compile(r'@(GetMapping|PostMapping|PutMapping|PatchMapping|DeleteMapping|RequestMapping|KafkaListener|KafkaHandler|Scheduled)\s*(?:\(([^)]*)\))?', re.S)
 CLASS = re.compile(r'\b(class|interface|enum|record)\s+([A-Za-z_$][\w$]*)')
 METHOD = re.compile(r'(?m)^\s*(?:(?:public|protected|private|static|final|synchronized|abstract|native|default)\s+)+[\w<>,.?\[\] @]+\s+([A-Za-z_$][\w$]*)\s*\(([^;{}]*)\)\s*(?:throws\s+[\w., ]+)?\s*\{')
