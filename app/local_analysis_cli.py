@@ -80,10 +80,16 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
             "Los resultados del LLM son inferencias y pueden contener falsos positivos.",
         ],
     }
-    (output / "possible-bugs.json").write_text(
-        json.dumps(bug_export, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
-    analysis["possible_bugs_export"] = "possible-bugs.json"
+    from datetime import datetime
+    export_timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    bug_export["generated_at"] = datetime.now().astimezone().isoformat(timespec="seconds")
+    timestamped_name = f"possible-bugs-{export_timestamp}.json"
+    serialized_bugs = json.dumps(bug_export, indent=2, ensure_ascii=False)
+    (output / timestamped_name).write_text(serialized_bugs, encoding="utf-8")
+    # Alias estable para compatibilidad con scripts existentes.
+    (output / "possible-bugs.json").write_text(serialized_bugs, encoding="utf-8")
+    analysis["possible_bugs_export"] = timestamped_name
+    analysis["possible_bugs_export_latest"] = "possible-bugs.json"
     (output / "analysis.json").write_text(json.dumps(analysis, indent=2, ensure_ascii=False), encoding="utf-8")
     report = build_analysis_markdown(name, inventory, deep)
     report += "\n\n## Análisis funcional\n" + json.dumps(functional.get("summary", {}), ensure_ascii=False, indent=2)
