@@ -6,6 +6,7 @@ repositories; it never runs project scripts, hooks, submodules, or tests.
 from __future__ import annotations
 
 import re
+import os
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -85,7 +86,7 @@ def clone_repository(agent_id: str, github_url: str, branch: str | None = None) 
     try:
         subprocess.run(
             cmd, check=True, capture_output=True, text=True, timeout=MAX_CLONE_SECONDS,
-            env={"PATH": __import__("os").environ.get("PATH", ""), "GIT_TERMINAL_PROMPT": "0"},
+            env={**os.environ, "GIT_TERMINAL_PROMPT": "0"},
         )
         commit = subprocess.run(
             ["git", "-C", str(source), "rev-parse", "HEAD"],
