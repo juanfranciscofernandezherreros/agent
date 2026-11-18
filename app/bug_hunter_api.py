@@ -109,6 +109,9 @@ def get_possible_bugs(agent_id: str):
         item.pop("scope_json", None)
         item.pop("evidence_json", None)
         investigations.append(item)
+    for item in investigations:
+        item["kind"] = "investigation_candidate"
+        item["confidence"] = "unverified"
     return {
         "schema_version": "1.0",
         "bug_hunter_id": agent_id,
