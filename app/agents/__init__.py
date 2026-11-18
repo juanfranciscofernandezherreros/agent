@@ -6,7 +6,8 @@ from .functional import FunctionalAnalysisAgent
 from .java import JavaAnalysisAgent
 from .quality import QualityAnalysisAgent
 from .integration import IntegrationAnalysisAgent
-from .bug_hunter import BugHunterAgent\nfrom .llm_agents import (
+from .bug_hunter import BugHunterAgent
+from .llm_agents import (
     FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
     EvidenceCorrelationAgent,
 )
