@@ -44,15 +44,16 @@ def run_analysis(project_id: str):
         source=clone_repository(project_id,git_url)
         with connect() as con: con.execute("UPDATE projects SET status='ANALYZING' WHERE id=?",(project_id,))
         context = AnalysisContext(root=source, repository=name, store=SharedStore(WORKSPACES_DIR/project_id/"agent-runs", run_id=project_id))
-        # El análisis individual no incluye calidad: se pide al supervisor solo lo necesario
-        # (los agentes LLM se omiten solos si no están activados).
+        # El análisis individual incluye calidad y Bug Hunter; los agentes LLM se omiten
+        # automáticamente cuando no están configurados.
         default_supervisor().run(context, only=["inventory", "deep_analysis", "functional_analysis", "java_analysis",
+            "quality_analysis", "llm_bug_hunter", "llm_bug_review",
             "llm_functional_interpretation", "llm_architecture_explanation"])
         inventory = context.results["inventory"]; deep = context.results["deep_analysis"]
         functional = context.results["functional_analysis"]; java = context.results["java_analysis"]
         analysis={"analysis_version":"5.0","functional_analysis":functional,"project_name":name,
           "source_path":str(source),"repository_inventory":inventory,"deep_analysis":deep,
-          "java_analysis":java,
+          "java_analysis":java,"quality_analysis":context.results.get("quality_analysis",{}),
           "agent_insights":{k:v for k,v in context.results.items() if k not in ("inventory","deep_analysis","functional_analysis","java_analysis")},
           "completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
         folder=WORKSPACES_DIR/project_id; folder.mkdir(parents=True,exist_ok=True)
@@ -60,6 +61,10 @@ def run_analysis(project_id: str):
         report=build_analysis_markdown(name,inventory,deep)
         report+="\n## Análisis funcional\n"+json.dumps(functional.get("summary",{}),ensure_ascii=False,indent=2)
         report+="\n\n## Análisis Java / Spring\n"+json.dumps(java.get("summary",{}),ensure_ascii=False,indent=2)
+        quality=context.results.get("quality_analysis",{})
+        report+="\n\n## Posibles bugs\n"
+        for finding in quality.get("bug_candidates",[]):
+            report+=f"- **{finding.get('severity','low').upper()} · {finding.get('title','Posible bug')}** — {finding.get('file','N/D')}:{finding.get('line','N/D')}\n  {finding.get('description','')}\n"
         (folder/"analysis.md").write_text(report,encoding="utf-8")
         (folder/"analysis.html").write_text(build_analysis_html(name,analysis),encoding="utf-8")
         with connect() as con:

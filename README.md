@@ -90,7 +90,7 @@ Los resultados de unos análisis se comparan con los de otros y las discrepancia
 
 ## Agentes LLM (opcional)
 
-Están desactivados por defecto y la herramienta es plenamente útil sin ellos. Al activarlos se añaden cuatro interpretaciones: qué hace funcionalmente cada servicio, una revisión de cada candidato a bug (bug probable, falso positivo o requiere revisión), una explicación de la arquitectura y los flujos de datos probables entre servicios.
+Están desactivados por defecto y la herramienta es plenamente útil sin ellos. Al activarlos se añaden análisis LLM: interpretación funcional, Bug Hunter (búsqueda de defectos adicionales con escenario y evidencia), revisión de candidatos heurísticos, explicación de arquitectura y correlación de flujos entre servicios.
 
 Funcionan sobre LangChain, así que el proveedor y el modelo se eligen en `.env` sin tocar código:
 
@@ -130,10 +130,10 @@ Cada análisis es un *agente*: un módulo con una única responsabilidad que dec
 | Análisis estático | `inventory`, `deep_analysis`, `functional_analysis`, `java_analysis`, `quality_analysis`, `integration_analysis` | No |
 | Actividad en Git | `activity_analysis`, `group_activity` | No |
 | Validación cruzada | `cross_validation`, `group_cross_validation` | No |
-| Interpretación | `llm_functional_interpretation`, `llm_bug_review`, `llm_architecture_explanation`, `llm_evidence_correlation` | Sí, opcional |
+| Interpretación y Bug Hunter | `llm_functional_interpretation`, `llm_bug_hunter`, `llm_bug_review`, `llm_architecture_explanation`, `llm_evidence_correlation` | Sí, opcional |
 | Documentación | `repository_report`, `group_report` | No |
 
-Conviene no sobreentender el término: salvo los cuatro de interpretación, los agentes son código determinista. El supervisor sigue un plan fijo y los agentes no dialogan entre ellos.
+Conviene no sobreentender el término: los agentes LLM son interpretativos y opcionales; el Bug Hunter añade candidatos basados en razonamiento del modelo, con evidencia validada contra archivos y líneas existentes. El supervisor sigue un plan fijo y los agentes no dialogan entre ellos.
 
 Si falla un agente obligatorio, ese repositorio se marca como fallido y el análisis continúa con los demás. Si falla o se omite uno opcional (LLM, actividad, validación), el repositorio se completa sin esa parte.
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from .agents import (
     AnalysisContext, InventoryAgent, DeepAnalysisAgent, FunctionalAnalysisAgent,
-    JavaAnalysisAgent, QualityAnalysisAgent, IntegrationAnalysisAgent,
+    JavaAnalysisAgent, QualityAnalysisAgent, IntegrationAnalysisAgent, BugHunterAgent,
     FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
     EvidenceCorrelationAgent, CrossValidationAgent, GroupCrossValidationAgent,
     RepositoryReportingAgent, GroupReportingAgent,
@@ -150,7 +150,7 @@ def default_supervisor(llm_client=None) -> Supervisor:
     return Supervisor([
         InventoryAgent(), DeepAnalysisAgent(), FunctionalAnalysisAgent(),
         JavaAnalysisAgent(), QualityAnalysisAgent(), IntegrationAnalysisAgent(),
-        FunctionalInterpretationAgent(llm_client), BugReviewAgent(llm_client),
+        BugHunterAgent(llm_client), FunctionalInterpretationAgent(llm_client), BugReviewAgent(llm_client),
         ArchitectureExplanationAgent(llm_client), EvidenceCorrelationAgent(llm_client),
         CrossValidationAgent(), GroupCrossValidationAgent(),
         ActivityAnalysisAgent(), GroupActivityAgent(),

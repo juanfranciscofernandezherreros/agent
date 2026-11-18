@@ -6,6 +6,7 @@ from .functional import FunctionalAnalysisAgent
 from .java import JavaAnalysisAgent
 from .quality import QualityAnalysisAgent
 from .integration import IntegrationAnalysisAgent
+from .bug_hunter import BugHunterAgent
 from .llm_agents import (
     FunctionalInterpretationAgent, BugReviewAgent, ArchitectureExplanationAgent,
     EvidenceCorrelationAgent,
@@ -17,7 +18,7 @@ from .activity import ActivityAnalysisAgent, GroupActivityAgent
 __all__ = [
     "AnalysisContext", "InventoryAgent", "DeepAnalysisAgent",
     "FunctionalAnalysisAgent", "JavaAnalysisAgent", "QualityAnalysisAgent",
-    "IntegrationAnalysisAgent", "FunctionalInterpretationAgent", "BugReviewAgent",
+    "IntegrationAnalysisAgent", "BugHunterAgent", "FunctionalInterpretationAgent", "BugReviewAgent",
     "ArchitectureExplanationAgent", "EvidenceCorrelationAgent",
     "CrossValidationAgent", "GroupCrossValidationAgent",
     "RepositoryReportingAgent", "GroupReportingAgent",

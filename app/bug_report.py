@@ -118,7 +118,7 @@ def build_bug_report_html(repository, group_name, quality, service_slug=None, gr
     counts = {s: sum(1 for x in findings if str(x.get("severity", "")).lower() == s) for s in ("high", "medium", "low")}
     cards = "".join(
         "<article class='finding " + _e(str(x.get("severity", "low")).lower()) + "'>"
-        + ("<label class='select-finding'><input class='bug-select' type='checkbox' value='" + str(index) + "' data-report='__REPORT_NAME__' data-repository='" + _e(repository) + "' data-service-slug='" + _e(service_slug or "") + "' data-finding='" + _e(__import__('json').dumps({**x, "recommended_action": TASKS.get(x.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")}, ensure_ascii=False)) + "'> Seleccionar para exportar</label>" if service_slug else "")
+        + ("<label class='select-finding'><input class='bug-select' type='checkbox' value='" + str(index) + "' data-report='__REPORT_NAME__' data-repository='" + _e(repository) + "' data-service-slug='" + _e(service_slug or "") + "' data-finding='" + _e(__import__('json').dumps({**x, "recommended_action": TASKS.get(x.get("code"), x.get("fix_suggestion") or "Revisar el hallazgo y añadir una prueba de regresión.")}, ensure_ascii=False)) + "'> Seleccionar para exportar</label>" if service_slug else "")
         + "<div class='top'><b>" + _e(str(x.get("severity", "low")).upper()) + "</b><span>" + _e(x.get("code", "N/D")) + "</span></div>"
         + "<h2>" + _e(x.get("title", "Posible bug")) + "</h2><p>" + _e(x.get("description", "")) + "</p>"
         + "<dl><dt>Archivo</dt><dd><code>" + _e(x.get("file", "N/D")) + "</code></dd>"
@@ -232,7 +232,7 @@ def build_bug_reports_index(group_name, reports, repositories=None, group_id=Non
             label = (
                 "<label class='finding-choice'><input class='bug-select' type='checkbox' data-report='" +
                 _e(report_name) + "' value='" + str(index) + "' data-repository='" + _e(repository.get("name", "Microservicio")) +
-                "' data-service-slug='" + _e(slug) + "' data-finding='" + _e(__import__('json').dumps({**finding, "recommended_action": TASKS.get(finding.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")}, ensure_ascii=False)) + "'><span><b>" +
+                "' data-service-slug='" + _e(slug) + "' data-finding='" + _e(__import__('json').dumps({**finding, "recommended_action": TASKS.get(finding.get("code"), finding.get("fix_suggestion") or "Revisar el hallazgo y añadir una prueba de regresión.")}, ensure_ascii=False)) + "'><span><b>" +
                 _e(str(finding.get("severity", "low")).upper()) + " · " + _e(repository.get("name", "Microservicio")) +
                 "</b><br>" + _e(finding.get("title", "Posible bug")) + "<small>" +
                 _e(finding.get("file", "N/D")) + ":" + _e(finding.get("line", "N/D")) +
