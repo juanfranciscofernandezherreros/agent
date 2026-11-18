@@ -85,6 +85,17 @@ def get_bug_hunter(agent_id: str):
 
 
 
+@router.get("/{agent_id}/possible-bugs/export.json")
+def export_possible_bugs_json(agent_id: str):
+    """Download candidates recorded by this autonomous Bug Hunter instance."""
+    from fastapi.responses import JSONResponse
+    payload = get_possible_bugs(agent_id)
+    return JSONResponse(
+        content=payload,
+        headers={"Content-Disposition": f'attachment; filename="bug-hunter-{agent_id}.json"'},
+    )
+
+
 @router.get("/{agent_id}/possible-bugs.json")
 def download_possible_bugs_json(agent_id: str):
     """Download the persisted investigation candidates as an attachment."""
