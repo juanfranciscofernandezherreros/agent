@@ -142,3 +142,6 @@ Claude Code should use the task-level priority and prerequisite annotations in `
 10. **P3 UX:** UX tasks after stable finding/report data and basic usability needs are met.
 
 For each task, Claude must refine the epic-level prerequisites into exact code-level dependencies after inspecting the current repository. The task plan must record the affected modules and symbols, implementation choices, edge cases, tests, validation commands/results, and any unresolved limitations. Routine choices are not user checkpoints.
+
+## Token/context optimization policy
+Read `docs/MINAGENT_TOKEN_EFFICIENCY.md`. Work task-first and inspect only relevant code/tests/docs; avoid repeated repository-wide exploration and verbose tool output. Make small cohesive diffs, run focused tests then expand based on risk, and keep durable checkpoints concise. Use lower-cost model/effort for routine work and escalate for complex security/architecture reasoning. Token savings must never skip acceptance criteria, tests, SDD conformance, safety, or evidence. Reset context between unrelated tasks; compact only when continuing the same task.
