@@ -100,3 +100,6 @@ Claude Code is expected to make progress without user hand-holding. For each bac
 ## SDD conformance is mandatory
 
 Read `docs/MINAGENT_SDD.md` before executing backlog work. Treat it as the system specification and alignment authority. For every task, map its scope to SDD requirement IDs/sections, inspect the actual current implementation (not just docs), state the current status and expected delta, and verify before/after conformance. If the capability already exists, prove it with code and tests instead of duplicating it. If the implementation, backlog, plan, and SDD disagree, document the conflict and reconcile it before affected changes. After implementation, run applicable tests, inspect the diff, record evidence and limitations, and update SDD current-state/gap/traceability when behavior or architecture changes. Never mark conformance as verified without test/code evidence.
+
+## Token-efficient work
+Follow `docs/MINAGENT_TOKEN_EFFICIENCY.md` for context/token optimization. Use targeted file and symbol inspection, concise command output, small diffs, proportional validation, compact checkpoints, and context resets between unrelated tasks. Never trade away correctness, security, SDD alignment, tests, or evidence to save tokens.
