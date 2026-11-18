@@ -70,6 +70,27 @@ def run_analysis(project_id: str):
           "agent_insights":{k:v for k,v in context.results.items() if k not in ("inventory","deep_analysis","functional_analysis","java_analysis")},
           "completion_status":"STATIC_ANALYSIS_COMPLETED","runtime_validation":"NOT_PERFORMED"}
         folder=WORKSPACES_DIR/project_id; folder.mkdir(parents=True,exist_ok=True)
+        quality=context.results.get("quality_analysis",{})
+        production_candidates=quality.get("bug_candidates",[])
+        test_candidates=quality.get("test_bug_candidates",[])
+        llm_findings=(context.results.get("llm_bug_hunter") or {}).get("findings",[])
+        unified_candidates=[]
+        for candidate in production_candidates:
+            unified_candidates.append({"source":candidate.get("source","static_quality"),"scope":"production",**candidate})
+        for candidate in test_candidates:
+            unified_candidates.append({"source":"static_quality","scope":"test",**candidate})
+        for candidate in llm_findings:
+            unified_candidates.append({"source":"llm_bug_hunter","scope":"production",**candidate})
+        bug_export={"schema_version":"1.0","project_name":name,"source_path":str(source),
+            "summary":{"production_candidates":len(production_candidates)+len(llm_findings),
+                       "test_candidates":len(test_candidates),"total_candidates":len(unified_candidates)},
+            "candidates":unified_candidates,"production_candidates":production_candidates,
+            "test_candidates":test_candidates,"llm_bug_hunter":context.results.get("llm_bug_hunter",{}),
+            "llm_bug_review":context.results.get("llm_bug_review",{}),
+            "runtime_validation":"NOT_PERFORMED",
+            "limitations":["Son candidatos estáticos, no defectos confirmados.","No se ejecutó el repositorio ni sus pruebas."]}
+        (folder/"possible-bugs.json").write_text(json.dumps(bug_export,indent=2,ensure_ascii=False),encoding="utf-8")
+        analysis["possible_bugs_export"]="possible-bugs.json"
         (folder/"analysis.json").write_text(json.dumps(analysis,indent=2,ensure_ascii=False),encoding="utf-8")
         report=build_analysis_markdown(name,inventory,deep)
         report+="\n## Análisis funcional\n"+json.dumps(functional.get("summary",{}),ensure_ascii=False,indent=2)
