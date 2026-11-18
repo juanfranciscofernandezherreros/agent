@@ -5,6 +5,8 @@ Findings are review candidates, not confirmed runtime defects.
 from pathlib import Path
 import re
 
+from app.security.owasp import OWASP_SQL_INJECTION
+
 SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__", "dist", "build", "target", "vendor", "reports", "workspaces", "logs"}
 SOURCE_SUFFIXES = {".py", ".java", ".js", ".jsx", ".ts", ".tsx", ".go", ".cs", ".php", ".rb"}
 
@@ -52,8 +54,11 @@ def _analyze_sql_injection(source: str, rel: str) -> list[dict]:
         "title": "Posible SQL Injection por SQL dinámico",
         "description": "Se detectó construcción dinámica de una sentencia SQL. Comprobar si los valores externos se incorporan sin parametrización y si existe un flujo alcanzable hasta la consulta.",
         "confidence": "heuristic_candidate",
-        "cwe": {"id": "CWE-89", "name": "Improper Neutralization of Special Elements used in an SQL Command"},
-        "owasp": {"framework": "OWASP Top 10 2025", "category": "A05", "name": "Injection"},
+        "cwe": dict(OWASP_SQL_INJECTION["cwe"]),
+        "owasp": dict(OWASP_SQL_INJECTION["owasp_top10"]),
+        "asvs_area": OWASP_SQL_INJECTION["asvs_area"],
+        "owasp_guidance": list(OWASP_SQL_INJECTION["guidance"]),
+        "references": list(OWASP_SQL_INJECTION["references"]),
         "occurrences": hits,
         "occurrence_count": len(hits),
         "file": hits[0]["file"], "line": hits[0]["line"], "excerpt": hits[0]["excerpt"],
