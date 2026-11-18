@@ -23,8 +23,8 @@ from .bug_report import TASKS, _sorted_findings, build_bug_export_html
 from .bug_hunter_api import router as bug_hunter_router
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION,
-app.include_router(bug_hunter_router)
  description="Orquestador de análisis estático profundo de uno o varios microservicios. No ejecuta el código analizado.")
+app.include_router(bug_hunter_router)
 
 @app.on_event("startup")
 def startup():
