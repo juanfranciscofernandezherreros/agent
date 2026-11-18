@@ -9,7 +9,7 @@ OWASP_SQL_INJECTION = {
         "version": "2025",
         "id": "A05:2025",
         "name": "Injection",
-        "url": "https://owasp.org/Top10/2025/A05_2025-Injection/",
+        "url": "https://top10.owasp.org/2025/A05_2025-Injection/",
     },
     "cwe": {
         "id": "CWE-89",
