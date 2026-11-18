@@ -26,13 +26,15 @@ WEIGHTS = {"high": 12, "medium": 5, "low": 2}
 
 
 def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dict:
-    findings = []
+    grouped = {}
     files_scanned = 0
     total_bytes = 0
+    test_hits = []
     for path in root.rglob("*"):
         if path.is_symlink() or not path.is_file() or path.suffix.lower() not in SOURCE_SUFFIXES:
             continue
-        if any(part in SKIP_DIRS for part in path.relative_to(root).parts):
+        parts = path.relative_to(root).parts
+        if any(part in SKIP_DIRS for part in parts):
             continue
         try:
             size = path.stat().st_size
@@ -44,24 +46,44 @@ def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dic
         except OSError:
             continue
         rel = path.relative_to(root).as_posix()
+        is_test = any(part.lower() in {"test", "tests", "testing", "spec", "specs"} for part in parts) or bool(re.search(r"(^|[/\\])test[^/\\]*|[^/\\]*test[^/\\]*$", rel, re.I))
+        bucket = "tests" if is_test else "production"
         for line_no, line in enumerate(source.splitlines(), 1):
             for code, severity, title, pattern, explanation in PATTERNS:
                 if pattern.search(line):
-                    findings.append({
-                        "code": code, "severity": severity, "title": title,
-                        "file": rel, "line": line_no,
-                        "excerpt": line.strip()[:300], "description": explanation,
-                        "confidence": "heuristic_candidate",
-                    })
+                    occurrence = {"file": rel, "line": line_no, "excerpt": line.strip()[:300]}
+                    if is_test:
+                        test_hits.append({"code": code, "severity": severity, "title": title, "description": explanation, "occurrences": [occurrence]})
+                    else:
+                        key = (code, title)
+                        if key not in grouped:
+                            grouped[key] = {"code": code, "severity": severity, "title": title, "description": explanation, "confidence": "heuristic_candidate", "occurrences": []}
+                        grouped[key]["occurrences"].append(occurrence)
                     break
 
+    findings = list(grouped.values())
+    for item in findings:
+        item["occurrence_count"] = len(item["occurrences"])
+        first = item["occurrences"][0]
+        item["file"], item["line"], item["excerpt"] = first["file"], first["line"], first["excerpt"]
     tests = deep.get("tests", {}).get("files", [])
     parse_issues = deep.get("parse_issues", [])
     security = deep.get("security", {})
     security_count = sum(len(v) for v in security.values() if isinstance(v, list))
     high = sum(x["severity"] == "high" for x in findings)
     medium = sum(x["severity"] == "medium" for x in findings)
-    # Transparent, capped deductions. A score is a prioritisation indicator, not a defect probability.
+    test_groups = {}
+    for hit in test_hits:
+        key = (hit["code"], hit["title"])
+        if key not in test_groups:
+            test_groups[key] = {**{k: hit[k] for k in ("code", "severity", "title", "description")}, "occurrences": []}
+        test_groups[key]["occurrences"].extend(hit["occurrences"])
+    test_candidates = list(test_groups.values())
+    for item in test_candidates:
+        item["occurrence_count"] = len(item["occurrences"])
+        first = item["occurrences"][0]
+        item["file"], item["line"], item["excerpt"] = first["file"], first["line"], first["excerpt"]
+    # Score production-pattern groups, not every repeated line occurrence.
     deductions = min(45, high * 12 + medium * 5)
     if not tests:
         deductions += 10
@@ -77,18 +99,21 @@ def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dic
         "score_factors": {
             "bug_candidates_high": high, "bug_candidates_medium": medium,
             "test_files_detected": len(tests), "parse_issues": len(parse_issues),
-            "security_indicators": security_count,
-            "deductions": min(80, deductions),
+            "security_indicators": security_count, "deductions": min(80, deductions),
         },
         "bug_candidates": findings[:2000],
+        "test_bug_candidates": test_candidates[:2000],
         "summary": {
-            "bug_candidates": len(findings), "high": high, "medium": medium,
-            "files_scanned": files_scanned, "test_files": len(tests),
+            "bug_candidates": len(findings), "bug_occurrences": sum(x["occurrence_count"] for x in findings),
+            "test_bug_groups": len(test_candidates), "test_bug_occurrences": sum(x["occurrence_count"] for x in test_candidates),
+            "high": high, "medium": medium, "files_scanned": files_scanned, "test_files": len(tests),
         },
         "limitations": [
+            "Las detecciones se agrupan por patrón/código: cada grupo muestra sus ubicaciones; el total de ocurrencias se conserva.",
+            "Los hallazgos de tests se separan de los candidatos encontrados en código de producción.",
+            "La puntuación cuenta grupos de patrones en producción, no cada repetición.",
             "La puntuación es un indicador heurístico de priorización, no una medida objetiva de calidad ni una probabilidad de defectos.",
-            "Los patrones detectan candidatos que requieren revisión humana; pueden producir falsos positivos y falsos negativos.",
-            "No se ejecutan compiladores, analizadores semánticos, pruebas ni servicios; no se confirma ningún bug en runtime.",
-            "La falta de tests detectados puede deberse a convenciones o ubicaciones no reconocidas."
+            "Los patrones pueden producir falsos positivos y falsos negativos; no se ejecutan compiladores, pruebas ni servicios.",
+            "La falta de tests detectados puede deberse a convenciones o ubicaciones no reconocidas.",
         ],
     }
