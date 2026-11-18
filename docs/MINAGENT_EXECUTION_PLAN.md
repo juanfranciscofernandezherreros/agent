@@ -112,10 +112,11 @@ This file turns the product backlog into an ordered implementation plan for Clau
 ## First task Claude should execute
 **M0-01 — Repository reconnaissance.** Inspect working tree, file structure, architecture, tests, CLI, current detector/report contracts, and existing documentation. Produce a concise findings note and identify the next concrete implementation task. Do not modify code during reconnaissance unless a documentation-only correction is explicitly required. Do not mark later tasks complete based on assumptions.
 
-## Checkpoint policy
-After each bounded task or logical group:
+## Autonomous checkpoint policy
+Checkpoints are **not stopping points** and never require user confirmation:
 1. Review the diff.
 2. Run relevant validation and record exact outcomes.
 3. Update statuses and evidence.
-4. Summarize completed work and remaining priorities.
-5. Stop at a stable checkpoint unless asked to continue.
+4. Append a concise progress note and next task to the running log.
+5. Immediately continue with the next highest-priority eligible task.
+Pause only for genuine human-required blockers, safety/permission issues, irreversible actions, or session/runtime limits. If interrupted, leave a precise resume point.
