@@ -737,3 +737,40 @@ The product vision is considered substantially achieved when MiniAgent can, on s
 MiniAgent aims to become a **static code quality and contextual security analysis platform** that understands repository structure, detects potential issues, follows data flows where supported, correlates evidence, estimates confidence and contextual risk, prioritizes what matters, and explains findings in a way developers can act on.
 
 This document is the product vision and backlog baseline. Implementation status must be tracked separately from the roadmap and updated as work is completed and validated.
+
+
+## 15. Claude Code execution protocol
+
+This backlog is intended to be executable by Claude Code. Read `CLAUDE.md` at the repository root before starting work; it is the mandatory execution contract.
+
+
+### Task execution rules
+1. Inspect the current repository, git status, existing architecture, tests, and documentation before changing anything.
+2. Do not assume roadmap items are implemented. Verify the code and tests first.
+3. Select the next task by dependency order and priority. Do not skip foundational work to implement downstream detectors.
+4. Work on one bounded task or cohesive slice at a time. Avoid broad rewrites unless the task explicitly requires them.
+5. Before coding, state the task ID, objective, files/components likely involved, dependencies, and acceptance criteria.
+6. Implement the smallest coherent change that satisfies the acceptance criteria.
+7. Add or update tests for behavior. Include negative/safe cases for security detectors.
+8. Run relevant tests, then broader tests when practical. Report commands and results accurately; never claim a test ran if it did not.
+9. Inspect the diff for correctness, unintended changes, security, compatibility, and scope creep.
+10. Update task status in the execution tracker only after validation. If blocked, record the blocker and do not mark complete.
+11. Preserve the analysis-only contract: MiniAgent must not execute or modify the repository it analyzes.
+12. Do not mark a vulnerability as confirmed when the evidence only supports a heuristic candidate.
+
+### Status vocabulary
+- `TODO`: not started.
+- `IN_PROGRESS`: actively being implemented.
+- `BLOCKED`: cannot proceed; blocker documented.
+- `DONE`: acceptance criteria satisfied and validation recorded.
+- `DEFERRED`: intentionally postponed with reason.
+
+### Definition of Done
+A backlog task is DONE only when its acceptance criteria are satisfied, tests or validation are run and recorded, the diff is reviewed, limitations are documented where relevant, and the execution tracker is updated. If tests cannot be run, the task must not be reported as fully validated.
+
+### Autonomous execution mode
+When asked to continue implementation, choose the earliest eligible incomplete task in priority/dependency order, execute it, validate it, update the tracker, and summarize the concrete changes. Continue to the next task only if the user explicitly requests a larger run (for example, "continue", "execute the backlog", or "work through the roadmap"). For large runs, stop at a sensible checkpoint, report completed/remaining work, and never sacrifice test quality to maximize task count.
+
+### Task format for future decomposition
+Each task should contain: ID, title, priority, epic, dependencies, objective, scope/non-scope, implementation notes, acceptance criteria, test plan, risks/limitations, and status.
+
