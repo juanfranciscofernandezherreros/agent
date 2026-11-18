@@ -44,6 +44,18 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
         "completion_status": "STATIC_ANALYSIS_COMPLETED",
         "runtime_validation": "NOT_PERFORMED",
     }
+    # Unifica todas las señales sin perder la procedencia de cada detector.
+    production_candidates = quality.get("bug_candidates", [])
+    test_candidates = quality.get("test_bug_candidates", [])
+    llm_findings = context.results.get("llm_bug_hunter", {}).get("findings", [])
+    unified_candidates = []
+    for candidate in production_candidates:
+        unified_candidates.append({"source": candidate.get("source", "static_quality"), "scope": "production", **candidate})
+    for candidate in test_candidates:
+        unified_candidates.append({"source": "static_quality", "scope": "test", **candidate})
+    for candidate in llm_findings:
+        unified_candidates.append({"source": "llm_bug_hunter", "scope": "production", **candidate})
+
     # Exportación completa de candidatos detectados por análisis estático y agentes LLM.
     bug_export = {
         "schema_version": "1.0",
@@ -53,12 +65,13 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
         "runtime_validation": analysis["runtime_validation"],
         "summary": {
             **quality.get("summary", {}),
-            "production_candidates": len(quality.get("bug_candidates", [])),
-            "test_candidates": len(quality.get("test_bug_candidates", [])),
-            "total_candidates": len(quality.get("bug_candidates", [])) + len(quality.get("test_bug_candidates", [])),
+            "production_candidates": len(production_candidates) + len(llm_findings),
+            "test_candidates": len(test_candidates),
+            "total_candidates": len(unified_candidates),
         },
-        "production_candidates": quality.get("bug_candidates", []),
-        "test_candidates": quality.get("test_bug_candidates", []),
+        "candidates": unified_candidates,
+        "production_candidates": production_candidates,
+        "test_candidates": test_candidates,
         "llm_bug_hunter": context.results.get("llm_bug_hunter", {}),
         "llm_bug_review": context.results.get("llm_bug_review", {}),
         "limitations": [
