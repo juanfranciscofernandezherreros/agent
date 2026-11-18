@@ -12,13 +12,14 @@ MAX_SEARCH_FILE_BYTES = 1_000_000
 
 def _safe_target(root: Path, relative_path: str) -> Path:
     root = root.resolve()
-    target = (root / relative_path).resolve()
+    candidate = root / relative_path
+    if candidate.is_symlink() or any(part.is_symlink() for part in candidate.parents if part != root):
+        raise ValueError("No se permiten enlaces simbólicos.")
+    target = candidate.resolve()
     if target != root and root not in target.parents:
         raise ValueError("Ruta fuera del repositorio.")
     if any(part in EXCLUDED for part in Path(relative_path).parts):
         raise ValueError("Ruta excluida de la exploración.")
-    if target.is_symlink():
-        raise ValueError("No se permiten enlaces simbólicos.")
     return target
 
 
