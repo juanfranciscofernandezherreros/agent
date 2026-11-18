@@ -117,8 +117,9 @@ class RepositoryReportingAgent(AnalyzerAgent):
             sections = build_sections(insights, runs, "repository")
             title = "Informe multiagente: " + str(name)
             (dest / "agents.md").write_text(to_markdown(title, SUBTITLE, sections), encoding="utf-8")
-            links = [("← Ficha técnica", "analysis.html"), ("Histórico de Git", "activity.html"),
-                     ("Informe multiagente global", "../../agents.html"), ("Índice de documentación", "../../index.html")]
+            links = [("← Ficha técnica", "analysis.html"), ("Posibles bugs JSON", bug_json),
+                     ("Histórico de Git", "activity.html"), ("Informe multiagente global", "../../agents.html"),
+                     ("Índice de documentación", "../../index.html")]
             if bug_report:
                 links.append(("Posibles bugs", "../../" + bug_report))
             (dest / "agents.html").write_text(to_html(title, SUBTITLE, sections, links), encoding="utf-8")
@@ -147,7 +148,8 @@ class RepositoryReportingAgent(AnalyzerAgent):
                  "agent_insights": {**insights, **({"activity_analysis": activity} if activity else {})}}
         context.outputs["repository_entry"] = entry  # no se publica: ya está en analysis.json
         context.outputs["static_report_files"] = static_files
-        return {"artifact_dir": artifact_dir, "bug_report": bug_report, "reused": cached is not None,
+        return {"artifact_dir": artifact_dir, "bug_report": bug_report, "bug_json": artifact_dir + "/" + bug_json,
+                "reused": cached is not None,
                 "files": static_files + [artifact_dir + "/" + f for f in ("activity.md", "activity.html", "activity.json")]}
 
 
