@@ -306,6 +306,31 @@ h2{color:#f0f5ff!important;letter-spacing:-.025em!important;font-weight:760!impo
 nav,.actions,.selection-actions{display:flex;gap:9px!important;flex-wrap:wrap!important;align-items:center!important}nav a,.actions a,button{background:#152235!important;color:#cfe0f6!important;border:1px solid #2b405b!important;border-radius:10px!important;padding:8px 12px!important;text-decoration:none!important;transition:all .15s ease!important}nav a:hover,.actions a:hover,button:hover{background:#1d314a!important;border-color:#4d7994!important;color:#fff!important}a{color:var(--blue)!important}a:hover{color:var(--accent)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}.note{background:#132233!important;border-left:3px solid var(--accent)!important;border-radius:10px!important;padding:12px 15px!important}
 table{border-collapse:separate!important;border-spacing:0!important;width:100%!important}table th{background:#172436!important;color:#aebed3!important;font-size:.76rem!important;letter-spacing:.07em!important;text-transform:uppercase!important}td,th{border-color:var(--line)!important;padding:11px 12px!important;vertical-align:top!important}tbody tr:hover td{background:rgba(102,157,204,.06)!important}pre,code{background:#080e17!important;color:#d7e6ff!important;border:1px solid #26364b!important;border-radius:9px!important}pre{white-space:pre-wrap!important;overflow-wrap:anywhere!important}input,select,textarea{background:#0b1320!important;color:var(--text)!important;border:1px solid #2b3b50!important;border-radius:9px!important}.bad,.badge-danger,.high{color:var(--danger)!important}.warn,.warning,.medium{color:var(--warning)!important}.ok,.success{color:var(--success)!important}hr{border-color:var(--line)!important}.empty{color:var(--muted)!important;border:1px dashed var(--line)!important;border-radius:12px!important;padding:14px!important}
 @media(max-width:700px){main{padding:0 12px!important;margin:18px auto!important}header{padding:22px 18px!important;border-radius:0 0 16px 16px!important}section,article{padding:15px!important}table{min-width:620px!important}nav a,.actions a{font-size:.88rem!important}}
+
+/* LIGHT REPORT THEME — readable, high-contrast documentation */
+:root{color-scheme:light!important;--bg:#f3f6fb;--surface:#ffffff;--surface2:#f8fafc;--surface3:#eef3f8;--line:#d9e1ec;--text:#253247;--muted:#64748b;--accent:#087f73;--blue:#245bb5;--danger:#c24152;--warning:#9a6700;--success:#16804a}
+html,body{background:#f3f6fb!important;color:#253247!important}
+body{background:#f3f6fb!important;color:#253247!important}
+header,header.hero{background:linear-gradient(120deg,#ffffff 0%,#edf4fb 58%,#e8f5f2 100%)!important;color:#1e293b!important;border:1px solid #d9e1ec!important;box-shadow:0 12px 32px rgba(31,51,73,.08)!important}
+header h1,header h1 a,h1,h2,h3,h4{color:#1e293b!important}
+header p:first-child,.section-kicker{color:#087f73!important}
+section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group,.kpi,.buggroup,.report-section{background:#ffffff!important;color:#253247!important;border:1px solid #d9e1ec!important;box-shadow:0 5px 18px rgba(31,51,73,.055)!important}
+p,li,td,dd,b,strong{color:#334155}
+.muted,small,.note,footer,dt,.line-ref{color:#64748b!important}
+.metric,.kpi,.score-card{background:#f8fafc!important;border-color:#d9e1ec!important}
+.metric strong,.kpi strong,.score-card strong,.quality-score{color:#087f73!important}
+nav a,.actions a,button,.doc-links a{background:#f1f5f9!important;color:#23405f!important;border:1px solid #d5dfeb!important}
+nav a:hover,.actions a:hover,button:hover,.doc-links a:hover{background:#e4edf7!important;border-color:#a8bdd4!important;color:#17324f!important}
+a{color:#245bb5!important}a:hover{color:#087f73!important}
+.note{background:#edf8f6!important;border-left:3px solid #0f9b8e!important;color:#315b56!important}
+table{background:#fff!important;color:#334155!important}
+table th{background:#edf2f7!important;color:#475569!important}
+td,th{border-color:#d9e1ec!important;color:#334155!important}
+tbody tr:hover td{background:#f5f8fc!important}
+pre,code{background:#f1f5f9!important;color:#334155!important;border:1px solid #d9e1ec!important}
+input,select,textarea{background:#fff!important;color:#253247!important;border:1px solid #cbd5e1!important}
+.empty{color:#64748b!important;border-color:#cbd5e1!important;background:#f8fafc!important}
+.status,.badge,.tag{color:#334155!important}
 </style></head><body>
 <header class='hero'><div class='hero-inner'><div class='eyebrow'>Arquitectura y calidad de software · Informe técnico</div>
 <h1>Informe de arquitectura y calidad de microservicios</h1>

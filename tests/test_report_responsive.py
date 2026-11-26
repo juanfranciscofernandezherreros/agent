@@ -19,3 +19,9 @@ def test_make_folder_responsive_injects_latest_layout_once(tmp_path):
     assert 'id="agent-responsive-layout-v2"' in generated
     assert make_folder_responsive(tmp_path) == 0
     assert generated.count('id="agent-responsive-layout-v2"') == 1
+
+
+def test_responsive_layout_uses_light_palette():
+    assert "color-scheme:light!important" in STYLE
+    assert "background:#fff!important" in STYLE
+    assert "#253247" in STYLE

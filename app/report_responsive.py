@@ -55,6 +55,15 @@ input,select,textarea,button{max-width:100%;font:inherit}
  section,article{padding:12px!important}
  .table-wrap>table,.report-table-scroll>table{min-width:560px}
 }
+
+/* Light palette for the responsive shell and mobile navigation */
+:root{color-scheme:light!important;--bg:#f3f6fb;--surface:#fff;--surface2:#f8fafc;--surface3:#eef3f8;--line:#d9e1ec;--text:#253247;--muted:#64748b;--accent:#087f73;--blue:#245bb5}
+html,body{background:#f3f6fb!important;color:#253247!important}
+.sidebar{background:#fff!important;border-color:#d9e1ec!important;box-shadow:0 5px 18px rgba(31,51,73,.06)!important;color:#253247!important}
+.sidebar>strong{color:#1e293b!important}
+.sidebar>a{color:#245bb5!important}
+.sidebar>a:hover{background:#f1f5f9!important;border-color:#d5dfeb!important}
+.table-wrap,.report-table-scroll{background:#fff!important}
 </style><script>(function(){function wrap(){document.querySelectorAll('table').forEach(function(t){if(t.parentElement&&(t.parentElement.classList.contains('report-table-scroll')||t.parentElement.classList.contains('table-wrap')))return;var w=document.createElement('div');w.className='report-table-scroll';t.parentNode.insertBefore(w,t);w.appendChild(t)})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wrap);else wrap()})();</script>"""
 
 def make_folder_responsive(folder):
