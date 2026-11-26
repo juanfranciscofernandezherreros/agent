@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote
-from .report_theme import install_stylesheet, stylesheet_link
+from .report_theme import apply_report_theme, install_stylesheet, stylesheet_link
 
 GLOBAL_DOCS = (
     ("index.html", "Índice de documentación"),
@@ -110,7 +110,12 @@ def build(report_dir) -> Path:
     report_dir = Path(report_dir)
     report_dir.mkdir(parents=True, exist_ok=True)
     target = report_dir / "index.html"
-    target.write_text(render(scan(report_dir)), encoding="utf-8")
+    bundles = scan(report_dir)
+    # Cada análisis descargado lleva su propia copia de report.css para que su
+    # carpeta siga viéndose igual aunque se copie o comparta por separado.
+    for bundle in bundles:
+        apply_report_theme(report_dir / bundle["folder"])
+    target.write_text(render(bundles), encoding="utf-8")
     install_stylesheet(report_dir)
     return target
 

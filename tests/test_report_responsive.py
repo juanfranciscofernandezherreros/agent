@@ -147,3 +147,38 @@ def test_api_serves_stylesheet_for_any_report_path():
         assert response.status_code == 200, url
         assert response.headers["content-type"].startswith("text/css")
         assert response.text == read_css()
+
+
+def test_reports_index_themes_every_downloaded_bundle(tmp_path):
+    """run-analysis.ps1 downloads pages from the API without report.css and then
+    runs reports_index; every bundle must end up with the shared stylesheet."""
+    from app.reports_index import build
+
+    page = LINKED_REPORTS["agent_report"]()
+    new = tmp_path / "grupo-20261126"
+    for rel in ("index.html", "analysis.html", "bug-reports/index.html", "repositories/orders/analysis.html"):
+        (new / rel).parent.mkdir(parents=True, exist_ok=True)
+        (new / rel).write_text(page, encoding="utf-8")
+    old = tmp_path / "antiguo-20250101"
+    old.mkdir()
+    (old / "index.html").write_text("<html><head><style>:root{color-scheme:dark}</style></head><body><h1>Antiguo</h1></body></html>", encoding="utf-8")
+
+    build(tmp_path)
+
+    assert (tmp_path / "report.css").read_text(encoding="utf-8") == read_css()
+    for bundle in (new, old):
+        assert (bundle / "report.css").read_text(encoding="utf-8") == read_css()
+        for html_file in bundle.rglob("*.html"):
+            html = html_file.read_text(encoding="utf-8")
+            assert "<style" not in html, html_file
+            assert html.count(LINK) == 1, html_file
+    assert 'href="../../report.css" ' + LINK in (new / "repositories/orders/analysis.html").read_text(encoding="utf-8")
+    root = (tmp_path / "index.html").read_text(encoding="utf-8")
+    assert 'href="report.css" ' + LINK in root
+
+
+def test_launcher_scripts_do_not_inline_styles():
+    root = APP_DIR.parent
+    for script in ("run-analysis.ps1", "run-analysis.bat", "setup-windows.ps1"):
+        source = (root / script).read_text(encoding="utf-8-sig")
+        assert "style=" not in source and "<style" not in source, script
