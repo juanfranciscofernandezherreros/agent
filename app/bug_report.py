@@ -22,13 +22,87 @@ def _sorted_findings(quality):
         str(item.get("file", "")), int(item.get("line") or 0), str(item.get("code", "")),
     ))
 
+
+def _repository_bug_findings(repository):
+    """Return production, test and LLM candidates shown across the repository reports."""
+    quality = repository.get("quality_analysis") or {}
+    findings = []
+    findings.extend({**item, "scope": item.get("scope", "production"),
+                     "source": item.get("source", "static_quality")}
+                    for item in quality.get("bug_candidates") or [])
+    findings.extend({**item, "scope": "test", "source": item.get("source", "static_quality")}
+                    for item in quality.get("test_bug_candidates") or [])
+    llm_findings = (repository.get("agent_insights") or {}).get("llm_bug_hunter", {}).get("findings") or []
+    findings.extend({**item, "scope": item.get("scope", "production"),
+                     "source": "llm_bug_hunter"}
+                    for item in llm_findings)
+    return _sorted_findings({"bug_candidates": findings})
+
 def _bug_export_script():
     return r"""<script>
 (function () {
   const checks = Array.from(document.querySelectorAll(".bug-select"));
   const selectAll = document.getElementById("select-all-bugs");
   const button = document.getElementById("export-selected-bugs");
+  const exportAllButton = document.getElementById("export-all-bugs-json");
   const status = document.getElementById("export-status");
+  const safeName = (value) => String(value || "hallazgo").normalize("NFKD")
+    .replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "").slice(0, 90) || "hallazgo";
+  const makeZip = (files) => {
+    const encoder = new TextEncoder();
+    const crcTable = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1); crcTable[n] = c >>> 0; }
+    const crc32 = (bytes) => { let c = 0xffffffff; for (const byte of bytes) c = crcTable[(c ^ byte) & 255] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+    const u16 = (view, offset, value) => view.setUint16(offset, value, true);
+    const u32 = (view, offset, value) => view.setUint32(offset, value >>> 0, true);
+    const local = [], central = []; let offset = 0;
+    const now = new Date(), dosTime = (now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1);
+    const dosDate = ((Math.max(1980,now.getFullYear())-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
+    files.forEach((file) => {
+      const name = encoder.encode(file.name), data = encoder.encode(file.content), crc = crc32(data);
+      const header = new Uint8Array(30 + name.length), hv = new DataView(header.buffer);
+      u32(hv,0,0x04034b50); u16(hv,4,20); u16(hv,6,0x0800); u16(hv,8,0);
+      u16(hv,10,dosTime); u16(hv,12,dosDate); u32(hv,14,crc); u32(hv,18,data.length); u32(hv,22,data.length); u16(hv,26,name.length); u16(hv,28,0); header.set(name,30);
+      local.push(header,data);
+      const ch = new Uint8Array(46 + name.length), cv = new DataView(ch.buffer);
+      u32(cv,0,0x02014b50); u16(cv,4,20); u16(cv,6,20); u16(cv,8,0x0800); u16(cv,10,0);
+      u16(cv,12,dosTime); u16(cv,14,dosDate); u32(cv,16,crc); u32(cv,20,data.length); u32(cv,24,data.length);
+      u16(cv,28,name.length); u16(cv,30,0); u16(cv,32,0); u16(cv,34,0); u16(cv,36,0); u32(cv,38,0); u32(cv,42,offset); ch.set(name,46);
+      central.push(ch); offset += header.length + data.length;
+    });
+    const centralSize = central.reduce((sum, part) => sum + part.length, 0);
+    const end = new Uint8Array(22), ev = new DataView(end.buffer);
+    u32(ev,0,0x06054b50); u16(ev,4,0); u16(ev,6,0); u16(ev,8,files.length); u16(ev,10,files.length);
+    u32(ev,12,centralSize); u32(ev,16,offset); u16(ev,20,0);
+    return new Blob([...local,...central,end], {type:"application/zip"});
+  };
+  if (exportAllButton && checks.length) exportAllButton.addEventListener("click", () => {
+    try {
+      const selected = checks;
+      const groupName = exportAllButton.dataset.groupName || "analysis";
+      const groupId = exportAllButton.dataset.groupId || "";
+      const files = [];
+      selected.forEach((item, index) => {
+        const finding = JSON.parse(item.dataset.finding || "{}");
+        const repository = item.dataset.repository || "microservicio";
+        const filename = safeName(repository) + "__" + safeName(finding.code) + "__" +
+          safeName(finding.file) + "__L" + safeName(finding.line || index + 1) + "__" + String(index + 1).padStart(4,"0") + ".json";
+        const payload = {schema_version:"1.0", analysis_group_id:groupId, group_name:groupName,
+          repository, exported_at:new Date().toISOString(), finding};
+        files.push({name:"revisao/" + filename, content:JSON.stringify(payload,null,2)});
+      });
+      if (!files.length) { status.textContent = "No hay bugs para exportar."; return; }
+      const manifest = {schema_version:"1.0", group_name:groupName, analysis_group_id:groupId,
+        total_findings:files.length, files:files.map(file=>file.name)};
+      files.push({name:"revisao/manifest.json",content:JSON.stringify(manifest,null,2)});
+      const url = URL.createObjectURL(makeZip(files));
+      const anchor = document.createElement("a"); anchor.href=url; anchor.download="revisao.zip";
+      document.body.appendChild(anchor); anchor.click(); anchor.remove();
+      window.setTimeout(()=>URL.revokeObjectURL(url),2000);
+      status.textContent = files.length - 1 + " JSON individuales preparados en revisao/ (revisao.zip).";
+    } catch (error) { status.textContent = error.message || "No se pudo crear el ZIP."; }
+  });
   if (!button || !checks.length) return;
   if (selectAll) selectAll.addEventListener("change", () => checks.forEach((item) => { item.checked = selectAll.checked; }));
   checks.forEach((item) => item.addEventListener("change", () => {
@@ -162,6 +236,7 @@ def build_bug_report_html(repository, group_name, quality, service_slug=None, gr
     toolbar = """<section id="export-panel" class="notice export-panel">
 <label><input id="select-all-bugs" type="checkbox"> Seleccionar todos</label>
 <button id="export-selected-bugs" type="button" data-group-id="__GROUP_ID__" data-report="__REPORT_NAME__">Exportar selección (JSON + HTML)</button>
+<button id="export-all-bugs-json" type="button" data-group-id="__GROUP_ID__" data-group-name="__GROUP_NAME__">Exportar todos como JSON individuales (revisao.zip)</button>
 <span id="export-status" role="status" aria-live="polite">Selecciona uno o varios hallazgos.</span>
 </section>"""
     script = _bug_export_script()
@@ -275,7 +350,7 @@ def build_bug_reports_index(group_name, reports, repositories=None, group_id=Non
         if report_name not in report_names:
             continue
         slug = str(repository.get("artifact_dir", "")).split("/")[-1]
-        for index, finding in enumerate(_sorted_findings(repository.get("quality_analysis") or {})):
+        for index, finding in enumerate(_repository_bug_findings(repository)):
             label = (
                 "<label class='finding-choice'><input class='bug-select' type='checkbox' data-report='" +
                 _e(report_name) + "' value='" + str(index) + "' data-repository='" + _e(repository.get("name", "Microservicio")) +
@@ -293,6 +368,7 @@ def build_bug_reports_index(group_name, reports, repositories=None, group_id=Non
 <p>Marca hallazgos de uno o varios microservicios y genera un único informe consolidado.</p>
 <div class="selection-actions"><label><input id="select-all-bugs" type="checkbox"> Seleccionar todos</label>
 <button id="export-selected-bugs" type="button" data-group-id="__GROUP_ID__" data-group-name="__GROUP_NAME__">Exportar selección (JSON + HTML)</button>
+<button id="export-all-bugs-json" type="button" data-group-id="__GROUP_ID__" data-group-name="__GROUP_NAME__">Exportar todos como JSON individuales (revisao.zip)</button>
 <span id="export-status" role="status" aria-live="polite">No hay hallazgos seleccionados.</span></div>
 <div class="finding-list">""" + "".join(selectable) + """</div></section>"""
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informes individuales de posibles bugs</title>
