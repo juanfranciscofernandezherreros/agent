@@ -40,6 +40,9 @@ def startup():
           hypothesis TEXT NOT NULL, scope_json TEXT NOT NULL, status TEXT NOT NULL,
           created_at TEXT NOT NULL, updated_at TEXT NOT NULL, evidence_json TEXT,
           last_error TEXT, FOREIGN KEY(agent_id) REFERENCES bug_hunters(id))""")
+    # Upgrade HTML reports created before the unified light theme was introduced.
+    make_folder_responsive(WORKSPACES_DIR)
+
 
     with connect() as con:
         con.execute("""CREATE TABLE IF NOT EXISTS analysis_groups (
