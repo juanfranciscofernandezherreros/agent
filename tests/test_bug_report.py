@@ -102,3 +102,47 @@ def test_bug_index_allows_selection_across_microservices():
     assert "TODO pendiente" in page
     assert "Assert en producción" in page
 
+
+
+def test_bug_html_offers_individual_json_zip_export():
+    quality = {
+        "bug_candidates": [{"code": "BUG001", "severity": "high", "title": "Producción",
+                            "file": "src/a.py", "line": 4}],
+        "test_bug_candidates": [{"code": "BUG003", "severity": "medium", "title": "Test",
+                                 "file": "tests/a.py", "line": 8}],
+    }
+    report = build_bug_report_html(
+        "service-a", "platform", quality, "service-a", "group-123", "service-a.html"
+    )
+    assert "Exportar todos como JSON individuales (revisao.zip)" in report
+    assert 'name:"revisao/" + filename' in report
+    assert "makeZip" in report
+    assert "data-group-name=\"platform\"" in report
+
+
+def test_bug_index_includes_test_and_llm_findings_in_individual_export():
+    from app.bug_report import build_bug_reports_index
+
+    repositories = [{
+        "name": "service-a",
+        "artifact_dir": "repositories/service-a",
+        "bug_report": "bug-reports/service-a.html",
+        "quality_analysis": {
+            "bug_candidates": [{"code": "BUG001", "severity": "high", "title": "Producción",
+                                "file": "src/a.py", "line": 4}],
+            "test_bug_candidates": [{"code": "BUG003", "severity": "medium", "title": "Test",
+                                     "file": "tests/a.py", "line": 8}],
+        },
+        "agent_insights": {"llm_bug_hunter": {"findings": [
+            {"code": "LLM001", "severity": "high", "title": "LLM", "file": "src/b.py", "line": 15}
+        ]}},
+    }]
+    page = build_bug_reports_index(
+        "platform", [{"repository": "service-a", "file": "service-a.html", "count": 3}],
+        repositories, "group-123"
+    )
+    assert "Producción" in page
+    assert "Test" in page
+    assert "LLM" in page
+    assert page.count("class='bug-select'") == 3
+    assert "revisao.zip" in page
