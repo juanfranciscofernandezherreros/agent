@@ -21,6 +21,7 @@ from .gitlab import gitlab_settings, list_accessible_groups, list_group_projects
 from .schemas import BugReportExportRequest
 from .bug_report import TASKS, _sorted_findings, build_bug_export_html
 from .bug_hunter_api import router as bug_hunter_router
+from .report_responsive import make_folder_responsive
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION,
  description="Orquestador de análisis estático profundo de uno o varios microservicios. No ejecuta el código analizado.")
@@ -109,6 +110,7 @@ def run_analysis(project_id: str):
             report+=f"- **{finding.get('severity','low').upper()} · {finding.get('title','Posible bug')}** — {finding.get('file','N/D')}:{finding.get('line','N/D')}\n  {finding.get('description','')}\n"
         (folder/"analysis.md").write_text(report,encoding="utf-8")
         (folder/"analysis.html").write_text(build_analysis_html(name,analysis),encoding="utf-8")
+        make_folder_responsive(folder)
         with connect() as con:
             con.execute("UPDATE projects SET status='ANALYSIS_COMPLETED',source_path=?,analysis_json=?,reconstruction_json=NULL,last_error=NULL WHERE id=?",
               (str(source),json.dumps(analysis,ensure_ascii=False),project_id))
