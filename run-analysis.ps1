@@ -233,7 +233,7 @@ try {
     $ApiIsStale = $false
     try {
         $HealthInfo = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 5
-        $NewestCode = (Get-ChildItem -LiteralPath (Join-Path $Root "app") -Recurse -File | Where-Object { $_.Extension -eq ".py" } | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1).LastWriteTimeUtc
+        $NewestCode = (Get-ChildItem -LiteralPath (Join-Path $Root "app") -Recurse -File | Where-Object { $_.Extension -in @(".py", ".css") } | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1).LastWriteTimeUtc
         $NewestEpoch = [DateTimeOffset]::new([DateTime]::SpecifyKind($NewestCode, [DateTimeKind]::Utc)).ToUnixTimeSeconds()
         # Se compara en segundos Unix para no depender de cómo cada versión de PowerShell interpreta las fechas JSON.
         $StartedEpoch = [long]$HealthInfo.started_epoch
@@ -485,6 +485,8 @@ try {
     try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/activity.html" -OutFile (Join-Path $BundleDir "activity.html") -UseBasicParsing } catch { Write-Host "Histórico de actividad no disponible" -ForegroundColor Yellow }
     try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/agents.html" -OutFile (Join-Path $BundleDir "agents.html") -UseBasicParsing } catch { Write-Host "Informe multiagente global no disponible" -ForegroundColor Yellow }
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/documentation/index.html" -OutFile (Join-Path $BundleDir "index.html") -UseBasicParsing
+    # Hoja de estilos única de todos los informes (los HTML la enlazan con rutas relativas).
+    try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/report.css" -OutFile (Join-Path $BundleDir "report.css") -UseBasicParsing } catch { Write-Host "No se pudo descargar report.css; se instalará al regenerar el índice general." -ForegroundColor Yellow }
 
     if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
         Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow

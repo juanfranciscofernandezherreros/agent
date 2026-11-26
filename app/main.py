@@ -22,7 +22,7 @@ from .schemas import BugReportExportRequest
 from .bug_report import TASKS, _repository_bug_findings, build_bug_export_html
 from .bug_hunter_api import router as bug_hunter_router
 from .report_responsive import make_folder_responsive
-from .report_theme import read_css
+from .report_theme import read_css, relative_href, theme_html
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION,
  description="Orquestador de análisis estático profundo de uno o varios microservicios. No ejecuta el código analizado.")
@@ -35,6 +35,13 @@ app.include_router(bug_hunter_router)
 @app.get("/api/{report_path:path}/report.css",include_in_schema=False)
 def get_report_stylesheet(report_path: str):
     return Response(read_css(),media_type="text/css; charset=utf-8",headers={"Cache-Control":"no-cache"})
+
+def _report_html(path):
+    """Devuelve un informe guardado con el tema único (report.css), aunque se
+    generara con una versión anterior o venga de la caché de análisis."""
+    root = WORKSPACES_DIR / path.relative_to(WORKSPACES_DIR).parts[0]
+    return theme_html(path.read_text(encoding="utf-8"), relative_href(path, root))
+
 
 @app.on_event("startup")
 def startup():
@@ -287,19 +294,19 @@ def get_analysis_group_report(group_id:str):
 def get_analysis_group_html(group_id:str):
     path=WORKSPACES_DIR/group_id/"analysis.html"
     if not path.is_file(): raise HTTPException(409,"Informe HTML todavía no disponible")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 @app.get("/api/analysis-groups/{group_id}/activity.html",response_class=HTMLResponse)
 def get_analysis_group_activity_html(group_id:str):
     path=WORKSPACES_DIR/group_id/"activity.html"
     if not path.is_file(): raise HTTPException(404,"Histórico de actividad no disponible (solo para grupos GitLab)")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 @app.get("/api/analysis-groups/{group_id}/agents.html",response_class=HTMLResponse)
 def get_analysis_group_agents_html(group_id:str):
     path=WORKSPACES_DIR/group_id/"agents.html"
     if not path.is_file(): raise HTTPException(409,"Informe multiagente todavía no disponible")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 @app.get("/api/analysis-groups/{group_id}/repositories/{repository_slug}/activity.html",response_class=HTMLResponse)
 def get_analysis_group_repository_activity_html(group_id: str, repository_slug: str):
@@ -309,7 +316,7 @@ def get_analysis_group_repository_activity_html(group_id: str, repository_slug: 
     path = WORKSPACES_DIR/group_id/"repositories"/repository_slug/"activity.html"
     if not path.is_file():
         raise HTTPException(404, "Histórico de Git del microservicio no encontrado")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 @app.get("/api/analysis-groups/{group_id}/repositories/{repository_slug}/agents.html",response_class=HTMLResponse)
 def get_analysis_group_repository_agents_html(group_id: str, repository_slug: str):
@@ -319,14 +326,14 @@ def get_analysis_group_repository_agents_html(group_id: str, repository_slug: st
     path = WORKSPACES_DIR/group_id/"repositories"/repository_slug/"agents.html"
     if not path.is_file():
         raise HTTPException(404, "Informe multiagente del microservicio no encontrado")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 @app.get("/api/analysis-groups/{group_id}/documentation/index.html",response_class=HTMLResponse)
 def get_analysis_group_documentation_index(group_id: str):
     path = WORKSPACES_DIR/group_id/"index.html"
     if not path.is_file():
         raise HTTPException(409, "El índice de documentación todavía no está disponible")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 
 @app.get("/api/analysis-groups/{group_id}/repositories/{repository_slug}/possible-bugs.json")
@@ -355,7 +362,7 @@ def get_analysis_group_repository_html(group_id: str, repository_slug: str):
     path = WORKSPACES_DIR/group_id/"repositories"/repository_slug/"analysis.html"
     if not path.is_file():
         raise HTTPException(404, "Ficha HTML del microservicio no encontrada")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 
 @app.post("/api/analysis-groups/{group_id}/bug-reports/export")
@@ -454,7 +461,7 @@ def get_analysis_group_bug_reports_index(group_id: str):
     path = WORKSPACES_DIR/group_id/"bug-reports"/"index.html"
     if not path.is_file():
         raise HTTPException(409, "El índice de informes de posibles bugs todavía no está disponible")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 
 @app.get("/api/analysis-groups/{group_id}/bug-reports/{report_name}",response_class=HTMLResponse)
@@ -465,7 +472,7 @@ def get_analysis_group_bug_report(group_id: str, report_name: str):
     path = WORKSPACES_DIR/group_id/"bug-reports"/report_name
     if not path.is_file():
         raise HTTPException(404, "No existe un informe de posibles bugs para ese microservicio")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)
 
 
 @app.get("/api/projects")
@@ -500,4 +507,4 @@ def get_report(project_id:str):
 def get_html_report(project_id:str):
     path=WORKSPACES_DIR/project_id/"analysis.html"
     if not path.is_file(): raise HTTPException(409,"Informe HTML todavía no disponible")
-    return path.read_text(encoding="utf-8")
+    return _report_html(path)

@@ -182,3 +182,66 @@ def test_launcher_scripts_do_not_inline_styles():
     for script in ("run-analysis.ps1", "run-analysis.bat", "setup-windows.ps1"):
         source = (root / script).read_text(encoding="utf-8-sig")
         assert "style=" not in source and "<style" not in source, script
+
+
+LEGACY = ("<!doctype html><html><head><title>x</title><style>:root{color-scheme:dark;--bg:#080b12}</style></head>"
+          "<body><header><h1>Informe antiguo</h1></header><main>x</main></body></html>")
+
+
+def test_api_serves_old_reports_with_the_new_theme(tmp_path, monkeypatch):
+    """Reports written by a previous version (or restored from cache) are served
+    with report.css and a link that matches the folder layout the launcher mirrors."""
+    from fastapi.testclient import TestClient
+    import app.main as main
+
+    monkeypatch.setattr(main, "WORKSPACES_DIR", tmp_path)
+    group = tmp_path / "g1"
+    pages = {
+        "/api/analysis-groups/g1/report.html": ("analysis.html", "report.css"),
+        "/api/analysis-groups/g1/activity.html": ("activity.html", "report.css"),
+        "/api/analysis-groups/g1/agents.html": ("agents.html", "report.css"),
+        "/api/analysis-groups/g1/repositories/orders/report.html": ("repositories/orders/analysis.html", "../../report.css"),
+        "/api/analysis-groups/g1/repositories/orders/agents.html": ("repositories/orders/agents.html", "../../report.css"),
+        "/api/analysis-groups/g1/repositories/orders/activity.html": ("repositories/orders/activity.html", "../../report.css"),
+    }
+    for rel, _ in pages.values():
+        (group / rel).parent.mkdir(parents=True, exist_ok=True)
+        (group / rel).write_text(LEGACY, encoding="utf-8")
+
+    client = TestClient(main.app)
+    for url, (_, href) in pages.items():
+        response = client.get(url)
+        assert response.status_code == 200, url
+        assert "<style" not in response.text, url
+        assert 'href="' + href + '" ' + LINK in response.text, url
+
+
+def test_cached_reports_are_restored_with_the_new_theme(sample_repo, tmp_path, monkeypatch):
+    import app.analysis_orchestrator as orch
+    from app import config
+
+    repos = [{"name": "team/orders", "git_url": "https://x/a.git"}]
+    monkeypatch.setattr(orch, "WORKSPACES_DIR", tmp_path)
+    monkeypatch.setattr(config, "WORKSPACES_DIR", tmp_path)
+    monkeypatch.setattr(orch, "clone_repository", lambda *a, **k: sample_repo)
+    monkeypatch.setattr(orch.engines, "remote_head", lambda *a: "a" * 40)
+    monkeypatch.setattr(orch.engines, "local_head", lambda path: None)
+    orch.run_group_analysis("g1", "Grupo", repos)
+
+    # Simula una caché escrita por la versión anterior (tema oscuro inline).
+    cached = list((tmp_path / "_cache").glob("*/reports"))[0]
+    html_files = list(cached.glob("*.html"))
+    assert html_files
+    for path in html_files:
+        path.write_text(LEGACY, encoding="utf-8")
+
+    # El lanzador descarga cada informe en cuanto termina su repositorio, antes del
+    # post-procesado final: el tema debe aplicarse ya al restaurar desde la caché.
+    monkeypatch.setattr(orch, "make_folder_responsive", lambda folder: 0)
+    orch.run_group_analysis("g2", "Grupo", repos)
+    restored = [p for p in (tmp_path / "g2" / "repositories").rglob("*.html") if p.name in {f.name for f in html_files}]
+    assert restored
+    for path in restored:
+        html = path.read_text(encoding="utf-8")
+        assert "<style" not in html, path
+        assert 'href="../../report.css" ' + LINK in html, path
