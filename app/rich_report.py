@@ -4,6 +4,7 @@ import html
 import json
 import re
 from collections import Counter
+from .report_theme import stylesheet_link
 
 
 def _e(value):
@@ -189,9 +190,9 @@ def build_integral_html(name, analysis, index_href="index.html"):
     score_cards = "".join(
         "<article class='score-card'><div class='score-card-head'><h3>" + _e(repo.get("name", "Microservicio")) +
         "</h3><strong>" + _e(repo.get("quality_analysis", {}).get("score", "N/D")) +
-        "<small>/100</small></strong></div><div class='score-track'><span style='width:" +
+        "<small>/100</small></strong></div><progress class='score-track' max='100' value='" +
         str(max(0, min(100, int(repo.get("quality_analysis", {}).get("score", 0))))) +
-        "%'></span></div><p>" + _e(repo.get("quality_analysis", {}).get("rating", "Sin datos")) +
+        "'></progress><p>" + _e(repo.get("quality_analysis", {}).get("rating", "Sin datos")) +
         " · " + str(repo.get("quality_analysis", {}).get("summary", {}).get("bug_candidates", 0)) +
         " posibles bugs</p></article>" for repo in service_scores
     )
@@ -265,73 +266,7 @@ def build_integral_html(name, analysis, index_href="index.html"):
     return """<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light"><title>Informe técnico de arquitectura y calidad de microservicios</title>
-<style>
-/* AGENT unified report theme v2 */
-:root{color-scheme:dark;--bg:#080b12;--surface:#101722;--surface2:#151f2d;--surface3:#1b293a;--line:#26364b;--text:#e7edf7;--muted:#91a2b9;--accent:#64d8c5;--blue:#83adff;--danger:#ff7385;--warning:#f4c56a;--success:#65d6a5}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--bg)}
-body{background:radial-gradient(ellipse at 12% 0%,rgba(39,87,125,.18),transparent 35%),var(--bg)!important;color:var(--text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;line-height:1.58}
-header{background:linear-gradient(125deg,#101b2b 0%,#142b40 58%,#123a3b 100%)!important;color:var(--text)!important;border:1px solid var(--line);border-radius:0 0 22px 22px;padding:30px clamp(18px,4vw,48px)!important;box-shadow:0 20px 55px rgba(0,0,0,.22)}
-header h1,h1{letter-spacing:-.04em;line-height:1.12;font-weight:780}
-header p:first-child,.section-kicker{color:var(--accent)!important;font-size:.75rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
-main{max-width:1280px!important;margin:28px auto!important;padding:0 20px!important}
-section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:linear-gradient(180deg,var(--surface),#0e1520)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(0,0,0,.16)!important}
-section,article{padding:clamp(16px,2.5vw,26px)!important;margin:16px 0!important}
-h2{color:#f0f5ff!important;letter-spacing:-.025em;font-weight:750}
-h3,h4{color:#dce8f8!important}
-.metric,.kpi,.score-card{background:linear-gradient(145deg,var(--surface2),var(--surface3))!important;border-color:#30445c!important}
-.metric strong,.kpi strong,.score-card strong{color:var(--accent)!important}
-nav{gap:9px!important}
-nav a,.actions a,button{background:#152235!important;color:#cfe0f6!important;border:1px solid #2b405b!important;border-radius:10px!important;padding:8px 12px!important;text-decoration:none!important;transition:all .15s ease}
-nav a:hover,.actions a:hover,button:hover{background:#1d314a!important;border-color:#4d7994!important;color:#fff!important}
-a{color:var(--blue)!important}a:hover{color:var(--accent)!important}
-.muted,small,.note,footer,dt{color:var(--muted)!important}
-.note{background:#132233!important;border-left:3px solid var(--accent)!important;border-radius:10px!important;padding:12px 15px!important}
-table{border-collapse:separate!important;border-spacing:0!important;width:100%}
-table th{background:#172436!important;color:#aebed3!important;font-size:.76rem!important;letter-spacing:.07em;text-transform:uppercase}
-td,th{border-color:var(--line)!important;padding:11px 12px!important}
-tbody tr:hover td{background:rgba(102,157,204,.055)!important}
-pre,code{background:#080e17!important;color:#d7e6ff!important;border:1px solid #26364b!important;border-radius:9px!important}
-input,select,textarea{background:#0b1320!important;color:var(--text)!important;border:1px solid #2b3b50!important;border-radius:9px!important}
-.bad,.badge-danger{color:var(--danger)!important}.warn,.warning{color:var(--warning)!important}.ok,.success{color:var(--success)!important}
-hr{border-color:var(--line)!important}
-@media(max-width:700px){main{padding:0 12px!important;margin:18px auto!important}header{padding:22px 18px!important;border-radius:0 0 16px 16px}section,article{padding:15px!important}table{min-width:620px}nav a,.actions a{font-size:.88rem}}
-
-/* AGENT premium visual layer */
-:root{color-scheme:dark!important;--bg:#080b12;--surface:#101722;--surface2:#151f2d;--surface3:#1b293a;--line:#26364b;--text:#e7edf7;--muted:#91a2b9;--accent:#64d8c5;--blue:#83adff;--danger:#ff7385;--warning:#f4c56a;--success:#65d6a5}
-*{box-sizing:border-box}html,body{background:radial-gradient(ellipse at 12% 0%,rgba(39,87,125,.2),transparent 35%),var(--bg)!important;color:var(--text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;line-height:1.6!important}
-body{min-height:100vh}header{background:linear-gradient(125deg,#101b2b 0%,#142b40 58%,#123a3b 100%)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:0 0 22px 22px!important;padding:clamp(22px,4vw,42px)!important;box-shadow:0 20px 55px rgba(0,0,0,.24)!important}header h1,h1{letter-spacing:-.04em!important;line-height:1.12!important;font-weight:800!important}header p:first-child,.section-kicker{color:var(--accent)!important;font-size:.75rem!important;font-weight:800!important;letter-spacing:.13em!important;text-transform:uppercase!important}
-main{max-width:1280px!important;margin:28px auto!important;padding:0 20px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group,.kpi,.buggroup{background:linear-gradient(180deg,var(--surface),#0e1520)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(0,0,0,.18)!important}section,article{padding:clamp(16px,2.5vw,26px)!important;margin:16px 0!important}
-h2{color:#f0f5ff!important;letter-spacing:-.025em!important;font-weight:760!important}h3,h4{color:#dce8f8!important}p,li,td{color:var(--text)!important}.metric,.kpi,.score-card{background:linear-gradient(145deg,var(--surface2),var(--surface3))!important;border-color:#30445c!important}.metric strong,.kpi strong,.score-card strong{color:var(--accent)!important}
-nav,.actions,.selection-actions{display:flex;gap:9px!important;flex-wrap:wrap!important;align-items:center!important}nav a,.actions a,button{background:#152235!important;color:#cfe0f6!important;border:1px solid #2b405b!important;border-radius:10px!important;padding:8px 12px!important;text-decoration:none!important;transition:all .15s ease!important}nav a:hover,.actions a:hover,button:hover{background:#1d314a!important;border-color:#4d7994!important;color:#fff!important}a{color:var(--blue)!important}a:hover{color:var(--accent)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}.note{background:#132233!important;border-left:3px solid var(--accent)!important;border-radius:10px!important;padding:12px 15px!important}
-table{border-collapse:separate!important;border-spacing:0!important;width:100%!important}table th{background:#172436!important;color:#aebed3!important;font-size:.76rem!important;letter-spacing:.07em!important;text-transform:uppercase!important}td,th{border-color:var(--line)!important;padding:11px 12px!important;vertical-align:top!important}tbody tr:hover td{background:rgba(102,157,204,.06)!important}pre,code{background:#080e17!important;color:#d7e6ff!important;border:1px solid #26364b!important;border-radius:9px!important}pre{white-space:pre-wrap!important;overflow-wrap:anywhere!important}input,select,textarea{background:#0b1320!important;color:var(--text)!important;border:1px solid #2b3b50!important;border-radius:9px!important}.bad,.badge-danger,.high{color:var(--danger)!important}.warn,.warning,.medium{color:var(--warning)!important}.ok,.success{color:var(--success)!important}hr{border-color:var(--line)!important}.empty{color:var(--muted)!important;border:1px dashed var(--line)!important;border-radius:12px!important;padding:14px!important}
-@media(max-width:700px){main{padding:0 12px!important;margin:18px auto!important}header{padding:22px 18px!important;border-radius:0 0 16px 16px!important}section,article{padding:15px!important}table{min-width:620px!important}nav a,.actions a{font-size:.88rem!important}}
-
-/* LIGHT REPORT THEME — readable, high-contrast documentation */
-:root{color-scheme:light!important;--bg:#f3f6fb;--surface:#ffffff;--surface2:#f8fafc;--surface3:#eef3f8;--line:#d9e1ec;--text:#253247;--muted:#64748b;--accent:#087f73;--blue:#245bb5;--danger:#c24152;--warning:#9a6700;--success:#16804a}
-html,body{background:#f3f6fb!important;color:#253247!important}
-body{background:#f3f6fb!important;color:#253247!important}
-header,header.hero{background:linear-gradient(120deg,#ffffff 0%,#edf4fb 58%,#e8f5f2 100%)!important;color:#1e293b!important;border:1px solid #d9e1ec!important;box-shadow:0 12px 32px rgba(31,51,73,.08)!important}
-header h1,header h1 a,h1,h2,h3,h4{color:#1e293b!important}
-header p:first-child,.section-kicker{color:#087f73!important}
-section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group,.kpi,.buggroup,.report-section{background:#ffffff!important;color:#253247!important;border:1px solid #d9e1ec!important;box-shadow:0 5px 18px rgba(31,51,73,.055)!important}
-p,li,td,dd,b,strong{color:#334155}
-.muted,small,.note,footer,dt,.line-ref{color:#64748b!important}
-.metric,.kpi,.score-card{background:#f8fafc!important;border-color:#d9e1ec!important}
-.metric strong,.kpi strong,.score-card strong,.quality-score{color:#087f73!important}
-nav a,.actions a,button,.doc-links a{background:#f1f5f9!important;color:#23405f!important;border:1px solid #d5dfeb!important}
-nav a:hover,.actions a:hover,button:hover,.doc-links a:hover{background:#e4edf7!important;border-color:#a8bdd4!important;color:#17324f!important}
-a{color:#245bb5!important}a:hover{color:#087f73!important}
-.note{background:#edf8f6!important;border-left:3px solid #0f9b8e!important;color:#315b56!important}
-table{background:#fff!important;color:#334155!important}
-table th{background:#edf2f7!important;color:#475569!important}
-td,th{border-color:#d9e1ec!important;color:#334155!important}
-tbody tr:hover td{background:#f5f8fc!important}
-pre,code{background:#f1f5f9!important;color:#334155!important;border:1px solid #d9e1ec!important}
-input,select,textarea{background:#fff!important;color:#253247!important;border:1px solid #cbd5e1!important}
-.empty{color:#64748b!important;border-color:#cbd5e1!important;background:#f8fafc!important}
-.status,.badge,.tag{color:#334155!important}
-</style></head><body>
+""" + stylesheet_link() + """</head><body>
 <header class='hero'><div class='hero-inner'><div class='eyebrow'>Arquitectura y calidad de software · Informe técnico</div>
 <h1>Informe de arquitectura y calidad de microservicios</h1>
 <p class='report-context'>Conjunto analizado: <strong>""" + _e(name) + """</strong></p>

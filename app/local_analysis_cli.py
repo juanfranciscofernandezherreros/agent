@@ -11,6 +11,7 @@ from .communication import SharedStore
 from .supervisor import default_supervisor
 from .deep_analysis import build_analysis_markdown
 from .functional_analysis import build_analysis_html
+from .report_theme import apply_report_theme
 
 
 def analyze_local(source: Path, output: Path, name: str) -> dict:
@@ -100,6 +101,7 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
         report += f"- **{finding.get('severity', 'low').upper()} · {finding.get('title', 'Posible bug')}** — {finding.get('file', 'N/D')}:{finding.get('line', 'N/D')}\n  {finding.get('description', '')}\n"
     (output / "analysis.md").write_text(report, encoding="utf-8")
     (output / "analysis.html").write_text(build_analysis_html(name, analysis), encoding="utf-8")
+    apply_report_theme(output)
     return analysis
 
 
