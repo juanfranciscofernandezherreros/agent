@@ -2,6 +2,8 @@
 from __future__ import annotations
 import html
 from datetime import datetime, timezone
+import json
+from .report_theme import inline_stylesheet, stylesheet_link
 
 TASKS = {
     "BUG001": "Revisar el bloque de captura y registrar, propagar o tratar explícitamente la excepción.",
@@ -39,7 +41,8 @@ def _repository_bug_findings(repository):
     return _sorted_findings({"bug_candidates": findings})
 
 def _bug_export_script():
-    return r"""<script>
+    return (r"""<script>
+const AGENT_REPORT_CSS = __AGENT_REPORT_CSS__;
 (function () {
   const checks = Array.from(document.querySelectorAll(".bug-select"));
   const selectAll = document.getElementById("select-all-bugs");
@@ -162,38 +165,7 @@ def _bug_export_script():
           ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
         const taskRows = tasks.map((x) => "<tr>" + [x.id,x.repository,x.title,x.file + ":" + x.line,x.severity,x.recommended_action].map((v) => "<td>"+esc(v)+"</td>").join("") + "</tr>").join("");
         const bugRows = bugs.map((x) => "<tr>" + [x.repository,x.code,x.title,x.description,x.excerpt].map((v) => "<td>"+esc(v)+"</td>").join("") + "</tr>").join("");
-        htmlContent = "<!doctype html><html lang='es'><meta charset='utf-8'><title>Exportación de tareas y bugs</title><style>
-/* AGENT unified report theme v2 */
-:root{color-scheme:dark;--bg:#080b12;--surface:#101722;--surface2:#151f2d;--surface3:#1b293a;--line:#26364b;--text:#e7edf7;--muted:#91a2b9;--accent:#64d8c5;--blue:#83adff;--danger:#ff7385;--warning:#f4c56a;--success:#65d6a5}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--bg)}
-body{background:radial-gradient(ellipse at 12% 0%,rgba(39,87,125,.18),transparent 35%),var(--bg)!important;color:var(--text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;line-height:1.58}
-header{background:linear-gradient(125deg,#101b2b 0%,#142b40 58%,#123a3b 100%)!important;color:var(--text)!important;border:1px solid var(--line);border-radius:0 0 22px 22px;padding:30px clamp(18px,4vw,48px)!important;box-shadow:0 20px 55px rgba(0,0,0,.22)}
-header h1,h1{letter-spacing:-.04em;line-height:1.12;font-weight:780}
-header p:first-child,.section-kicker{color:var(--accent)!important;font-size:.75rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
-main{max-width:1280px!important;margin:28px auto!important;padding:0 20px!important}
-section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:linear-gradient(180deg,var(--surface),#0e1520)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(0,0,0,.16)!important}
-section,article{padding:clamp(16px,2.5vw,26px)!important;margin:16px 0!important}
-h2{color:#f0f5ff!important;letter-spacing:-.025em;font-weight:750}
-h3,h4{color:#dce8f8!important}
-.metric,.kpi,.score-card{background:linear-gradient(145deg,var(--surface2),var(--surface3))!important;border-color:#30445c!important}
-.metric strong,.kpi strong,.score-card strong{color:var(--accent)!important}
-nav{gap:9px!important}
-nav a,.actions a,button{background:#152235!important;color:#cfe0f6!important;border:1px solid #2b405b!important;border-radius:10px!important;padding:8px 12px!important;text-decoration:none!important;transition:all .15s ease}
-nav a:hover,.actions a:hover,button:hover{background:#1d314a!important;border-color:#4d7994!important;color:#fff!important}
-a{color:var(--blue)!important}a:hover{color:var(--accent)!important}
-.muted,small,.note,footer,dt{color:var(--muted)!important}
-.note{background:#132233!important;border-left:3px solid var(--accent)!important;border-radius:10px!important;padding:12px 15px!important}
-table{border-collapse:separate!important;border-spacing:0!important;width:100%}
-table th{background:#172436!important;color:#aebed3!important;font-size:.76rem!important;letter-spacing:.07em;text-transform:uppercase}
-td,th{border-color:var(--line)!important;padding:11px 12px!important}
-tbody tr:hover td{background:rgba(102,157,204,.055)!important}
-pre,code{background:#080e17!important;color:#d7e6ff!important;border:1px solid #26364b!important;border-radius:9px!important}
-input,select,textarea{background:#0b1320!important;color:var(--text)!important;border:1px solid #2b3b50!important;border-radius:9px!important}
-.bad,.badge-danger{color:var(--danger)!important}.warn,.warning{color:var(--warning)!important}.ok,.success{color:var(--success)!important}
-hr{border-color:var(--line)!important}
-@media(max-width:700px){main{padding:0 12px!important;margin:18px auto!important}header{padding:22px 18px!important;border-radius:0 0 16px 16px}section,article{padding:15px!important}table{min-width:620px}nav a,.actions a{font-size:.88rem}}
-</style><h1>Tareas y posibles bugs</h1><p>Conjunto: "+esc(groupName)+" · Microservicios: "+esc(exportData.repository)+"</p><h2>Tareas pendientes</h2><table><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr>"+taskRows+"</table><h2>Posibles bugs</h2><table><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr>"+bugRows+"</table></html>";
+        htmlContent = "<!doctype html><html lang='es'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Exportación de tareas y bugs</title>" + AGENT_REPORT_CSS + "</head><body><header><p>INFORME DE EXPORTACIÓN</p><h1>Tareas y posibles bugs</h1><p>Conjunto: "+esc(groupName)+" · Microservicios: "+esc(exportData.repository)+"</p></header><main><section><h2>Tareas pendientes</h2><div class='table-wrap'><table><tr><th>ID</th><th>Microservicio</th><th>Hallazgo</th><th>Ubicación</th><th>Severidad</th><th>Acción recomendada</th></tr>"+taskRows+"</table></div></section><section><h2>Posibles bugs</h2><div class='table-wrap'><table><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr>"+bugRows+"</table></div></section></main></body></html>";
         const safeId = String(groupId).slice(0, 8);
         jsonFilename = "tareas-y-bugs-" + safeId + ".json";
         htmlFilename = "informe-tareas-y-bugs-" + safeId + ".html";
@@ -215,7 +187,7 @@ hr{border-color:var(--line)!important}
     } finally { button.disabled = false; }
   });
 })();
-</script>"""
+</script>""").replace("__AGENT_REPORT_CSS__", json.dumps(inline_stylesheet()))
 
 def build_bug_report_html(repository, group_name, quality, service_slug=None, group_id=None, report_name=None):
     findings = _sorted_findings(quality)
@@ -241,33 +213,8 @@ def build_bug_report_html(repository, group_name, quality, service_slug=None, gr
 </section>"""
     script = _bug_export_script()
 
-    styles = """
-.export-panel{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.export-panel button{background:#2457c5;color:white;border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
-.export-panel button:disabled{opacity:.6;cursor:wait}
-.select-finding{display:inline-flex;align-items:center;gap:8px;font-weight:650;color:#2457c5;margin-bottom:10px}
-"""
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Posibles bugs - """ + _e(repository) + """</title><style>
-/* AGENT unified report theme */
-:root{color-scheme:dark;--bg:#080d18;--panel:#101827;--panel2:#141f31;--border:#26344a;--text:#e8eef8;--muted:#95a5bd;--accent:#65d6c4;--blue:#7ca8ff}
-html,body{background:var(--bg)!important;color:var(--text)!important}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif!important}
-header{background:linear-gradient(120deg,#0b1222,#142a45,#123a42)!important;color:var(--text)!important;border-bottom:1px solid var(--border)}
-main{max-width:1240px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;border-radius:14px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)}
-section.latest{border-color:#2c7778!important}.metric,.kpi,.score-card{background:var(--panel2)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}
-a{color:var(--blue)!important}a:hover{color:var(--accent)!important}button{border-radius:9px!important}pre,code{background:#070c14!important;color:#d8e6ff!important;border:1px solid #26344a}table th{background:#172337!important;color:#aebed3!important}td,th{border-color:var(--border)!important}input,select,textarea{background:#0b1322!important;color:var(--text)!important;border-color:var(--border)!important}
-
-*{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#172033;font:15px/1.55 system-ui}
-header{background:linear-gradient(120deg,#10254c,#2457c5);color:white;padding:32px max(20px,calc((100% - 1000px)/2))}
-main{max-width:1000px;margin:25px auto;padding:0 18px}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px}
-.metric,.finding,.notice{background:white;border:1px solid #dce3ed;border-radius:12px;padding:16px}.metric strong{display:block;font-size:1.7rem}
-.metric span,footer{color:#5b6678}.finding{margin:14px 0;border-left:5px solid #8b96a8}.finding.high{border-left-color:#c43d4b}.finding.medium{border-left-color:#c28a23}.finding.low{border-left-color:#3975bb}
-.top{display:flex;gap:12px}.top b{font-size:.8rem;padding:3px 8px;border-radius:20px;background:#edf1f6}.high .top b{background:#fdebed;color:#a62231}.medium .top b{background:#fff3d9;color:#805500}
-h1{font-size:clamp(1.6rem,4vw,2.2rem);margin:0}h2{font-size:1.2rem}dl{display:grid;grid-template-columns:100px 1fr;gap:5px 12px}dt{font-weight:650;color:#5b6678}dd{margin:0;overflow-wrap:anywhere}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2e;color:#e8efff;padding:13px;border-radius:8px}.notice{margin:16px 0;color:#5b6678}.doc-links{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.doc-links a{color:#2457c5;text-decoration:none;border:1px solid #dce3ed;border-radius:7px;padding:7px 10px;font-weight:650}
-""" + styles + """
-@media(max-width:520px){header{padding:25px 18px}dl{grid-template-columns:1fr}dd{margin-bottom:7px}}
-</style></head><body><header><p>INFORME INDIVIDUAL DE HALLAZGOS</p><h1>""" + _e(repository) + """</h1><p>Conjunto analizado: """ + _e(group_name) + """</p></header><main><nav class="doc-links"><a href="../analysis.html">← Volver al informe global</a>""" + ("<a href='../repositories/" + _e(service_slug) + "/analysis.html'>Abrir ficha técnica del microservicio</a>" if service_slug else "") + """</nav>
+<title>Posibles bugs - """ + _e(repository) + """</title>""" + stylesheet_link() + """</head><body><header><p>INFORME INDIVIDUAL DE HALLAZGOS</p><h1>""" + _e(repository) + """</h1><p>Conjunto analizado: """ + _e(group_name) + """</p></header><main><nav class="doc-links"><a href="../analysis.html">← Volver al informe global</a>""" + ("<a href='../repositories/" + _e(service_slug) + "/analysis.html'>Abrir ficha técnica del microservicio</a>" if service_slug else "") + """</nav>
 <section class="metrics"><div class="metric"><strong>""" + _e(quality.get("score", "N/D")) + """ / 100</strong><span>Calidad estática: """ + _e(quality.get("rating", "Sin puntuación")) + """</span></div>
 <div class="metric"><strong>""" + str(len(findings)) + """</strong><span>Posibles bugs</span></div>
 <div class="metric"><strong>""" + str(counts["high"]) + """</strong><span>Prioridad alta</span></div>
@@ -300,41 +247,19 @@ def build_bug_export_html(export_data):
     return """<!doctype html><html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Exportación de tareas y bugs</title>
-<style>
-/* AGENT unified report theme */
-:root{color-scheme:dark;--bg:#080d18;--panel:#101827;--panel2:#141f31;--border:#26344a;--text:#e8eef8;--muted:#95a5bd;--accent:#65d6c4;--blue:#7ca8ff}
-html,body{background:var(--bg)!important;color:var(--text)!important}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif!important}
-header{background:linear-gradient(120deg,#0b1222,#142a45,#123a42)!important;color:var(--text)!important;border-bottom:1px solid var(--border)}
-main{max-width:1240px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;border-radius:14px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)}
-section.latest{border-color:#2c7778!important}.metric,.kpi,.score-card{background:var(--panel2)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}
-a{color:var(--blue)!important}a:hover{color:var(--accent)!important}button{border-radius:9px!important}pre,code{background:#070c14!important;color:#d8e6ff!important;border:1px solid #26344a}table th{background:#172337!important;color:#aebed3!important}td,th{border-color:var(--border)!important}input,select,textarea{background:#0b1322!important;color:var(--text)!important;border-color:var(--border)!important}
-
-body{font:15px/1.5 system-ui;margin:0;background:#f4f6fa;color:#172033}
-main{max-width:1100px;margin:32px auto;padding:0 18px}
-section{background:white;border:1px solid #dce3ed;border-radius:12px;padding:20px;margin:16px 0}
-.task-card{background:#fff;border:1px solid #dce3ed;border-left:5px solid #3975bb;border-radius:12px;padding:16px;margin:13px 0}
-.task-card.high{border-left-color:#c43d4b}.task-card.medium{border-left-color:#c28a23}.task-card.low{border-left-color:#3975bb}
-.task-top{display:flex;gap:10px;align-items:center}.severity{font-size:.78rem;font-weight:750;padding:3px 9px;border-radius:20px;background:#edf1f6}
-.high .severity{background:#fdebed;color:#a62231}.medium .severity{background:#fff3d9;color:#805500}
-.task-id{color:#66758a;font-size:.85rem;font-weight:650}.repository{color:#5b6678;font-weight:650;margin:9px 0 0}
-.task-card h3{font-size:1.12rem;margin:5px 0 10px}.task-card h4{margin:12px 0 3px;color:#40516a}
-dl{display:grid;grid-template-columns:75px 1fr;gap:4px 12px;margin:10px 0}dt{font-weight:650;color:#5b6678}dd{margin:0;overflow-wrap:anywhere}
-code{overflow-wrap:anywhere}.bug-table{width:100%;border-collapse:collapse}.bug-table th,.bug-table td{text-align:left;vertical-align:top;padding:9px;border-bottom:1px solid #e5eaf1;overflow-wrap:anywhere}
-.bug-table th{background:#edf1f6}h1,h2{color:#172b4d}
-@media(max-width:520px){dl{grid-template-columns:1fr}dd{margin-bottom:6px}}
-</style></head><body><main><h1>Informe consolidado de tareas y posibles bugs</h1>
+""" + inline_stylesheet() + """</head><body><header><p>INFORME DE EXPORTACIÓN</p><h1>Informe consolidado de tareas y posibles bugs</h1>
 <p>Conjunto: """ + _e(export_data["group_name"]) + """ · Microservicio: """ + _e(export_data["repository"]) + """</p>
-<p>Generado: """ + _e(export_data["generated_at"]) + """ · Elementos seleccionados: """ + str(len(tasks)) + """</p>
+<p>Generado: """ + _e(export_data["generated_at"]) + """ · Elementos seleccionados: """ + str(len(tasks)) + """</p></header><main>
 <section><h2>Tareas pendientes (""" + str(len(tasks)) + """)</h2>""" + (task_cards or "<p>No hay tareas seleccionadas.</p>") + """</section>
 <section><h2>Posibles bugs (""" + str(len(bugs)) + """)</h2>
-<table class="bug-table"><thead><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr></thead><tbody>""" + bug_rows + """</tbody></table></section>
+<div class="table-wrap"><table class="bug-table"><thead><tr><th>Microservicio</th><th>Código</th><th>Título</th><th>Detalle</th><th>Evidencia</th></tr></thead><tbody>""" + bug_rows + """</tbody></table></div></section>
 <p>Los elementos son candidatos heurísticos y deben validarse mediante revisión y pruebas.</p>
 </main></body></html>"""
 
 def build_bug_reports_index(group_name, reports, repositories=None, group_id=None):
     rows = "".join(
         "<li><a href='" + _e(x["file"]) + "'>" + _e(x["repository"]) +
-        "</a><span>" + _e(x["count"]) + " posibles bugs</span></li>"
+        "</a> <span class='muted'>· " + _e(x["count"]) + " posibles bugs</span></li>"
         for x in reports
     )
     if not rows:
@@ -372,39 +297,5 @@ def build_bug_reports_index(group_name, reports, repositories=None, group_id=Non
 <span id="export-status" role="status" aria-live="polite">No hay hallazgos seleccionados.</span></div>
 <div class="finding-list">""" + "".join(selectable) + """</div></section>"""
     return """<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informes individuales de posibles bugs</title>
-<style>
-/* AGENT unified report theme */
-:root{color-scheme:dark;--bg:#080d18;--panel:#101827;--panel2:#141f31;--border:#26344a;--text:#e8eef8;--muted:#95a5bd;--accent:#65d6c4;--blue:#7ca8ff}
-html,body{background:var(--bg)!important;color:var(--text)!important}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif!important}
-header{background:linear-gradient(120deg,#0b1222,#142a45,#123a42)!important;color:var(--text)!important;border-bottom:1px solid var(--border)}
-main{max-width:1240px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;border-radius:14px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)}
-section.latest{border-color:#2c7778!important}.metric,.kpi,.score-card{background:var(--panel2)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}
-a{color:var(--blue)!important}a:hover{color:var(--accent)!important}button{border-radius:9px!important}pre,code{background:#070c14!important;color:#d8e6ff!important;border:1px solid #26344a}table th{background:#172337!important;color:#aebed3!important}td,th{border-color:var(--border)!important}input,select,textarea{background:#0b1322!important;color:var(--text)!important;border-color:var(--border)!important}
-
-body{font:16px/1.5 system-ui;margin:0;background:#f4f6fa;color:#172033}
-main{max-width:950px;margin:40px auto;padding:0 18px}
-section{background:white;border:1px solid #dce3ed;border-radius:14px;padding:24px;margin:16px 0}
-li{padding:12px 0;border-bottom:1px solid #e5eaf1}
-a{font-weight:700;color:#2457c5}span{display:block;color:#5b6678;font-size:.9rem}
-.actions,.selection-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.actions a{padding:8px 11px;border:1px solid #dce3ed;border-radius:7px}
-.finding-list{display:grid;gap:8px;margin-top:14px}
-.finding-choice{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid #e1e7f0;border-radius:9px;cursor:pointer}
-.finding-choice input{margin-top:5px}.finding-choice span{font-size:.95rem;color:#172033}
-.finding-choice small{display:block;color:#5b6678;margin-top:3px;overflow-wrap:anywhere}
-.selection-actions button{background:#2457c5;color:white;border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
-.selection-actions button:disabled{opacity:.6;cursor:wait}
-@media(max-width:520px){main{margin:20px auto}section{padding:16px}}
-
-/* AGENT premium visual layer */
-:root{color-scheme:dark!important;--bg:#080b12;--surface:#101722;--surface2:#151f2d;--surface3:#1b293a;--line:#26364b;--text:#e7edf7;--muted:#91a2b9;--accent:#64d8c5;--blue:#83adff;--danger:#ff7385;--warning:#f4c56a;--success:#65d6a5}
-*{box-sizing:border-box}html,body{background:radial-gradient(ellipse at 12% 0%,rgba(39,87,125,.2),transparent 35%),var(--bg)!important;color:var(--text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;line-height:1.6!important}
-body{min-height:100vh}header{background:linear-gradient(125deg,#101b2b 0%,#142b40 58%,#123a3b 100%)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:0 0 22px 22px!important;padding:clamp(22px,4vw,42px)!important;box-shadow:0 20px 55px rgba(0,0,0,.24)!important}header h1,h1{letter-spacing:-.04em!important;line-height:1.12!important;font-weight:800!important}header p:first-child,.section-kicker{color:var(--accent)!important;font-size:.75rem!important;font-weight:800!important;letter-spacing:.13em!important;text-transform:uppercase!important}
-main{max-width:1280px!important;margin:28px auto!important;padding:0 20px!important}section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group,.kpi,.buggroup{background:linear-gradient(180deg,var(--surface),#0e1520)!important;color:var(--text)!important;border:1px solid var(--line)!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(0,0,0,.18)!important}section,article{padding:clamp(16px,2.5vw,26px)!important;margin:16px 0!important}
-h2{color:#f0f5ff!important;letter-spacing:-.025em!important;font-weight:760!important}h3,h4{color:#dce8f8!important}p,li,td{color:var(--text)!important}.metric,.kpi,.score-card{background:linear-gradient(145deg,var(--surface2),var(--surface3))!important;border-color:#30445c!important}.metric strong,.kpi strong,.score-card strong{color:var(--accent)!important}
-nav,.actions,.selection-actions{display:flex;gap:9px!important;flex-wrap:wrap!important;align-items:center!important}nav a,.actions a,button{background:#152235!important;color:#cfe0f6!important;border:1px solid #2b405b!important;border-radius:10px!important;padding:8px 12px!important;text-decoration:none!important;transition:all .15s ease!important}nav a:hover,.actions a:hover,button:hover{background:#1d314a!important;border-color:#4d7994!important;color:#fff!important}a{color:var(--blue)!important}a:hover{color:var(--accent)!important}.muted,small,.note,footer,dt{color:var(--muted)!important}.note{background:#132233!important;border-left:3px solid var(--accent)!important;border-radius:10px!important;padding:12px 15px!important}
-table{border-collapse:separate!important;border-spacing:0!important;width:100%!important}table th{background:#172436!important;color:#aebed3!important;font-size:.76rem!important;letter-spacing:.07em!important;text-transform:uppercase!important}td,th{border-color:var(--line)!important;padding:11px 12px!important;vertical-align:top!important}tbody tr:hover td{background:rgba(102,157,204,.06)!important}pre,code{background:#080e17!important;color:#d7e6ff!important;border:1px solid #26364b!important;border-radius:9px!important}pre{white-space:pre-wrap!important;overflow-wrap:anywhere!important}input,select,textarea{background:#0b1320!important;color:var(--text)!important;border:1px solid #2b3b50!important;border-radius:9px!important}.bad,.badge-danger,.high{color:var(--danger)!important}.warn,.warning,.medium{color:var(--warning)!important}.ok,.success{color:var(--success)!important}hr{border-color:var(--line)!important}.empty{color:var(--muted)!important;border:1px dashed var(--line)!important;border-radius:12px!important;padding:14px!important}
-@media(max-width:700px){main{padding:0 12px!important;margin:18px auto!important}header{padding:22px 18px!important;border-radius:0 0 16px 16px!important}section,article{padding:15px!important}table{min-width:620px!important}nav a,.actions a{font-size:.88rem!important}}
-</style></head><body><main><section><nav class="actions"><a href="../analysis.html">← Informe global</a><a href="../index.html">Índice de documentación</a></nav>
-<h1>Informes individuales de posibles bugs</h1><p>Conjunto analizado: """ + _e(group_name) + """</p>
+""" + stylesheet_link() + """</head><body><header><p>POSIBLES BUGS</p><h1>Informes individuales de posibles bugs</h1><p>Conjunto analizado: """ + _e(group_name) + """</p></header><main><nav class="actions"><a href="../analysis.html">← Informe global</a><a href="../index.html">Índice de documentación</a></nav><section>
 <p>Solo aparecen microservicios con uno o más candidatos detectados. Puedes abrir un informe individual o seleccionar hallazgos de varios servicios para exportarlos juntos.</p><ul>""" + rows + """</ul></section>""" + selection_ui.replace("__GROUP_ID__", _e(group_id or "")).replace("__GROUP_NAME__", _e(group_name)) + """</main>""" + (_bug_export_script() if selectable else "") + """</body></html>"""

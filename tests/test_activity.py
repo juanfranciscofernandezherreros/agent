@@ -148,7 +148,7 @@ def test_index_ranks_most_active_microservices():
     assert "Más commits</small><b><a href='repositories/g-busy/activity.html'>g/busy</a></b><span>250 commits" in kpis
     assert "Más ramas recientes</small><b><a href='repositories/g-branchy/activity.html'>g/branchy</a></b><span>9 ramas" in kpis
     assert "Ana G</b><span>40 pushes en 1 repositorios" in kpis
-    assert "1 microservicios sin datos de actividad" in section and "width:100%" in section
+    assert "1 microservicios sin datos de actividad" in section and "<progress class='bar' max='100' value='100'>" in section
     assert "250 commits</a> · 2 ramas" in html and "<span>Sin datos</span>" in html and "g/&lt;manual&gt;" in html
     empty = build_documentation_index("Grupo", {"repositories": repos[3:], "bug_reports": []})
     assert "No hay histórico de Git disponible" in empty

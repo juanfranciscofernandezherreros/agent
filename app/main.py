@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
-from fastapi.responses import PlainTextResponse, HTMLResponse
+from fastapi.responses import PlainTextResponse, HTMLResponse, Response
 from datetime import datetime, timezone
 from pathlib import Path
 import json
@@ -22,10 +22,19 @@ from .schemas import BugReportExportRequest
 from .bug_report import TASKS, _repository_bug_findings, build_bug_export_html
 from .bug_hunter_api import router as bug_hunter_router
 from .report_responsive import make_folder_responsive
+from .report_theme import read_css
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION,
  description="Orquestador de análisis estático profundo de uno o varios microservicios. No ejecuta el código analizado.")
 app.include_router(bug_hunter_router)
+
+# Hoja de estilos única de los informes (app/static/report.css). Los informes la
+# enlazan con una ruta relativa, así que cualquier URL de informe bajo /api que
+# termine en report.css debe devolver este mismo fichero. Se declara antes que
+# las rutas de informes para que ninguna ruta con parámetros la capture.
+@app.get("/api/{report_path:path}/report.css",include_in_schema=False)
+def get_report_stylesheet(report_path: str):
+    return Response(read_css(),media_type="text/css; charset=utf-8",headers={"Cache-Control":"no-cache"})
 
 @app.on_event("startup")
 def startup():
