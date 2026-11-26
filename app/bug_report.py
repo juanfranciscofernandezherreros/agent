@@ -47,7 +47,7 @@ def _bug_export_script():
   const exportAllButton = document.getElementById("export-all-bugs-json");
   const status = document.getElementById("export-status");
   const safeName = (value) => String(value || "hallazgo").normalize("NFKD")
-    .replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]+/g, "-")
     .replace(/^-+|-+$/g, "").slice(0, 90) || "hallazgo";
   const makeZip = (files) => {
     const encoder = new TextEncoder();
