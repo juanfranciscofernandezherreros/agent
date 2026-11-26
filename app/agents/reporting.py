@@ -50,11 +50,6 @@ class RepositoryReportingAgent(AnalyzerAgent):
         dest = folder / "repositories" / service
         dest.mkdir(parents=True, exist_ok=True)
         artifact_dir = str(dest.relative_to(folder))
-        candidates = quality.get("bug_candidates") or []
-        # Nombre estable por repositorio: los enlaces siguen siendo válidos entre ejecuciones.
-        identity = (context.data.get("repository_input") or {}).get("git_url") or str(name)
-        report_file = (service + "-" + hashlib.sha1(identity.encode("utf-8")).hexdigest()[:6] + ".html") if candidates else None
-        bug_report = ("bug-reports/" + report_file) if report_file else None
         production_candidates = quality.get("bug_candidates") or []
         test_candidates = quality.get("test_bug_candidates") or []
         llm_findings = (insights.get("llm_bug_hunter") or {}).get("findings") or []
@@ -65,6 +60,12 @@ class RepositoryReportingAgent(AnalyzerAgent):
             unified_candidates.append({"source": "static_quality", "scope": "test", **candidate})
         for candidate in llm_findings:
             unified_candidates.append({"source": "llm_bug_hunter", "scope": "production", **candidate})
+        report_quality = {**quality, "bug_candidates": unified_candidates}
+        candidates = unified_candidates
+        # Nombre estable por repositorio: los enlaces siguen siendo válidos entre ejecuciones.
+        identity = (context.data.get("repository_input") or {}).get("git_url") or str(name)
+        report_file = (service + "-" + hashlib.sha1(identity.encode("utf-8")).hexdigest()[:6] + ".html") if candidates else None
+        bug_report = ("bug-reports/" + report_file) if report_file else None
         from datetime import datetime
         export_datetime = datetime.now().astimezone()
         export_timestamp = export_datetime.strftime("%Y%m%d-%H%M%S")
@@ -99,7 +100,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 if rel == bug_report:
                     target.write_text(build_bug_report_html(
-                        name, group_name, quality, service,
+                        name, group_name, report_quality, service,
                         context.data.get("group_id"), report_file
                     ), encoding="utf-8")
                     continue
@@ -110,7 +111,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
         else:
             if report_file:
                 (folder / "bug-reports").mkdir(parents=True, exist_ok=True)
-                (folder / bug_report).write_text(build_bug_report_html(name, group_name, quality, service, context.data.get("group_id"), report_file), encoding="utf-8")
+                (folder / bug_report).write_text(build_bug_report_html(name, group_name, report_quality, service, context.data.get("group_id"), report_file), encoding="utf-8")
             member = {"project_name": name, "inventory": inv, "deep_analysis": deep,
                       "functional_analysis": functional, "java_analysis": java, "quality_analysis": quality,
                       "bug_report": bug_report, "agent_insights": insights,
