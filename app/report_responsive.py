@@ -115,7 +115,7 @@ def make_folder_responsive(folder):
     for path in root.rglob("*.html"):
         try:
             original = path.read_text(encoding="utf-8")
-            if 'id="agent-responsive-layout-v2"' in original:
+            if 'id="agent-responsive-layout-v3"' in original:
                 continue
             pos = original.lower().find("</head>")
             if pos < 0:
