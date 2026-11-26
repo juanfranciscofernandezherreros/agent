@@ -32,7 +32,7 @@ def _repository_bug_findings(repository):
                     for item in quality.get("bug_candidates") or [])
     findings.extend({**item, "scope": "test", "source": item.get("source", "static_quality")}
                     for item in quality.get("test_bug_candidates") or [])
-    llm_findings = (repository.get("agent_insights") or {}).get("llm_bug_hunter", {}).get("findings") or []
+    llm_findings = ((repository.get("agent_insights") or {}).get("llm_bug_hunter") or {}).get("findings") or []
     findings.extend({**item, "scope": item.get("scope", "production"),
                      "source": "llm_bug_hunter"}
                     for item in llm_findings)
