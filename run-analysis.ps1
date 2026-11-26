@@ -179,7 +179,7 @@ try {
         # Landing page for each local bundle, then rebuild the global reports index.
         $BundleIndex = Join-Path $BundleDir "index.html"
         $BundleTitle = [System.Net.WebUtility]::HtmlEncode($SafeName)
-        $BundleHtml = "<!doctype html><html lang=`"es`"><meta charset=`"utf-8`"><meta name=`"viewport`" content=`"width=device-width,initial-scale=1`"><title>$BundleTitle - Informes</title><body style=`"font-family:system-ui;max-width:900px;margin:40px auto;padding:20px;background:#0b111b;color:#e6edf7`"><h1>$BundleTitle</h1><p>Informes del análisis local · $Timestamp</p><ul><li><a href=`"analysis.html`">Informe HTML</a></li><li><a href=`"analysis.md`">Informe Markdown</a></li><li><a href=`"analysis.json`">Datos JSON</a></li></ul></body></html>"
+        $BundleHtml = "<!doctype html><html lang=`"es`"><meta charset=`"utf-8`"><meta name=`"viewport`" content=`"width=device-width,initial-scale=1`"><title>$BundleTitle - Informes</title><body style=`"font-family:system-ui;max-width:900px;margin:40px auto;padding:20px;background:#f4f7fb;color:#243247`"><h1>$BundleTitle</h1><p>Informes del análisis local · $Timestamp</p><ul><li><a href=`"analysis.html`">Informe HTML</a></li><li><a href=`"analysis.md`">Informe Markdown</a></li><li><a href=`"analysis.json`">Datos JSON</a></li></ul></body></html>"
         Set-Content -LiteralPath $BundleIndex -Value $BundleHtml -Encoding UTF8
         $RootIndex = Join-Path $ReportDir "index.html"
         try { & $Python -m app.reports_index $ReportDir | Out-Null; if (Test-Path -LiteralPath $RootIndex) { Write-Host "Índice general de todos los análisis: $RootIndex" -ForegroundColor Green } } catch { Write-Host "No se pudo generar el índice general." -ForegroundColor Yellow }

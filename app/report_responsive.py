@@ -5,7 +5,7 @@ receive the same predictable responsive behavior.
 """
 from pathlib import Path
 
-STYLE = """<style id="agent-responsive-layout-v2">
+STYLE = """<style id="agent-responsive-layout-v3">
 *,*::before,*::after{box-sizing:border-box;min-width:0}
 html,body{width:100%;max-width:100%;overflow-x:clip}
 body{line-height:1.6}
@@ -64,6 +64,47 @@ html,body{background:#f3f6fb!important;color:#253247!important}
 .sidebar>a{color:#245bb5!important}
 .sidebar>a:hover{background:#f1f5f9!important;border-color:#d5dfeb!important}
 .table-wrap,.report-table-scroll{background:#fff!important}
+
+/* AGENT project-wide LIGHT theme v3: enforce a single readable light palette. */
+:root{color-scheme:light!important;--bg:#f4f7fb!important;--surface:#ffffff!important;--surface2:#f8fafc!important;--surface3:#eef3f8!important;--panel:#ffffff!important;--panel2:#f8fafc!important;--line:#d8e1ec!important;--border:#d8e1ec!important;--text:#243247!important;--muted:#64748b!important;--accent:#087f73!important;--blue:#245bb5!important;--danger:#b42335!important;--warning:#946200!important;--success:#137547!important;--red:#b42335!important;--amber:#946200!important;--green:#137547!important}
+html,body{background:#f4f7fb!important;color:#243247!important;color-scheme:light!important}
+body{background:#f4f7fb!important;color:#243247!important}
+header,.hero{background:linear-gradient(120deg,#e8eff8,#f5f8fc 65%,#e6f3f1)!important;color:#1e293b!important;border-color:#d8e1ec!important;box-shadow:0 8px 24px rgba(31,51,73,.06)!important}
+header h1,header h2,header h3,.hero h1,.hero h2{color:#17243a!important}
+header p,.hero p{color:#52647a!important}
+main{color:#243247!important}
+section,article,.panel,.metric,.score-card,.finding,.task,.notice,.service-node,.class-card,.quality-banner,.selection,.evidence-group,.kpi,.buggroup,.report-section,.raw-summary,details.data-section,.finding details,.service,.metric,.score-card{background:#fff!important;background-image:none!important;color:#243247!important;border-color:#d8e1ec!important;box-shadow:0 5px 18px rgba(31,51,73,.055)!important}
+h1,h2,h3,h4,h5,h6,strong,b,summary,label,dt{color:#1e293b!important}
+p,li,dd,td,th,span,div{ text-shadow:none!important}
+p,li,dd,td{color:#334155!important}
+small,.muted,.note,footer,dt,.section-intro,.finding-number,.empty{color:#64748b!important}
+a{color:#245bb5!important}a:hover{color:#087f73!important}
+nav,.report-nav,.bugbar{background:rgba(255,255,255,.96)!important;border-color:#d8e1ec!important;box-shadow:0 4px 14px rgba(31,51,73,.06)!important}
+nav a,.report-nav a,.actions a,.selection-actions a{background:#f8fafc!important;color:#245bb5!important;border-color:#d8e1ec!important}
+nav a:hover,.report-nav a:hover,.actions a:hover{background:#eaf1f8!important;color:#087f73!important;border-color:#b9c9dc!important}
+button,.export-panel button,#bug-send{background:#245bb5!important;color:#fff!important;border:1px solid #245bb5!important}
+button:hover,.export-panel button:hover,#bug-send:hover{background:#19488f!important;color:#fff!important}
+button:disabled{opacity:.6}
+input,select,textarea{background:#fff!important;color:#243247!important;border:1px solid #cbd5e1!important;box-shadow:none!important}
+input::placeholder,textarea::placeholder{color:#94a3b8!important}
+pre,code,kbd,samp{background:#f1f5f9!important;color:#243247!important;border:1px solid #d8e1ec!important}
+table{background:#fff!important;color:#243247!important}
+table th,thead th{background:#eaf0f6!important;color:#334155!important;border-color:#d8e1ec!important}
+td,th{border-color:#e2e8f0!important;color:#334155!important}
+tbody tr:hover,tbody tr:hover td{background:#f5f8fc!important}
+hr{border-color:#d8e1ec!important}
+.metric strong,.kpi strong,.score-card strong,.metric .value{color:#087f73!important}
+.count,.tag,.eyebrow,.section-kicker{color:#087f73!important}
+.severity.high,.sev-high{background:#fff1f2!important;color:#b42335!important;border-color:#fecdd3!important}
+.severity.medium,.sev-medium{background:#fff7e6!important;color:#946200!important;border-color:#f5dfaa!important}
+.severity.low{background:#eff6ff!important;color:#245bb5!important;border-color:#bfdbfe!important}
+.bad,.badge-danger,.high{color:#b42335!important}.warn,.warning,.medium{color:#946200!important}.ok,.success{color:#137547!important}
+.sidebar{background:#fff!important;border-color:#d8e1ec!important;color:#243247!important}
+.sidebar>a{color:#245bb5!important}
+.sidebar>a:hover{background:#f1f5f9!important}
+.report-nav{backdrop-filter:blur(12px)}
+.empty{background:#f8fafc!important;border-color:#cbd5e1!important}
+@media(prefers-color-scheme:dark){:root{color-scheme:light!important}html,body{background:#f4f7fb!important;color:#243247!important}}
 </style><script>(function(){function wrap(){document.querySelectorAll('table').forEach(function(t){if(t.parentElement&&(t.parentElement.classList.contains('report-table-scroll')||t.parentElement.classList.contains('table-wrap')))return;var w=document.createElement('div');w.className='report-table-scroll';t.parentNode.insertBefore(w,t);w.appendChild(t)})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wrap);else wrap()})();</script>"""
 
 def make_folder_responsive(folder):
@@ -74,7 +115,7 @@ def make_folder_responsive(folder):
     for path in root.rglob("*.html"):
         try:
             original = path.read_text(encoding="utf-8")
-            if 'id="agent-responsive-layout-v2"' in original:
+            if 'id="agent-responsive-layout-v3"' in original:
                 continue
             pos = original.lower().find("</head>")
             if pos < 0:
