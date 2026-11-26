@@ -17,6 +17,7 @@ from ..documentation import build_documentation_index
 from ..group_report import markdown, slug
 from ..report_details import java_catalog, write_individual_reports
 from ..rich_report import build_integral_html
+from ..report_theme import relative_href, theme_html
 from .context import AnalysisContext, AnalyzerAgent
 from .validation import LLM_REPOSITORY, STATIC
 
@@ -107,7 +108,13 @@ class RepositoryReportingAgent(AnalyzerAgent):
                 if rel.endswith("/" + bug_json) or rel.endswith("/" + bug_json_timestamped):
                     target.write_text(json.dumps(bug_json_payload, indent=2, ensure_ascii=False), encoding="utf-8")
                     continue
-                shutil.copyfile(cached / rel.replace("\\", "/").split("/")[-1], target)
+                source = cached / rel.replace("\\", "/").split("/")[-1]
+                if target.suffix == ".html":
+                    # Los informes cacheados pueden venir de una versión anterior: se
+                    # les aplica el tema único (report.css) al restaurarlos.
+                    target.write_text(theme_html(source.read_text(encoding="utf-8"), relative_href(target, folder)), encoding="utf-8")
+                    continue
+                shutil.copyfile(source, target)
         else:
             if report_file:
                 (folder / "bug-reports").mkdir(parents=True, exist_ok=True)

@@ -179,7 +179,7 @@ try {
         # Landing page for each local bundle, then rebuild the global reports index.
         $BundleIndex = Join-Path $BundleDir "index.html"
         $BundleTitle = [System.Net.WebUtility]::HtmlEncode($SafeName)
-        $BundleHtml = "<!doctype html><html lang=`"es`"><meta charset=`"utf-8`"><meta name=`"viewport`" content=`"width=device-width,initial-scale=1`"><title>$BundleTitle - Informes</title><body style=`"font-family:system-ui;max-width:900px;margin:40px auto;padding:20px;background:#f4f7fb;color:#243247`"><h1>$BundleTitle</h1><p>Informes del análisis local · $Timestamp</p><ul><li><a href=`"analysis.html`">Informe HTML</a></li><li><a href=`"analysis.md`">Informe Markdown</a></li><li><a href=`"analysis.json`">Datos JSON</a></li></ul></body></html>"
+        $BundleHtml = "<!doctype html><html lang=`"es`"><head><meta charset=`"utf-8`"><meta name=`"viewport`" content=`"width=device-width,initial-scale=1`"><title>$BundleTitle - Informes</title><link rel=`"stylesheet`" href=`"report.css`" data-agent-report-css></head><body><header><p>ANÁLISIS LOCAL</p><h1>$BundleTitle</h1><p>Informes del análisis local · $Timestamp</p></header><main><section><h2>Documentos generados</h2><nav class=`"actions`"><a href=`"analysis.html`">Informe HTML</a><a href=`"analysis.md`">Informe Markdown</a><a href=`"analysis.json`">Datos JSON</a></nav></section></main></body></html>"
         Set-Content -LiteralPath $BundleIndex -Value $BundleHtml -Encoding UTF8
         $RootIndex = Join-Path $ReportDir "index.html"
         try { & $Python -m app.reports_index $ReportDir | Out-Null; if (Test-Path -LiteralPath $RootIndex) { Write-Host "Índice general de todos los análisis: $RootIndex" -ForegroundColor Green } } catch { Write-Host "No se pudo generar el índice general." -ForegroundColor Yellow }
@@ -233,7 +233,7 @@ try {
     $ApiIsStale = $false
     try {
         $HealthInfo = Invoke-RestMethod -Uri "$Api/health" -TimeoutSec 5
-        $NewestCode = (Get-ChildItem -LiteralPath (Join-Path $Root "app") -Recurse -File | Where-Object { $_.Extension -eq ".py" } | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1).LastWriteTimeUtc
+        $NewestCode = (Get-ChildItem -LiteralPath (Join-Path $Root "app") -Recurse -File | Where-Object { $_.Extension -in @(".py", ".css") } | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1).LastWriteTimeUtc
         $NewestEpoch = [DateTimeOffset]::new([DateTime]::SpecifyKind($NewestCode, [DateTimeKind]::Utc)).ToUnixTimeSeconds()
         # Se compara en segundos Unix para no depender de cómo cada versión de PowerShell interpreta las fechas JSON.
         $StartedEpoch = [long]$HealthInfo.started_epoch
@@ -485,6 +485,8 @@ try {
     try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/activity.html" -OutFile (Join-Path $BundleDir "activity.html") -UseBasicParsing } catch { Write-Host "Histórico de actividad no disponible" -ForegroundColor Yellow }
     try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/agents.html" -OutFile (Join-Path $BundleDir "agents.html") -UseBasicParsing } catch { Write-Host "Informe multiagente global no disponible" -ForegroundColor Yellow }
     Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/documentation/index.html" -OutFile (Join-Path $BundleDir "index.html") -UseBasicParsing
+    # Hoja de estilos única de todos los informes (los HTML la enlazan con rutas relativas).
+    try { Invoke-WebRequest -Uri "$Api/api/analysis-groups/$AnalysisGroupId/report.css" -OutFile (Join-Path $BundleDir "report.css") -UseBasicParsing } catch { Write-Host "No se pudo descargar report.css; se instalará al regenerar el índice general." -ForegroundColor Yellow }
 
     if ($FinalStatus -eq "PARTIAL_ANALYSIS_COMPLETED") {
         Write-Host "Análisis parcial: uno o varios repositorios no pudieron analizarse." -ForegroundColor Yellow

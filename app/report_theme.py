@@ -60,8 +60,8 @@ def install_stylesheet(folder) -> Path:
     return target
 
 
-def relative_href(page: Path, root: Path) -> str:
-    rel = os.path.relpath(root / CSS_FILENAME, page.parent)
+def relative_href(page, root) -> str:
+    rel = os.path.relpath(Path(root) / CSS_FILENAME, Path(page).parent)
     return rel.replace(os.sep, "/")
 
 
