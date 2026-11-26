@@ -18,10 +18,12 @@ from ..group_report import markdown, slug
 from ..report_details import java_catalog, write_individual_reports
 from ..rich_report import build_integral_html
 from ..report_theme import relative_href, theme_html
+from ..security.outputs import write_security_outputs
 from .context import AnalysisContext, AnalyzerAgent
 from .validation import LLM_REPOSITORY, STATIC
 
-STATIC_REPORT_FILES = ("analysis.json", "analysis.md", "analysis.html", "agents.md", "agents.html")
+STATIC_REPORT_FILES = ("analysis.json", "analysis.md", "analysis.html", "agents.md", "agents.html",
+                       "security.json", "security.sarif")
 SUBTITLE = "Análisis estático; no se ejecutó el código. Las secciones LLM son interpretaciones, no hechos verificados."
 
 
@@ -34,7 +36,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
     """Informes individuales de un microservicio."""
     name = "repository_report"
     requires = STATIC
-    after = (*LLM_REPOSITORY, "cross_validation", "activity_analysis")
+    after = (*LLM_REPOSITORY, "cross_validation", "activity_analysis", "security_triage")
     optional = True  # se omite si no hay carpeta de salida; el orquestador exige su resultado
 
     def run(self, context: AnalysisContext) -> dict:
@@ -124,6 +126,7 @@ class RepositoryReportingAgent(AnalyzerAgent):
                       "bug_report": bug_report, "agent_insights": insights,
                       "completion_status": "STATIC_ANALYSIS_COMPLETED", "runtime_validation": "NOT_PERFORMED"}
             (dest / "analysis.json").write_text(json.dumps(member, indent=2, ensure_ascii=False), encoding="utf-8")
+            write_security_outputs(dest, context.results.get("security_analysis"))
             serialized_bug_json = json.dumps(bug_json_payload, indent=2, ensure_ascii=False)
             (dest / bug_json).write_text(serialized_bug_json, encoding="utf-8")
             (dest / bug_json_timestamped).write_text(serialized_bug_json, encoding="utf-8")

@@ -6,14 +6,13 @@ from .context import AnalysisContext, AnalyzerAgent
 class QualityAnalysisAgent(AnalyzerAgent):
     name = "quality_analysis"
     requires = ("deep_analysis", "functional_analysis", "java_analysis")
+    after = ("security_analysis", "security_triage")
 
     def run(self, context: AnalysisContext) -> dict:
-        result = analyze_quality(
-            context.root,
-            context.results["deep_analysis"],
-            context.results["functional_analysis"],
-            context.results["java_analysis"],
-        )
+        args = (context.root, context.results["deep_analysis"], context.results["functional_analysis"],
+                context.results["java_analysis"])
+        scan = context.results.get("security_analysis")
+        result = analyze_quality(*args, security_scan=scan) if scan is not None else analyze_quality(*args)
         context.results[self.name] = result
         return result
 

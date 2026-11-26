@@ -653,3 +653,43 @@ button:disabled { opacity: .6; cursor: wait; }
   pre { max-height: none; }
   a { color: inherit; }
 }
+
+/* 14. Hallazgos de seguridad: clasificación, flujo de datos y triaje ---------- */
+.finding-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.finding-tags .tag { text-transform: none; letter-spacing: 0; font-weight: 650; }
+.finding-tags a.tag:hover { text-decoration: none; border-color: var(--line-strong); }
+.dataflow { list-style: none; padding: 0; margin: 8px 0 12px; counter-reset: flow; }
+.dataflow li {
+  position: relative;
+  margin: 0 0 8px;
+  padding: 8px 12px 8px 40px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  counter-increment: flow;
+}
+.dataflow li::before {
+  content: counter(flow);
+  position: absolute;
+  left: 10px;
+  top: 9px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text-soft);
+  font-size: .72rem;
+  font-weight: 800;
+}
+.dataflow li.flow-source::before { background: var(--warning-soft); color: var(--warning); }
+.dataflow li.flow-sanitizer::before { background: var(--success-soft); color: var(--success); }
+.dataflow li.flow-sink::before { background: var(--danger-soft); color: var(--danger); }
+.dataflow .flow-kind { font-weight: 750; color: var(--text-strong); }
+.dataflow pre { margin: 6px 0 0; padding: 6px 10px; font-size: .8rem; }
+.triage { border-radius: var(--radius-sm); padding: 10px 14px; margin: 12px 0; border: 1px solid var(--line); }
+.triage p { margin: 4px 0; }
+.triage-confirmed { background: var(--danger-soft); border-color: var(--danger-line); }
+.triage-false_positive { background: var(--success-soft); border-color: var(--success-line); }
+.triage-needs_review { background: var(--warning-soft); border-color: var(--warning-line); }

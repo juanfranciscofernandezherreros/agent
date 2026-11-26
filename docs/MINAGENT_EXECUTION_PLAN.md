@@ -24,42 +24,42 @@ This file turns the product backlog into an ordered implementation plan for Clau
 | Task | Description | Dependencies | Status | Validation/evidence |
 |---|---|---|---|---|
 | M0-01 | Inspect repository structure, working tree, architecture, and test baseline | — | TODO | |
-| M0-02 | Run current tests and record baseline failures | M0-01 | TODO | |
+| M0-02 | Run current tests and record baseline failures | M0-01 | DONE | Baseline 2026-11-26: 3 pre-existing failures (test_cache_progress x2, test_reporting_phase6 inert send button); test_sql_injection_analysis.py had literal '\n' (SyntaxError) — fixed. |
 | M0-03 | Validate package/import/dependency setup and CLI entry points | M0-01 | TODO | |
 | M0-04 | Verify end-to-end analysis and report paths on safe fixtures | M0-01 | TODO | |
-| M0-05 | Review existing SQLi detector and OWASP metadata; identify gaps | M0-01 | TODO | |
-| M0-06 | Define/validate shared SecurityFinding and Evidence contracts | M0-02, M0-05 | TODO | |
-| M0-07 | Add contract and serialization tests; preserve compatibility | M0-06 | TODO | |
+| M0-05 | Review existing SQLi detector and OWASP metadata; identify gaps | M0-01 | DONE | Regex SQLI001/BUG011 reviewed: line-based, no source/sink; superseded for .py/.java by SEC-SQLI taint rule, kept for other languages. |
+| M0-06 | Define/validate shared SecurityFinding and Evidence contracts | M0-02, M0-05 | DONE | app/security/contracts.py SecurityFinding/TraceStep schema 1.0 + to_bug_candidate adapter. pytest tests/test_security_corpus.py tests/test_security_agents.py: 11 passed (2026-11-26) |
+| M0-07 | Add contract and serialization tests; preserve compatibility | M0-06 | DONE | Serialization via to_dict/SARIF covered by test_security_agents; legacy analyze_quality unchanged when called without security_scan. |
 
 ### M1 — SQL Injection foundation (P0)
 | Task | Description | Dependencies | Status | Validation/evidence |
 |---|---|---|---|---|
-| M1-01 | Define SQL source/sink catalog for supported Python patterns | M0-06 | TODO | |
-| M1-02 | Detect dynamic SQL construction patterns (concat/interpolation/formatting) | M1-01 | TODO | |
-| M1-03 | Recognize supported parameterized query patterns | M1-01 | TODO | |
-| M1-04 | Add simple assignment/variable propagation needed by SQLi | M0-06 | TODO | |
-| M1-05 | Connect source → query construction → execution sink evidence | M1-01–04 | TODO | |
-| M1-06 | Add vulnerable and safe SQLi test corpus | M1-02–05 | TODO | |
-| M1-07 | Integrate contextual SQLi findings into report/JSON | M0-07, M1-05 | TODO | |
+| M1-01 | Define SQL source/sink catalog for supported Python patterns | M0-06 | DONE | SQL sinks Python (execute/raw/text/read_sql) and Java (JDBC/JdbcTemplate/JPA/Hibernate/R2DBC). pytest tests/test_security_corpus.py tests/test_security_agents.py: 11 passed (2026-11-26) |
+| M1-02 | Detect dynamic SQL construction patterns (concat/interpolation/formatting) | M1-01 | DONE | Concat, %, .format, f-strings (Python); + / StringBuilder / String.format (Java). Corpus-gated. |
+| M1-03 | Recognize supported parameterized query patterns | M1-01 | DONE | Parameterised forms not reported (corpus safe cases in flask_app.py, OrderService.java). |
+| M1-04 | Add simple assignment/variable propagation needed by SQLi | M0-06 | DONE | Assignment/augmented/tuple/for/with propagation (Python); declarations/assignments/builders (Java). |
+| M1-05 | Connect source → query construction → execution sink evidence | M1-01–04 | DONE | Trace source → propagation → sink on every taint finding, incl. cross-file (test_java_flow_crosses_controller_service_and_repository). |
+| M1-06 | Add vulnerable and safe SQLi test corpus | M1-02–05 | DONE | tests/fixtures/security: vulnerable + safe SQLi cases, exact-match gate. |
+| M1-07 | Integrate contextual SQLi findings into report/JSON | M0-07, M1-05 | DONE | Merged into quality bug_candidates, bug reports (trace/CWE/OWASP), security.json, security.sarif. |
 
 ### M2 — Basic data-flow engine (P0)
 | Task | Description | Dependencies | Status | Validation/evidence |
 |---|---|---|---|---|
-| M2-01 | Define data-flow node/edge/path representation | M0-06 | TODO | |
-| M2-02 | Track assignment, concatenation, and interpolation | M2-01 | TODO | |
-| M2-03 | Track supported function arguments and returns | M2-02 | TODO | |
-| M2-04 | Represent transforms, validation, and sanitization conservatively | M2-01–03 | TODO | |
-| M2-05 | Produce explainable traces and partial-flow indicators | M2-01–04 | TODO | |
-| M2-06 | Add positive/negative propagation tests and fixtures | M2-01–05 | TODO | |
+| M2-01 | Define data-flow node/edge/path representation | M0-06 | DONE | Taint/TraceStep model with sanitized_for and confidence (python_engine.Taint, java_engine.Taint). |
+| M2-02 | Track assignment, concatenation, and interpolation | M2-01 | DONE | Assignment, concatenation, interpolation tracked; corpus-gated. |
+| M2-03 | Track supported function arguments and returns | M2-02 | DONE | Function summaries: params → sinks/returns; Python cross-module, Java cross-file keyed by class+method (fallback name+arity, medium confidence). |
+| M2-04 | Represent transforms, validation, and sanitization conservatively | M2-01–03 | DONE | Rule-specific sanitizers (shlex.quote, secure_filename, escape, HtmlUtils, FilenameUtils.getName) and cleansing conversions (int(), parseInt, typed params). |
+| M2-05 | Produce explainable traces and partial-flow indicators | M2-01–04 | IN_PROGRESS | Explainable traces done; partial-flow indicators not yet emitted. |
+| M2-06 | Add positive/negative propagation tests and fixtures | M2-01–05 | DONE | Positive/negative propagation fixtures in corpus; mutation check (disable shlex.quote) makes the gate fail. |
 
 ### M3 — Evidence, confidence, correlation, and risk (P1)
 | Task | Description | Dependencies | Status | Validation/evidence |
 |---|---|---|---|---|
-| M3-01 | Normalize evidence/location records | M0-06 | TODO | |
-| M3-02 | Deduplicate findings without losing original detector provenance | M3-01 | TODO | |
+| M3-01 | Normalize evidence/location records | M0-06 | DONE | Normalised file/line/snippet/fingerprint per finding. |
+| M3-02 | Deduplicate findings without losing original detector provenance | M3-01 | DONE | Dedup by rule+file+line and per same-variable flow; provenance kept (engine, trace, triage). |
 | M3-03 | Correlate source, flow, and sink evidence into contextual findings | M1-05, M2-05, M3-01 | TODO | |
-| M3-04 | Define explainable confidence levels and factors | M3-03 | TODO | |
-| M3-05 | Keep severity, confidence, risk, and exploitability separate | M0-06, M3-04 | TODO | |
+| M3-04 | Define explainable confidence levels and factors | M3-03 | IN_PROGRESS | Confidence high/medium/low with rationale (direct flow vs homonym summary vs broker source); factors not yet listed explicitly. |
+| M3-05 | Keep severity, confidence, risk, and exploitability separate | M0-06, M3-04 | DONE | severity, confidence and LLM triage verdict are separate fields; no exploitability claim. |
 | M3-06 | Implement explainable risk ranking and rationale | M3-05 | TODO | |
 | M3-07 | Add correlation/confidence/risk tests and fixtures | M3-01–06 | TODO | |
 
@@ -70,27 +70,27 @@ This file turns the product backlog into an ordered implementation plan for Clau
 | M4-02 | Add executive summary and ranked findings | M3-06 | TODO | |
 | M4-03 | Include traces, evidence, mappings, remediation, and limitations | M3-03, M4-01 | TODO | |
 | M4-04 | Report coverage, exclusions, unsupported cases, and errors | M0-04 | TODO | |
-| M4-05 | Build safe/vulnerable benchmark corpus and baseline metrics | M1-06 | TODO | |
-| M4-06 | Establish detector regression checks in CI | M4-01, M4-05 | TODO | |
+| M4-05 | Build safe/vulnerable benchmark corpus and baseline metrics | M1-06 | DONE | Labelled corpus (Python 27, Java 25 expected findings plus safe counterparts) with 0 FP/0 FN gate in tests/test_security_corpus.py. |
+| M4-06 | Establish detector regression checks in CI | M4-01, M4-05 | IN_PROGRESS | Gate runs in pytest; no CI workflow in repo yet. |
 | M4-07 | Validate end-to-end JSON/report fixtures | M4-01–06 | TODO | |
 
 ### M5 — Detector expansion (P2)
 | Task | Description | Dependencies | Status | Validation/evidence |
 |---|---|---|---|---|
-| M5-01 | XSS detector for supported contexts and APIs | M2, M3, M4 | TODO | |
-| M5-02 | Command Injection detector | M2, M3, M4 | TODO | |
-| M5-03 | Path Traversal detector | M2, M3, M4 | TODO | |
-| M5-04 | SSRF detector | M2, M3, M4 | TODO | |
-| M5-05 | Insecure deserialization candidate detection | Detector framework/contracts | TODO | |
-| M5-06 | Secret exposure detector and safe reporting | Detector framework/contracts | TODO | |
-| M5-07 | Security misconfiguration checks | Detector framework/contracts | TODO | |
+| M5-01 | XSS detector for supported contexts and APIs | M2, M3, M4 | DONE | SEC-XSS: Flask/FastAPI HTML returns, Markup/mark_safe/HttpResponse, Servlet writer. Corpus-gated. |
+| M5-02 | Command Injection detector | M2, M3, M4 | DONE | SEC-CMDI: os.system/popen, subprocess shell=True, Runtime.exec, ProcessBuilder. Corpus-gated. |
+| M5-03 | Path Traversal detector | M2, M3, M4 | DONE | SEC-PATH: open/os/shutil/Path methods, File*/Files.*/FileSystemResource. Corpus-gated. |
+| M5-04 | SSRF detector | M2, M3, M4 | DONE | SEC-SSRF: requests/httpx/urllib, new URL, RestTemplate, WebClient/HttpRequest uri. Corpus-gated. |
+| M5-05 | Insecure deserialization candidate detection | Detector framework/contracts | DONE | SEC-DESER (taint) + SEC-UNSAFE-DESER-API (pickle/yaml.load/ObjectInputStream/XMLDecoder/default typing). |
+| M5-06 | Secret exposure detector and safe reporting | Detector framework/contracts | DONE | SEC-SECRET in code/config/.env with redaction; i18n bundles and placeholders excluded (validated on WebGoat). |
+| M5-07 | Security misconfiguration checks | Detector framework/contracts | DONE | SEC-DEBUG/CORS/CSRF/XXE/TLS/JWT/WEAKHASH/WEAKCIPHER/WEAKRANDOM + Spring properties checks. |
 
 ### M6 — Extensibility, language profiles, and integrations (P2)
 | Task | Description | Dependencies | Status | Validation/evidence |
 |---|---|---|---|---|
 | M6-01 | Detector registry, configuration, lifecycle, and contracts | M0, M4 | TODO | |
 | M6-02 | Language capability matrix and Python profile maturity | M6-01 | TODO | |
-| M6-03 | Add Java profile incrementally | M6-02 | TODO | |
+| M6-03 | Add Java profile incrementally | M6-02 | DONE | Java profile via tree-sitter-java (optional dependency, reported in coverage when missing). |
 | M6-04 | Add JavaScript/TypeScript profile incrementally | M6-02 | TODO | |
 | M6-05 | Evaluate and add optional external-tool adapters | M6-01 | TODO | |
 | M6-06 | Adaptive analysis planning and skipped-check rationale | M6-01, repository context | TODO | |
@@ -145,3 +145,7 @@ For each task, Claude must refine the epic-level prerequisites into exact code-l
 
 ## Token/context optimization policy
 Read `docs/MINAGENT_TOKEN_EFFICIENCY.md`. Work task-first and inspect only relevant code/tests/docs; avoid repeated repository-wide exploration and verbose tool output. Make small cohesive diffs, run focused tests then expand based on risk, and keep durable checkpoints concise. Use lower-cost model/effort for routine work and escalate for complex security/architecture reasoning. Token savings must never skip acceptance criteria, tests, SDD conformance, safety, or evidence. Reset context between unrelated tasks; compact only when continuing the same task.
+
+## Running log
+- 2026-11-26 — Security engine v7.0.0 (branch `security-engine`): contracts, CWE/OWASP 2025 catalogue, Python AST taint engine (cross-module), Java/Spring tree-sitter taint engine (cross-file), config checks, LLM triage agent with read-only tools, SARIF export, report rendering, labelled corpus gate. Full suite: 160 passed, 3 pre-existing failures (see M0-02). Manual validation: WebGoat 57 findings (SQLi/JWT/XXE/path/SSRF lessons found), spring-petclinic 1 (Actuator exposure, true positive), vulpy `bad/` 3 SQLi + 1 path, `good/` 0, flask 4 low/medium. **Next:** M2-05 partial-flow indicators, M3-06 risk ranking, M4-06 CI workflow, M6-04 JS/TS profile.
+

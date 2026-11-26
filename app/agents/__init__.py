@@ -14,6 +14,7 @@ from .llm_agents import (
 from .validation import CrossValidationAgent, GroupCrossValidationAgent
 from .reporting import RepositoryReportingAgent, GroupReportingAgent
 from .activity import ActivityAnalysisAgent, GroupActivityAgent
+from .security import SecurityAnalysisAgent, SecurityTriageAgent
 
 __all__ = [
     "AnalysisContext", "InventoryAgent", "DeepAnalysisAgent",
@@ -22,5 +23,5 @@ __all__ = [
     "ArchitectureExplanationAgent", "EvidenceCorrelationAgent",
     "CrossValidationAgent", "GroupCrossValidationAgent",
     "RepositoryReportingAgent", "GroupReportingAgent",
-    "ActivityAnalysisAgent", "GroupActivityAgent",
+    "ActivityAnalysisAgent", "GroupActivityAgent", "SecurityAnalysisAgent", "SecurityTriageAgent",
 ]

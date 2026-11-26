@@ -65,6 +65,9 @@ def test_llm_hallucinations_and_disagreements_are_flagged(sample_repo):
                        "integrations": [{"name": "RabbitMQ y Postgres", "type": "database", "description": "", "evidence": []},
                                         {"name": "Kafka", "type": "mensajería", "description": "", "evidence": []}]},
     })
+    # Segundo candidato (el TODO del fixture ya no cuenta como bug): el LLM solo revisa el primero.
+    (sample_repo / "retry.py").write_text("def retry():\n    try:\n        run()\n    except Exception:\n        pass\n",
+                                          encoding="utf-8")
     ctx = AnalysisContext(root=sample_repo, repository="svc")
     result = default_supervisor(llm).run(ctx)["cross_validation"]
     checks = _by_id(result)

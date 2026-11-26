@@ -3,6 +3,9 @@ uvicorn[standard]>=0.30,<1
 pydantic>=2.8,<3
 httpx>=0.27,<1
 python-dotenv>=1.0,<2
+# Análisis de seguridad de Java (parser sin ejecutar código; ruedas para Windows, macOS y Linux)
+tree-sitter>=0.23,<1
+tree-sitter-java>=0.23,<1
 # Agentes LLM (opcionales): un proveedor por paquete, seleccionable con LLM_PROVIDER
 langchain>=1.0,<2
 langchain-openai>=1.0,<2

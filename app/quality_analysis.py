@@ -66,7 +66,41 @@ def _analyze_sql_injection(source: str, rel: str) -> list[dict]:
     }]
 
 
-def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dict:
+# Legacy regex codes superseded by the AST/taint engine for the languages it parses.
+SUPERSEDED_BY_ENGINE = {"BUG001", "BUG002", "BUG005", "BUG006", "BUG007", "BUG008", "BUG009", "BUG010", "BUG011", "SQLI001"}
+ENGINE_SUFFIXES = (".py", ".java")
+NOT_BUGS = {"BUG003"}  # TODO/FIXME markers are maintenance notes, not defects
+
+
+def _merge_security(findings: list, test_candidates: list, security: dict) -> tuple[list, list, list, list]:
+    """Replace superseded regex hits with engine findings; keep regex coverage for other languages."""
+    from app.security.contracts import to_bug_candidate
+
+    def keep(item):
+        if item["code"] in NOT_BUGS:
+            return False
+        if item["code"] not in SUPERSEDED_BY_ENGINE:
+            return True
+        item["occurrences"] = [o for o in item["occurrences"] if not str(o["file"]).endswith(ENGINE_SUFFIXES)]
+        return bool(item["occurrences"])
+
+    maintenance = [x for x in findings if x["code"] in NOT_BUGS]
+    findings = [x for x in findings if keep(x)]
+    test_candidates = [x for x in test_candidates if keep(x)]
+    dismissed = []
+    engine_production, engine_tests = [], []
+    for finding in security.get("findings", []):
+        candidate = to_bug_candidate(finding)
+        if (finding.get("triage") or {}).get("verdict") == "false_positive":
+            dismissed.append(candidate)
+        elif finding.get("is_test"):
+            engine_tests.append(candidate)
+        else:
+            engine_production.append(candidate)
+    return engine_production + findings, engine_tests + test_candidates, dismissed, maintenance
+
+
+def analyze_quality(root: Path, deep: dict, functional: dict, java: dict, security_scan: dict | None = None) -> dict:
     grouped = {}
     files_scanned = 0
     total_bytes = 0
@@ -140,7 +174,12 @@ def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dic
             test_groups[key] = {**{k: hit[k] for k in ("code", "severity", "title", "description")}, "occurrences": []}
         test_groups[key]["occurrences"].extend(hit["occurrences"])
     test_candidates = list(test_groups.values())
-    for item in test_candidates:
+    dismissed, maintenance = [], []
+    if security_scan is not None:
+        findings, test_candidates, dismissed, maintenance = _merge_security(findings, test_candidates, security_scan)
+        high = sum(x["severity"] == "high" for x in findings)
+        medium = sum(x["severity"] == "medium" for x in findings)
+    for item in findings + test_candidates:
         item["occurrence_count"] = len(item["occurrences"])
         first = item["occurrences"][0]
         item["file"], item["line"], item["excerpt"] = first["file"], first["line"], first["excerpt"]
@@ -153,7 +192,7 @@ def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dic
     if security_count:
         deductions += min(15, security_count * 3)
     score = max(0, 100 - min(80, deductions))
-    return {
+    result = {
         "score": score,
         "rating": "Bueno" if score >= 85 else "Mejorable" if score >= 70 else "Requiere atención",
         "score_type": "heuristic_static_quality",
@@ -178,3 +217,16 @@ def analyze_quality(root: Path, deep: dict, functional: dict, java: dict) -> dic
             "La falta de tests detectados puede deberse a convenciones o ubicaciones no reconocidas.",
         ],
     }
+    if security_scan is not None:
+        result["security"] = {k: security_scan.get(k) for k in ("schema_version", "engine", "java_profile", "summary", "coverage")}
+        result["dismissed_candidates"] = dismissed
+        result["maintenance_notes"] = maintenance
+        result["summary"]["dismissed_by_triage"] = len(dismissed)
+        result["summary"]["security_findings"] = security_scan.get("summary", {}).get("total", 0)
+        result["limitations"] = [
+            "Los hallazgos SEC-* y BUG-* proceden de análisis AST y de flujo de datos (fuente → sink) en Python y Java; "
+            "los códigos BUG0xx restantes son patrones heurísticos para otros lenguajes.",
+            "Los TODO/FIXME se listan como notas de mantenimiento, no como bugs.",
+            *result["limitations"],
+        ]
+    return result

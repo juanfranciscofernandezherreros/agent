@@ -93,6 +93,10 @@ Actual agent selection, dependencies, skip/error handling, and output paths are 
 
 ### 3.3 Current security-analysis baseline
 
+**Update (v7.0.0, verified by code and tests):** `app/security/` now provides a versioned `SecurityFinding`/`TraceStep` contract (`contracts.py`), a rule catalogue mapped to CWE and OWASP Top 10:2025 (`catalog.py`), an AST taint engine for Python with cross-module summaries (`python_engine.py`), a tree-sitter taint engine for Java/Spring with cross-file summaries keyed by class+method (`java_engine.py`), config-file checks, SARIF 2.1.0 export (`sarif.py`), and an LLM triage loop with read-only tools and citation validation (`triage.py`, `agents/security.py`). Evidence: `tests/test_security_corpus.py` (labelled vulnerable+safe corpus, exact-match gate: 0 FP / 0 FN), `tests/test_security_agents.py`. Remaining gaps are listed in section 10 and in the engine's `limitations`.
+
+Previous baseline (kept for traceability):
+
 Observed current code includes heuristic quality analysis, SQL-injection-related tests and OWASP metadata. The current system does not, based on inspected modules, yet constitute the target modular contextual security analyzer described in the backlog.
 
 The following target capabilities must be treated as planned/not verified as implemented unless code and tests prove otherwise:
@@ -280,15 +284,15 @@ This is an initial assessment based on repository structure and the modules insp
 | Java analysis | Java module/agent | capability matrix and validated coverage | IMPLEMENTED-PARTIAL |
 | Quality/bug candidates | quality analysis + tests | explainable candidates, benchmark quality | IMPLEMENTED-PARTIAL |
 | SQL injection | OWASP metadata + SQLi analysis/tests | contextual source-query-sink reasoning | IMPLEMENTED-PARTIAL; depth unverified |
-| Unified SecurityFinding | existing agent/evidence contracts are not equivalent | stable security-specific schema | GAP |
-| General Source/Sink catalog | no general reusable engine verified | catalog and contracts | GAP |
-| Data-flow engine | no reusable flow engine verified | AST/graph propagation with partial paths | GAP |
-| XSS/CMD/PATH/SSRF | no dedicated modular detectors verified | contextual detector families | GAP |
+| Unified SecurityFinding | `app/security/contracts.py` (schema 1.0, fingerprint, trace, triage) + legacy adapter `to_bug_candidate` | stable security-specific schema | IMPLEMENTED; tests: test_security_agents, test_security_corpus |
+| General Source/Sink catalog | source/sink/sanitizer tables per language in python_engine/java_engine | catalog and contracts | IMPLEMENTED-PARTIAL (tables in code, not yet a declarative registry) |
+| Data-flow engine | intraprocedural propagation + function summaries (Python cross-module, Java cross-file) | AST/graph propagation with partial paths | IMPLEMENTED-PARTIAL (flow-insensitive per function; no field-sensitive heap model) |
+| XSS/CMD/PATH/SSRF | taint rules SEC-XSS/CMDI/PATH/SSRF (+SQLI, CODEI, SSTI, REDIRECT, LDAPI, DESER) | contextual detector families | IMPLEMENTED; corpus-gated |
 | Correlation/dedup | LLM evidence correlation and cross-validation exist; security evidence correlation not verified | deterministic normalized evidence correlation | IMPLEMENTED-PARTIAL / GAP |
-| Confidence/risk | quality score and LLM review exist; unified confidence/risk model not verified | separate explainable confidence and risk | GAP |
-| Knowledge base | selected OWASP SQLi metadata exists | versioned mappings/catalog | IMPLEMENTED-PARTIAL |
+| Confidence/risk | finding confidence (high/medium/low) separate from severity; LLM triage verdict separate | separate explainable confidence and risk | IMPLEMENTED-PARTIAL (no contextual risk score yet) |
+| Knowledge base | `catalog.py`: 30 rules with CWE, OWASP 2025, remediation, cheat-sheet references | versioned mappings/catalog | IMPLEMENTED-PARTIAL (ASVS only for some rules; per-category OWASP URLs except A05 point to the index) |
 | Reporting | multiple HTML/Markdown/report/index modules and tests | versioned, complete, structured security reporting | IMPLEMENTED-PARTIAL |
-| Benchmark | tests exist; labeled precision/recall corpus/gates not verified | benchmark with metrics and CI regression | GAP |
+| Benchmark | `tests/fixtures/security` labelled corpus (Python+Java+config) with exact-match gate; manual runs on WebGoat, vulpy, spring-petclinic, flask | benchmark with metrics and CI regression | IMPLEMENTED-PARTIAL (no CI workflow) |
 | Detector framework | agents/supervisor abstractions exist; detector registry not verified | modular detector registry/capabilities | GAP |
 | Safety | read-only/static claims, safety tests, redaction helpers | robust adversarial repo handling and isolation | IMPLEMENTED-PARTIAL; audit required |
 | Adaptive planning | supervisor dependency graph exists; detector capability planning not verified | repo-profile-based detector plan | GAP |

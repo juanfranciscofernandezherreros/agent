@@ -12,6 +12,7 @@ from .supervisor import default_supervisor
 from .deep_analysis import build_analysis_markdown
 from .functional_analysis import build_analysis_html
 from .report_theme import apply_report_theme
+from .security.outputs import write_security_outputs
 
 
 def analyze_local(source: Path, output: Path, name: str) -> dict:
@@ -23,7 +24,7 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
     context = AnalysisContext(root=source, repository=name, store=SharedStore(output / "agent-runs", run_id=run_id))
     default_supervisor().run(context, only=[
         "inventory", "deep_analysis", "functional_analysis", "java_analysis",
-        "quality_analysis", "llm_bug_hunter", "llm_bug_review",
+        "security_analysis", "security_triage", "quality_analysis", "llm_bug_hunter", "llm_bug_review",
         "llm_functional_interpretation", "llm_architecture_explanation",
     ])
     inventory = context.results["inventory"]
@@ -32,7 +33,7 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
     java = context.results["java_analysis"]
     quality = context.results.get("quality_analysis", {})
     analysis = {
-        "analysis_version": "6.5",
+        "analysis_version": "7.0",
         "functional_analysis": functional,
         "project_name": name,
         "source_path": str(source),
@@ -101,6 +102,7 @@ def analyze_local(source: Path, output: Path, name: str) -> dict:
         report += f"- **{finding.get('severity', 'low').upper()} · {finding.get('title', 'Posible bug')}** — {finding.get('file', 'N/D')}:{finding.get('line', 'N/D')}\n  {finding.get('description', '')}\n"
     (output / "analysis.md").write_text(report, encoding="utf-8")
     (output / "analysis.html").write_text(build_analysis_html(name, analysis), encoding="utf-8")
+    write_security_outputs(output, context.results.get("security_analysis"))
     apply_report_theme(output)
     return analysis
 

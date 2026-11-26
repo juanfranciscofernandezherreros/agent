@@ -4,6 +4,7 @@ import html
 import json
 import re
 from .report_theme import stylesheet_link
+from .security.render import finding_details_html
 
 SECRET = re.compile(r"(?i)(password|secret|token|api[_-]?key|private[_-]?key)(\s*[=:]\s*)[^\s,;]+")
 
@@ -151,7 +152,7 @@ def build_analysis_html(name: str, analysis: dict) -> str:
                 "<div class='finding-top'><span class='severity " + esc(severity) + "'>" + esc(severity_label) + "</span><span class='finding-number'>#" + str(i) + "</span></div>"
                 "<h3>" + esc(finding.get("title", "Posible bug")) + "</h3>"
                 "<p class='location'><span>Ubicación</span><code>" + esc(location) + "</code></p>"
-                "<p>" + esc(finding.get("description", "")) + "</p><p class='occurrence-badge'>" + str(finding.get("occurrence_count", 1)) + " coincidencias del mismo patrón</p>" + locations_html +
+                "<p>" + esc(finding.get("description", "")) + "</p>" + finding_details_html(finding) + "<p class='occurrence-badge'>" + str(finding.get("occurrence_count", 1)) + " coincidencias del mismo patrón</p>" + locations_html +
                 "<details><summary>Ver evidencia de código</summary><pre>" + esc(finding.get("excerpt", "")) + "</pre></details></article>"
             )
         return "".join(cards)

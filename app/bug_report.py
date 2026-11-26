@@ -4,6 +4,7 @@ import html
 from datetime import datetime, timezone
 import json
 from .report_theme import inline_stylesheet, stylesheet_link
+from .security.render import finding_details_html, references_html
 
 TASKS = {
     "BUG001": "Revisar el bloque de captura y registrar, propagar o tratar explícitamente la excepción.",
@@ -198,10 +199,12 @@ def build_bug_report_html(repository, group_name, quality, service_slug=None, gr
         + ("<label class='select-finding'><input class='bug-select' type='checkbox' value='" + str(index) + "' data-report='__REPORT_NAME__' data-repository='" + _e(repository) + "' data-service-slug='" + _e(service_slug or "") + "' data-finding='" + _e(__import__('json').dumps({**x, "recommended_action": TASKS.get(x.get("code"), x.get("fix_suggestion") or "Revisar el hallazgo y añadir una prueba de regresión.")}, ensure_ascii=False)) + "'> Seleccionar para exportar</label>" if service_slug else "")
         + "<div class='top'><b>" + _e(str(x.get("severity", "low")).upper()) + "</b><span>" + _e(x.get("code", "N/D")) + "</span></div>"
         + "<h2>" + _e(x.get("title", "Posible bug")) + "</h2><p>" + _e(x.get("description", "")) + "</p>"
+        + finding_details_html(x)
         + "<dl><dt>Archivo</dt><dd><code>" + _e(x.get("file", "N/D")) + "</code></dd>"
         + "<dt>Línea</dt><dd>" + _e(x.get("line", "N/D")) + "</dd><dt>Confianza</dt><dd>" + _e(x.get("confidence", "heuristic_candidate")) + "</dd></dl>"
         + "<h3>Evidencia</h3><pre>" + _e(x.get("excerpt", "")) + "</pre>"
-        + "<h3>Tarea recomendada</h3><p>" + _e(TASKS.get(x.get("code"), "Revisar el hallazgo y añadir una prueba de regresión.")) + "</p></article>"
+        + "<h3>Tarea recomendada</h3><p>" + _e(TASKS.get(x.get("code")) or x.get("recommended_action") or "Revisar el hallazgo y añadir una prueba de regresión.") + "</p>"
+        + references_html(x) + "</article>"
         for index, x in enumerate(findings)
     )
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
