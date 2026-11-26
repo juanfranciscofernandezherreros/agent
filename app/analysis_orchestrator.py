@@ -11,6 +11,7 @@ from .agents import AnalysisContext
 from .supervisor import default_supervisor
 from .communication import SharedStore
 from .group_report import slug, markdown, html_report  # noqa: F401  (compatibilidad)
+from .report_responsive import make_folder_responsive
 
 STATIC_AGENTS=("inventory","deep_analysis","functional_analysis","java_analysis","quality_analysis")
 
@@ -73,5 +74,6 @@ def run_group_analysis(group_id,name,repositories,clone_token=None,clone_host=No
     # El manifiesto definitivo se añade cuando todos los agentes (incluido el documental) han terminado.
     result["agent_runs"]=store.manifest()
     (folder/"analysis.json").write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding="utf-8")
+    make_folder_responsive(folder)
     progress["phase"]="done"; _write_progress(folder,progress)
     return result
