@@ -19,7 +19,7 @@ from . import llm
 from .analysis_orchestrator import run_group_analysis
 from .gitlab import gitlab_settings, list_accessible_groups, list_group_projects
 from .schemas import BugReportExportRequest
-from .bug_report import TASKS, _sorted_findings, build_bug_export_html
+from .bug_report import TASKS, _repository_bug_findings, build_bug_export_html
 from .bug_hunter_api import router as bug_hunter_router
 from .report_responsive import make_folder_responsive
 
@@ -388,7 +388,7 @@ def export_selected_bug_reports(group_id: str, payload: BugReportExportRequest):
         repository = next((item for item in repositories if item.get("bug_report") == expected_report), None)
         if repository is None:
             raise HTTPException(404, "Uno de los informes no pertenece a este grupo de análisis.")
-        findings = _sorted_findings(repository.get("quality_analysis") or {})
+        findings = _repository_bug_findings(repository)
         if any(index >= len(findings) for index in selection.finding_indexes):
             raise HTTPException(400, "La selección contiene hallazgos que no existen.")
         service_slug = str(repository.get("artifact_dir", "")).split("/")[-1]
