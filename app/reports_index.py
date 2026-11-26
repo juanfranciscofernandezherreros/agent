@@ -102,15 +102,15 @@ def render(bundles: list[dict]) -> str:
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Índice de reportes generados</title>
 <style>
-:root{color-scheme:dark;--bg:#080b12;--surface:#101722;--surface2:#151f2d;--line:#26364b;--text:#e7edf7;--muted:#91a2b9;--accent:#64d8c5;--blue:#83adff}
+:root{color-scheme:light;--bg:#f4f7fb;--surface:#fff;--surface2:#f8fafc;--line:#d8e1ec;--text:#243247;--muted:#64748b;--accent:#087f73;--blue:#245bb5}
 *,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;min-height:100%;max-width:100%;overflow-x:hidden;background:var(--bg);color:var(--text);font:15px/1.6 Inter,system-ui,sans-serif}
-header{background:linear-gradient(125deg,#101b2b,#142b40 58%,#123a3b);padding:clamp(22px,4vw,42px);border-bottom:1px solid var(--line)}
+html,body{margin:0;min-height:100%;max-width:100%;overflow-x:hidden;background:#f4f7fb;color:#243247;font:15px/1.6 Inter,system-ui,sans-serif}
+header{background:linear-gradient(120deg,#e8eff8,#f5f8fc 65%,#e6f3f1);color:#1e293b;padding:clamp(22px,4vw,42px);border-bottom:1px solid var(--line)}
 header p:first-child,.tag{color:var(--accent);font-size:.75rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
 h1,h2,h3{line-height:1.2;letter-spacing:-.025em}h1{font-size:clamp(1.7rem,4vw,2.5rem)}
 main{width:min(100% - 32px,1200px);margin:26px auto}
 section,.service{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:clamp(15px,2.5vw,25px);margin:16px 0;min-width:0}
-.latest{border-color:#2c7778}a{color:var(--blue);text-decoration:none;overflow-wrap:anywhere}a:hover{color:var(--accent);text-decoration:underline}
+.latest{border-color:#9acfc5}a{color:var(--blue);text-decoration:none;overflow-wrap:anywhere}a:hover{color:var(--accent);text-decoration:underline}
 .links{display:flex;flex-wrap:wrap;gap:9px}.links a{display:inline-flex;padding:8px 11px;background:var(--surface2);border:1px solid var(--line);border-radius:9px;max-width:100%}
 .muted{color:var(--muted)}details{margin-top:18px}summary{cursor:pointer;font-weight:700;padding:10px 0}
 .service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:10px}
